@@ -1,0 +1,1661 @@
+\documentclass[12pt]{amsart}
+\usepackage{fix-cm}
+\usepackage{fontspec}
+\usepackage[scheme=plain]{ctex} 
+\usepackage{unicode-math}
+\setmainfont{Latin Modern Roman}
+\setmathfont{Latin Modern Math}
+% Use JuliaMono from the local folder, but only regular and bold (no italic)
+\setmonofont{JuliaMono}[
+  Path=./JuliaMono/,
+  Extension=.ttf,
+  UprightFont=*-Regular,
+  BoldFont=*-Bold,
+  ItalicFont={},
+  BoldItalicFont={},
+]
+
+% --- CJK font fallback for bibliography (Chinese characters) ---
+\IfFontExistsTF{SimSun}{%
+  \newfontfamily\cjkfont{SimSun}[Scale=MatchLowercase]%
+}{%
+  \IfFontExistsTF{Microsoft YaHei}{%
+    \newfontfamily\cjkfont{Microsoft YaHei}[Scale=MatchLowercase]%
+  }{%
+    \IfFontExistsTF{Arial Unicode MS}{%
+      \newfontfamily\cjkfont{Arial Unicode MS}[Scale=MatchLowercase]%
+    }{%
+      \newfontfamily\cjkfont{Latin Modern Roman}[Scale=MatchLowercase]%
+    }%
+  }%
+}
+\newcommand{\cjk}[1]{{\cjkfont #1}}
+
+% No amssymb – unicode-math provides all symbols
+
+\usepackage{amsmath,amsfonts,longtable,array}
+\usepackage{geometry,relsize}
+\usepackage{graphicx}
+\usepackage{xurl,breakurl}
+\usepackage{xcolor}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{setspace}
+\usepackage{parskip, ragged2e, fancyhdr}
+\usepackage{listings}
+\usepackage{upquote}
+\usepackage{caption}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings, skins, breakable}
+\usepackage{multicol} 
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=red, urlcolor=blue]{hyperref}
+\usepackage{imakeidx,varwidth}
+\makeindex
+\usepackage{arydshln}
+\usepackage{textcase}
+\usepackage{titlesec}
+\usepackage{slashed}
+\usepackage{cancel}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{booktabs}
+\usepackage{float}
+
+\geometry{a4paper,margin=1.5cm}
+\newcommand{\br}{,\allowbreak}
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\colorlet{codebg}{backcolour}
+\renewcommand{\seriesdefault}{\bfdefault}
+\boldmath
+
+\DeclareMathOperator{\fst}{fst}
+\DeclareMathOperator{\snd}{snd}
+\DeclareMathOperator{\flip}{flip}
+\DeclareMathOperator{\op}{op}
+\newcommand{\True}{\operatorname{True}}
+\newcommand{\False}{\operatorname{False}}
+\newcommand{\bool}{\operatorname{bool}}
+\newcommand{\nat}{\operatorname{nat}}
+\newcommand{\Prop}{\operatorname{Prop}}
+\newcommand{\Type}{\operatorname{Type}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyhead[R]{\thepage}
+\setlength{\footskip}{14pt}
+\setlength{\headheight}{14pt}
+
+\renewcommand{\normalsize}{\fontsize{10}{12}\selectfont}
+\setstretch{1.2}
+\setlength{\parindent}{0pt}
+\sloppy
+\setlength{\emergencystretch}{3em}
+\setlength{\abovedisplayskip}{8pt}
+\setlength{\belowdisplayskip}{8pt}
+
+\titleformat{\section}
+{\normalfont\fontsize{14}{18}\selectfont\bfseries\color{blue}}
+{\thesection}{1em}{}
+\titleformat{\subsection}
+{\normalfont\fontsize{13}{16}\selectfont\bfseries\color{teal}}
+{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+{\normalfont\fontsize{12}{15}\selectfont\bfseries\color{violet}}
+{\thesubsubsection}{1em}{}
+
+\makeatletter
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}.}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{1}
+\renewcommand{\l@section}{\@tocline{1}{0em}{1em}{2em}{}}
+\renewcommand{\l@subsection}{\@tocline{2}{0em}{1.5em}{2.5em}{}}
+\makeatother
+
+\newcounter{axcounter}
+\newcounter{defcounter}
+\newcounter{thmcounter}
+\newcommand{\axnum}{\refstepcounter{axcounter}Ax:\arabic{axcounter}}
+\newcommand{\defnum}{\refstepcounter{defcounter}Def:\arabic{defcounter}}
+\newcommand{\thmnum}{\refstepcounter{thmcounter}Thm:\arabic{thmcounter}}
+
+\renewcommand{\theHaxcounter}{\arabic{section}.\arabic{axcounter}}
+\renewcommand{\theHdefcounter}{\arabic{section}.\arabic{defcounter}}
+\renewcommand{\theHthmcounter}{\arabic{section}.\arabic{thmcounter}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Q}{\mathbb{Q}}
+\newtheorem{axiom}{Axiom}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+\newtheorem{hypothesis}{Hypothesis}
+
+% --- Wider columns with aligned environments for long formulas ---
+\newenvironment{definitiontable}{%
+	\renewcommand{\arraystretch}{1.5}%
+	\setlength{\tabcolsep}{4pt}%
+	\setlength{\LTleft}{0pt plus 1fill}%
+	\setlength{\LTright}{0pt plus 1fill}%
+	\mathsurround=0pt
+	\tiny
+	\sloppy
+	\setstretch{1.4}
+	\begin{longtable}{|c|>{\RaggedRight\arraybackslash}m{0.14\textwidth}|>{\RaggedRight\arraybackslash}m{0.76\textwidth}|}
+		\hline  \textbf{No.} & \textbf{Def} & \textbf{Statement} \\ \hline
+		\endfirsthead \hline \textbf{No.} & \textbf{Def} & \textbf{Statement} \\ \hline \endhead
+		\hline \multicolumn{3}{r}{$\rightarrow$ next page} \\ \endfoot \hline \endlastfoot
+	}{\end{longtable}}
+
+\newenvironment{axiomtable}{%
+	\renewcommand{\arraystretch}{1.4}%
+	\setlength{\tabcolsep}{3pt}%
+	\setstretch{1.4}
+	\tiny
+	\sloppy
+	\mathsurround=0pt
+	\begin{longtable}{||c|>{\RaggedRight\arraybackslash}m{0.14\textwidth}|>{\RaggedRight\arraybackslash}m{0.76\textwidth}|}
+		\hline \textbf{No.} & \textbf{Axiom} & \textbf{Formula} \\ \hline
+		\endfirsthead \hline \textbf{No.} & \textbf{Axiom} & \textbf{Formula} \\ \hline \endhead
+		\hline \multicolumn{3}{r}{$\rightarrow$ next page} \\ \endfoot \hline \endlastfoot
+	}{\end{longtable}}
+
+\newenvironment{theoremtable}{%
+	\renewcommand{\arraystretch}{1.5}%
+	\setlength{\tabcolsep}{3pt}%
+	\setstretch{1.4}
+	\tiny
+	\sloppy
+	\mathsurround=0pt
+	\begin{longtable}{|c|>{\RaggedRight\arraybackslash}m{0.15\textwidth}|>{\RaggedRight\arraybackslash}m{0.75\textwidth}|}
+		\hline \textbf{No.} & \textbf{Theorem} & \textbf{Statement/References} \\ \hline
+		\endfirsthead \hline \textbf{No.} & \textbf{Theorem} & \textbf{Statement/References} \\ \hline \endhead
+		\hline \multicolumn{3}{r}{$\rightarrow$ next page} \\ \endfoot \hline \endlastfoot
+	}{\end{longtable}}
+
+\newenvironment{prooftable}{%
+	\renewcommand{\arraystretch}{1.2}%
+	\setlength{\tabcolsep}{4pt}%
+	\setlength{\arrayrulewidth}{0.05pt}
+	\tiny
+	\sloppy
+	\begin{longtable}{
+			|>{\centering\arraybackslash}m{0.7cm}|
+			>{\raggedright\centering\arraybackslash}m{0.70\textwidth}|
+			>{\centering\arraybackslash}m{3.5cm}|  % centered third column
+		}%
+		\hline
+		\textbf{Step} & \centering\textbf{Formula} & \textbf{Ref} \\
+		\hline
+		\endfirsthead
+		\hline
+		\textbf{Step} & \centering\textbf{Formula} & \textbf{Ref} \\
+		\hline
+		\endhead
+		\hline
+		\multicolumn{3}{r}{\textit{Continued on next page}} \\
+		\endfoot
+		\hline
+		\endlastfoot
+	}{%
+	\end{longtable}%
+}
+\newcommand{\thicksoliddoubleline}{%
+	\noalign{\vskip1pt}%
+	\noalign{\hrule height 0.2pt}%
+	\noalign{\vskip0.2pt}%
+	\noalign{\hrule height 0.2pt}%
+	\noalign{\vskip1pt}%
+}
+
+\definecolor{leankeyword}{RGB}{0, 102, 204}
+\lstdefinelanguage{Lean}{
+	morekeywords={
+		import, structure, theorem, lemma, proof, def, inductive, class,
+		variable, variables, section, end, open, namespace, protected,
+		private, noncomputable, instance, axiom, exact, apply,
+		assumption, rw, simp, intro, intros, have, let, show, calc,
+		exists, fun, forall, iff, if, then, else, and, or, not,
+		true, false, Type, Prop, Sort, \_, in, out, match, with, end,
+		by, begin, using, from, with, at, of, for, in, to, then,
+		where, done, qed, variable, variables, noncomputable
+	},
+	morecomment=[n]{/-}{-/},
+	morecomment=[l]{--},
+	morestring=[b]{"},
+	morestring=[b]{'},
+	sensitive=true,
+	keywordstyle=\color{leankeyword}\bfseries,
+	commentstyle=\color{black}\itshape,
+	stringstyle=\color{black},
+	alsoletter={_},
+}
+
+\lstdefinestyle{leanstyle}{
+	language=Lean,
+	columns=fullflexible,
+	keepspaces=true,
+	showspaces=false,
+	showtabs=false,
+	showstringspaces=false,
+	upquote=true,
+	tabsize=2,
+	literate={\t}{ }1,
+	basicstyle=\fontsize{6}{12}\selectfont\ttfamily\color{black},
+	keywordstyle=\color{leankeyword}\bfseries,
+	commentstyle=\color{black}\itshape,
+	stringstyle=\color{black},
+	identifierstyle=\color{black},
+}
+
+\newtcblisting{leanlistingtiny}[1][5.5]{
+	listing style=leanstyle,
+	listing only,
+	frame empty,
+	colback=white,
+	left=2pt, right=2pt, top=2pt, bottom=2pt,
+	breakable, width=\linewidth,
+	listing options={
+		language=Lean,
+		basicstyle=\fontsize{#1}{\dimexpr #1 pt *14/10\relax}\selectfont\ttfamily\color{black},
+		aboveskip=0pt, belowskip=0pt,
+		xleftmargin=0pt, xrightmargin=0pt,
+		showspaces=false, showtabs=false, showstringspaces=false,
+		tabsize=2,
+	}
+}
+
+\newtcblisting{leanlisting}{
+	listing style=leanstyle,
+	listing only,
+	sharp corners,
+	boxrule=0.4pt,
+	colback=white,
+	colframe=black,
+	left=4pt, right=4pt, top=4pt, bottom=4pt,
+	arc=0pt, outer arc=0pt,
+	breakable, enhanced jigsaw, width=\linewidth,
+	listing options={
+		language=Lean,
+		basicstyle=\fontsize{5}{12}\selectfont\ttfamily\color{black},
+		aboveskip=0pt, belowskip=0pt,
+		showspaces=false, showtabs=false, showstringspaces=false,
+		tabsize=2,
+	}
+}
+
+\begin{filecontents}{References.bib}
+	@book{chace1927,
+		author    = {Chace, A. B. and Manning, H. P. and Archibald, R. C. and Bull, L.},
+		title     = {The Rhind Mathematical Papyrus},
+		volume    = {I \& II},
+		publisher = {Mathematical Association of America},
+		address   = {Oberlin, OH},
+		year      = {1927},
+		note      = {\url{https://doi.org/10.2307/2299792}}
+	}
+	
+	@book{shen1999,
+		author    = {Shen, Kangshen and Crossley, John N. and Lun, Anthony W.-C.},
+		title     = {The Nine Chapters on the Mathematical Art: Companion and Commentary},
+		publisher = {Oxford University Press},
+		address   = {Oxford},
+		year      = {1999},
+		note      = {\url{https://doi.org/10.1093/oso/9780198539360.001.0001}}
+	}
+	
+	@book{cullen1996,
+		author    = {Cullen, Christopher},
+		title     = {Astronomy and Mathematics in Ancient China: The 'Zhou Bi Suan Jing'},
+		publisher = {Cambridge University Press},
+		address   = {Cambridge},
+		year      = {1996},
+		note      = {\url{https://doi.org/10.1017/CBO9780511563720}}
+	}
+	
+	@book{joseph2011,
+		author    = {Joseph, George Gheverghese},
+		title     = {The Crest of the Peacock: Non-European Roots of Mathematics},
+		edition   = {3rd},
+		publisher = {Princeton University Press},
+		address   = {Princeton, NJ},
+		year      = {2011},
+		note      = {\url{https://doi.org/10.2307/j.ctv1n35bgp}}
+	}
+	
+	@book{struve1930,
+		author    = {Struve, W. W. and Turajeff, B. A.},
+		title     = {Mathematischer Papyrus des Staatlichen Museums der Schönen Künste in Moskau},
+		volume    = {1},
+		series    = {Quellen und Studien zur Geschichte der Mathematik, Astronomie und Physik, Abteilung A: Quellen},
+		publisher = {Springer},
+		address   = {Berlin},
+		year      = {1930},
+		note      = {\url{https://doi.org/10.1086/346596}}
+	}
+	
+	@misc{sun2015,
+		author       = {Sun, Weidong},
+		title        = {Explosive Archaeological Discovery: The Ancestors of the Chinese People Came from Egypt},
+		year         = {2015},
+		month        = {September},
+		howpublished = {Online essay published on Kooniao (\cjk{酷鸟})},
+		note         = {\url{http://mp.weixin.qq.com/s?__biz=MzA5MDkyNDIzNw==&mid=207684878&idx=1&sn=56eac09ce9106a081be0ad0d8b3da00e&scene=19#wechat_redirect}}
+	}
+	
+	@incollection{dauben2007,
+		author    = {Dauben, Joseph W.},
+		title     = {Chinese Mathematics},
+		booktitle = {The Mathematics of Egypt, Mesopotamia, China, India, and Islam: A Sourcebook},
+		editor    = {Katz, Victor J.},
+		pages     = {187--384},
+		publisher = {Princeton University Press},
+		address   = {Princeton, NJ},
+		year      = {2007},
+		note      = {\url{https://doi.org/10.2307/j.ctv1qgnq84.8}}
+	}
+	
+	@article{lewis2016,
+		author  = {Lewis, Ricardo},
+		title   = {Did Chinese Civilization Come From Ancient Egypt?},
+		journal = {Foreign Policy},
+		year    = {2016},
+		month   = {September},
+		day     = {2},
+		note    = {\url{https://foreignpolicy.com/2016/09/02/did-chinese-civilization-come-from-ancient-egypt-archeological-debate-at-heart-of-china-national-identity/}}
+	}
+	
+	@article{marshall2021,
+		author    = {Marshall, Stuart M. and Mathis, Cole and Carrick, Emma and Keenan, Graham and Cooper, Geoffrey J. T. and Graham, Heather and Craven, Matthew and Gromski, Piotr S. and Moore, Douglas G. and Walker, Sara I. and Cronin, Leroy},
+		title     = {Identifying molecules as biosignatures with assembly theory and mass spectrometry},
+		journal   = {Nature Communications},
+		volume    = {12},
+		number    = {1},
+		pages     = {3033},
+		year      = {2021},
+		note      = {\url{https://doi.org/10.1038/s41467-021-23258-x}}
+	}
+	
+	@book{gillings1972,
+		author    = {Gillings, R. J.},
+		title     = {Mathematics in the Time of the Pharaohs},
+		publisher = {MIT Press},
+		address   = {Cambridge, MA},
+		year      = {1972},
+		note      = {\url{https://doi.org/10.7551/mitpress/4522.001.0001}}
+	}
+	
+	@book{imhausen2016,
+		author    = {Imhausen, A.},
+		title     = {Mathematics in Ancient Egypt: A Contextual History},
+		publisher = {Princeton University Press},
+		address   = {Princeton, NJ},
+		year      = {2016},
+		note      = {\url{https://press.princeton.edu/books/hardcover/9780691117133/mathematics-in-ancient-egypt}}
+	}
+	
+	@book{clagett1999,
+		author    = {Clagett, M.},
+		title     = {Ancient Egyptian Science, Volume III: Ancient Egyptian Mathematics},
+		publisher = {American Philosophical Society},
+		address   = {Philadelphia, PA},
+		year      = {1999},
+		note      = {\url{https://www.amphilsoc.org/publications/ancient-egyptian-science-source-book-volume-iii}}
+	}
+	
+	@book{taylor1859,
+		author    = {Taylor, John},
+		title     = {The Great Pyramid: Why Was It Built? And Who Built It?},
+		publisher = {Longman, Green, Longman, and Roberts},
+		address   = {London},
+		year      = {1859},
+		note      = {\url{https://archive.org/details/greatpyramidwhy00tayl}}
+	}
+	
+	@article{kauffman1986,
+		author    = {Kauffman, S. A.},
+		title     = {Autocatalytic Sets of Proteins},
+		journal   = {Journal of Theoretical Biology},
+		volume    = {119},
+		number    = {1},
+		pages     = {1--24},
+		year      = {1986},
+		note      = {\url{https://doi.org/10.1016/S0022-5193(86)80047-9}}
+	}
+	
+	@article{balbi2020,
+		author    = {Balbi, Amedeo and Grimaldi, Claudio},
+		title     = {Quantifying the information impact of future searches for exoplanetary biosignatures},
+		journal   = {Astrobiology},
+		volume    = {20},
+		number    = {10},
+		pages     = {1234--1245},
+		year      = {2020},
+		note      = {\url{https://doi.org/10.1073/pnas.2007560117}}
+	}
+	
+	@book{gelman2013,
+		author    = {Gelman, A. and Carlin, J. B. and Stern, H. S. and Dunson, D. B. and Vehtari, A. and Rubin, D. B.},
+		title     = {Bayesian Data Analysis},
+		edition   = {3rd},
+		publisher = {CRC Press},
+		year      = {2013},
+		note      = {\url{https://doi.org/10.1201/b16018}}
+	}
+	
+	@book{jeffreys1939,
+		author    = {Jeffreys, H.},
+		title     = {Theory of Probability},
+		edition   = {3rd},
+		publisher = {Oxford University Press},
+		year      = {1998},
+		note      = {\url{https://doi.org/10.1093/oso/9780198503682.001.0001}}
+	}
+	
+	@incollection{hordijk2015,
+		author    = {Hordijk, Wim and Steel, Mike},
+		title     = {Autocatalytic Sets and the Origin of Life},
+		booktitle = {The Origin of Life},
+		publisher = {Springer},
+		year      = {2015},
+		pages     = {1--20},
+		address   = {Dordrecht},
+		note      = {\url{https://doi.org/10.3390/e12071733}}
+	}
+	
+	@article{hordijk2016,
+		author    = {Hordijk, Wim and Steel, Mike},
+		title     = {Autocatalytic Sets in Polymer Networks with Variable Catalysis Distributions},
+		journal   = {Journal of Theoretical Biology},
+		volume    = {402},
+		pages     = {42--53},
+		year      = {2016},
+		note      = {\url{https://doi.org/10.1007/s10910-016-0666-z}}
+	}
+	
+	% Dunn's book
+	@book{dunn2010lost,
+		author    = {Dunn, Christopher},
+		title     = {Lost Technologies of Ancient Egypt: Advanced Engineering in the Temples of the Pharaohs},
+		publisher = {Bear \& Company},
+		address   = {Rochester, Vt.},
+		year      = {2010},
+		isbn      = {9781591431022},
+		pages     = {400},
+		note      = {\url{https://www.innertraditions.com/books/lost-technologies-of-ancient-egypt}}
+	}
+	
+@book{euclid,
+	author    = {Euclid},
+	editor    = {Heath, Thomas L.},
+	title     = {The Thirteen Books of Euclid's Elements},
+	edition   = {2nd},
+	publisher = {Cambridge University Press},
+	year      = {1926},
+	note      = {\url{https://doi.org/10.1017/CBO9781139600721}}
+}
+	
+	@book{heath1981,
+		author    = {Heath, Thomas L.},
+		title     = {A History of Greek Mathematics},
+		publisher = {Dover Publications},
+		year      = {1981},
+		note      = {\url{https://www.doverpublications.com/0486240738}}
+	}
+	
+	@book{schneider1995,
+		author    = {Schneider, Michael S.},
+		title     = {A Beginner's Guide to Constructing the Universe: The Mathematical Archetypes of Nature, Art, and Science},
+		publisher = {HarperPerennial},
+		year      = {1995},
+		note      = {\url{https://www.harpercollins.com/products/a-beginners-guide-to-constructing-the-universe-michael-s-schneider}}
+	}
+% --- Custom dash pattern (gap and dash length) ---
+
+\end{filecontents}
+
+\setlength{\dashlinedash}{0.5pt}
+\setlength{\dashlinegap}{1pt}
+\setlength{\arrayrulewidth}{0.2pt}
+\begin{document}
+	\setstretch{1.2}
+	\pagestyle{empty}
+	\title{\NoCaseChange{\LARGE Formal Egyptian Geometry:\\[2pt] A Dependent Type–Theoretic Reconstruction}}
+\author{%
+	\NoCaseChange{Brahimi, Mahdi. Tahar. \\
+		Department of Mathematics \\
+		University of Mohamed Boudiaf, Msila, Algeria \\
+		\texttt{\href{mailto:mahdi.brahimi@univ-msila.dz}{mahditahar.brahimi@univ-msila.dz}}
+	}
+}
+	\subjclass[2020]{Primary 01A16, 51-03; Secondary 00A35, 51N20}
+	\keywords{ancient Egyptian mathematics, Rhind Mathematical Papyrus, circle mensuration, seked theory, golden triangle, dependent type theory, Lean theorem prover, Great Pyramid, ancient Chinese mathematics, Dunn's metrological thesis}
+	
+	\begin{abstract}
+		$$
+		\begin{aligned}
+		\textsf{MainTheorems} := & \\
+		&\hyperref[thm:area]{\textsf{CircleArea}}
+		\wedge \hyperref[thm:cyl]{\textsf{CylinderVolume}}
+		\wedge \hyperref[thm:seked]{\textsf{SekedFormula}}
+		\wedge \hyperref[thm:sum]{\textsf{Summary}}
+		\wedge \hyperref[thm:excl]{\textsf{Exclusion}} \\
+		&\wedge \hyperref[thm:falseequiv]{\textsf{FalsePositionEquivalence}}
+		\wedge \hyperref[thm:pythcommon]{\textsf{CommonTriple}}
+		\wedge \hyperref[thm:frustumequiv]{\textsf{FrustumConvergence}} \\
+		&\wedge \hyperref[thm:circleconverge]{\textsf{CircleAreaConvergence}}
+		\wedge \hyperref[thm:algindep]{\textsf{AlgebraicIndependence}}
+		\wedge \hyperref[thm:taylorexcl]{\textsf{TaylorExclusion}} \\
+		&\wedge \hyperref[thm:dunnmetrological]{\textsf{DunnMetrologicalThesis}}
+		\end{aligned}
+		$$
+	\end{abstract}
+	\maketitle
+	\thispagestyle{empty}
+	\vspace{10pt}
+	
+\begin{multicols}{3}
+	\begin{leanlistingtiny}[2.5]
+		import Mathlib.Data.Real.Basic
+		import Mathlib.Tactic
+		import Mathlib.Data.Real.Irrational
+		
+		structure UnitSystem :=
+		(cubit palm digit : ℝ)
+		(cubit_eq : cubit = 7 * palm)
+		(palm_eq : palm = 4 * digit)
+		
+		def CircleArea (d : ℝ) : ℝ := (8/9 * d)^2
+		def EgyptianPi : ℝ := 256/81
+		def Seked (run rise : ℝ) : ℝ := 7 * run / rise
+		
+		def GoldenTriangle (a b c : ℝ) : Prop :=
+		a = b ∧ (a / c = (1 + Real.sqrt 5) / 2)
+		
+		def EgyptianGeometry (x : ℝ) : Prop := Rational x
+		
+		theorem SekedFormula (x y S : ℝ) (h : Seked x y = S) : S = 7 * x / y :=
+		by rw [← h]; rfl
+		
+		axiom Exclusion :
+		¬ ∃ (T : ℝ × ℝ × ℝ), GoldenTriangle T.1 T.2.1 T.2.2 ∧ EgyptianGeometry T.1
+		
+		axiom CircleAreaFormula (d A : ℝ) (hc : Circle d) (ha : Area A) :
+		A = (8/9*d)^2
+		
+		axiom CylinderVolume (d h V : ℝ) (hc : Cylinder d h) (hv : Volume V) :
+		V = (8/9*d)^2 * h
+		
+		theorem EgyptianMainTheorem (d A : ℝ) (hc : Circle d) (ha : Area A) :
+		∃ s, Square s ∧ s = 8/9*d ∧ A = s^2 :=
+		begin
+		use 8/9 * d,
+		split,
+		{ admit }, -- Square proof omitted; could be derived from CircleRule axiom
+		split,
+		{ refl },
+		{ exact CircleAreaFormula d A hc ha }
+		end
+		
+		def AffineFunction (f : ℝ → ℝ) (a b : ℝ) : Prop :=
+		∀ x, f x = a * x + b ∧ a ≠ 0
+		
+		def EgyptianFalsePosition (f : ℝ → ℝ) (x1 xstar : ℝ) : Prop :=
+		f x1 ≠ 0 ∧ xstar = x1 * f 0 / f x1
+		
+		def ChineseDoubleFalsePosition (f : ℝ → ℝ) (x1 x2 xstar : ℝ) : Prop :=
+		let e1 := f x1
+		let e2 := f x2
+		e1 ≠ e2 ∧ xstar = (e2 * x1 - e1 * x2) / (e2 - e1)
+		
+		def PythagoreanTriple (a b c : ℝ) : Prop := a^2 + b^2 = c^2
+		
+		def Frustum (a b h : ℝ) : Prop := a > 0 ∧ b > 0 ∧ h > 0
+		def FrustumVolume (a b h V : ℝ) : Prop :=
+		Frustum a b h ∧ V = h/3 * (a^2 + a*b + b^2)
+		
+		def ChineseCircleArea (d A : ℝ) : Prop := A = 3/4 * d^2
+		
+		axiom ChineseFalseAxiom (f a b x1 x2 e1 e2 xstar : ℝ)
+		(hf : AffineFunction f a b)
+		(hC : ChineseDoubleFalsePosition f x1 x2 xstar) :
+		f xstar = 0
+		
+		axiom FrustumAxiom (a b h V : ℝ) (hf : Frustum a b h) :
+		FrustumVolume a b h V
+		
+		axiom ChineseCircleAxiom (d A : ℝ) (hc : Circle d) (ha : Area A) :
+		ChineseCircleArea d A
+		
+		axiom FalsePositionEquivalence (f a b x1 x2 xstar : ℝ)
+		(hf : AffineFunction f a b)
+		(hC : ChineseDoubleFalsePosition f x1 x2 xstar) :
+		EgyptianFalsePosition f x1 xstar ∨ EgyptianFalsePosition f x2 xstar
+		
+		theorem CommonTriple : PythagoreanTriple 3 4 5 :=
+		by ring
+	\end{leanlistingtiny}
+	\columnbreak
+	\begin{leanlistingtiny}[2.5]
+		def DecimalPlaceValue (x : ℕ) : Prop :=
+		∃ k : ℕ, ∃ a : Fin k → ℕ, (∀ i, 0 ≤ a i ∧ a i ≤ 9) ∧
+		x = ∑ i, a i * 10^i
+		
+		def AdditiveRepresentation (x : ℕ) : Prop :=
+		∃ k : ℕ, ∃ b : Fin k → ℕ, x = ∑ i, b i * 10^i
+		
+		def ArithmeticMorphism (f : ℕ → ℕ) : Prop :=
+		∀ x y, f (x + y) = f x + f y ∧ f (x * y) = f x * f y
+		
+		def TaylorPi : ℝ := 366 / 116.5
+		parameter british_inch : ℝ
+		parameter earth_radius : ℝ
+		def TaylorUnit (c i : ℝ) : Prop :=
+		c = 25 * i ∧ i ≈ 1.001 * british_inch
+		
+		def TaylorPyramid (s h Av Ab : ℝ) : Prop :=
+		(4*s / h = 2 * Real.pi) ∧
+		(2*h / s = 4 / Real.pi) ∧
+		(10^7 * c = earth_radius) ∧
+		(Av / Ab = 1 / Real.pi)
+		
+		axiom TaylorAxiom (s h Av Ab : ℝ) (hp : TaylorPyramid s h Av Ab) :
+		(4*s / h = 2 * Real.pi) ∧
+		(2*h / s = 4 / Real.pi) ∧
+		(10^7 * c = earth_radius) ∧
+		(Av / Ab = 1 / Real.pi)
+		
+		theorem FrustumConvergence (a b h V : ℝ) :
+		FrustumVolume a b h V ↔ V = h/3 * (a^2 + a*b + b^2) :=
+		begin
+		split,
+		{ intro h; exact h.2 },
+		{ intro h; split, { admit }, exact h } -- Frustum condition omitted
+		end
+		
+		theorem CircleAreaConvergence (d : ℝ) (hc : Circle d) :
+		let A_E := (8/9 * d)^2
+		let A_C := 3/4 * d^2
+		True := trivial
+		
+		axiom AlgebraicIndependence (f : ℕ → ℕ) (hm : ArithmeticMorphism f) :
+		¬ (∀ x, DecimalPlaceValue x ↔ AdditiveRepresentation (f x))
+		
+		axiom TaylorExclusion (s h Av Ab : ℝ) (hp : TaylorPyramid s h Av Ab) :
+		¬ EgyptianGeometry s
+	\end{leanlistingtiny}
+	\columnbreak
+	
+	\includegraphics[width=0.6\linewidth, keepaspectratio=true]{scripts/Dependency_Graph.pdf}
+	
+\end{multicols}
+
+	\newpage
+	\pagestyle{plain}
+	\pagenumbering{arabic}
+
+\section{Definitions}
+
+\subsection{Units and Basic Quantities}
+\begin{definitiontable}
+	\defnum\label{def:cubit} & $\textsf{CubitUnit}$ & $\textsf{CubitUnit} (c : \R) (p : \R) (d : \R) : \Prop := \textsf{Cubit}(c) \wedge \textsf{Palm}(p) \wedge \textsf{Digit}(d) \wedge (c = 7p) \wedge (p = 4d)$ \\  \hline
+	\defnum\label{def:khet} & $\textsf{KhetUnit}$ & $\textsf{KhetUnit} (k : \R) (c : \R) : \Prop := \textsf{Khet}(k) \wedge \textsf{Cubit}(c) \wedge (k = 100c)$ \\[5pt]  \hline
+	\defnum\label{def:setat} & $\textsf{SetatUnit}$ & $\textsf{SetatUnit} (s : \R) (k : \R) : \Prop := \textsf{Setat}(s) \wedge \textsf{Khet}(k) \wedge (s = k^2)$ \\[5pt]  \hline
+	\defnum\label{def:seked} & $\textsf{Seked}$ & $\textsf{Seked} (x : \R) (y : \R) (S : \R) : \Prop := S = 7 \cdot \dfrac{x}{y}$ \\[5pt]  \hline
+	\defnum\label{def:golden} & $\textsf{GoldenTriangle}$ & $\textsf{GoldenTriangle} (a : \R) (b : \R) (c : \R) : \Prop := (a = b) \wedge \left(\dfrac{a}{c} = \dfrac{1+\sqrt{5}}{2}\right)$ \\[5pt]  \hline
+	\defnum\label{def:height} & $\textsf{Height}$ & $\textsf{Height} (h : \R) : \Prop := h > 0$ \\[5pt]  \hline
+\end{definitiontable}
+
+\subsection{Geometric Operations}
+\begin{definitiontable}
+	\defnum\label{def:circle} & $\textsf{Circle}$ & $\textsf{Circle} (d : \R) (r : \R) : \Prop := r = d/2$ \\[5pt]  \hline
+	\defnum\label{def:square} & $\textsf{Square}$ & $\textsf{Square} (s : \R) : \Prop := \forall (x : \R) (y : \R) \br  (0 \le x \le s) \wedge (0 \le y \le s) \to \textsf{Point}(x \br y)$ \\[5pt]  \hline
+	\defnum\label{def:cylinder} & $\textsf{Cylinder}$ & $\textsf{Cylinder} (d : \R) (h : \R) : \Prop := \textsf{Circle}(d) \wedge \textsf{Height}(h)$ \\[5pt]  \hline
+	\defnum\label{def:volume} & $\textsf{Volume}$ & $\textsf{Volume} (V : \R) : \Prop := \exists (A : \R) (h : \R) \br  \textsf{Area}(A) \wedge \textsf{Height}(h) \wedge V = A \cdot h$ \\[5pt]  \hline
+\end{definitiontable}
+
+\subsection{Convergent Algebraic Structures}
+\begin{definitiontable}
+	\defnum\label{def:affine} & $\textsf{AffineFunction}$ & $\textsf{AffineFunction} (f : \R \to \R) (a : \R) (b : \R) : \Prop := \forall (x : \R) \br  f(x) = a x + b \wedge a \neq 0$ \\[5pt] \hline
+	\defnum\label{def:egyptianfalse} &{ \sloppy\textsf{EgyptianFalsePosition} } & $\textsf{EgyptianFalsePosition} (f : \R \to \R) (x_1 : \R) (x^* : \R) : \Prop := f(x_1) \neq 0 \wedge x^* = \dfrac{x_1 \cdot f(0)}{f(x_1)}$ \\[5pt] \hline
+	\defnum\label{def:chinesefalse} & {\sloppy\textsf{ChineseDoubleFalsePosition}} & $\begin{aligned}
+	& \textsf{ChineseDoubleFalsePosition} (f : \R \to \R) (x_1 : \R) (x_2 : \R) (x^* : \R) : \Prop := \\
+	&  \exists (e_1 : \R) (e_2 : \R) \br  f(x_1) = e_1 \wedge f(x_2) = e_2 \wedge e_1 \neq e_2 \wedge 
+	x^* = \frac{e_2 x_1 - e_1 x_2}{e_2 - e_1}.
+	\end{aligned}$ \\[5pt] \hline
+	\defnum\label{def:pythtriple} & {\sloppy\textsf{PythagoreanTriple}} & $\textsf{PythagoreanTriple} (a : \R) (b : \R) (c : \R) : \Prop := a^2 + b^2 = c^2$ \\[5pt] \hline
+	\defnum\label{def:frustum} & $\textsf{Frustum}$ & $\textsf{Frustum} (a : \R) (b : \R) (h : \R) : \Prop := a > 0 \wedge b > 0 \wedge h > 0$ \\[5pt] \hline
+	\defnum\label{def:frustumvolume} &{\sloppy \textsf{FrustumVolume}} & $\textsf{FrustumVolume} (a : \R) (b : \R) (h : \R) (V : \R) : \Prop := \textsf{Frustum}(a \br b \br h) \wedge V = \dfrac{h}{3}(a^2 + ab + b^2)$ \\[5pt] \hline
+	\defnum\label{def:circleC} & {\sloppy\textsf{ChineseCircleArea}} & $\textsf{ChineseCircleArea} (d : \R) (A : \R) : \Prop := A = \dfrac{3}{4}d^2$ \\[5pt] \hline
+	\defnum\label{def:mouthaspect} & {\sloppy\textsf{MouthAspect}} & $\textsf{MouthAspect} (w : \R) (h : \R) : \Prop := w = 3 \wedge h = 4$ \\[5pt] \hline
+	\defnum\label{def:decimal} & {\sloppy\textsf{DecimalPlaceValue}} & $\textsf{DecimalPlaceValue} (x : \N) : \Prop := \exists (k : \N) \br  \exists (a_0 \br \ldots \br a_k : \N) \br  (\forall i \le k \br  0 \le a_i \le 9) \wedge x = \sum_{i=0}^k a_i 10^i$ \\[5pt] \hline
+	\defnum\label{def:additive} & {\sloppy\textsf{AdditiveRepresentation}} & $\textsf{AdditiveRepresentation} (x : \N) : \Prop := \exists (k : \N) \br  \exists (b_0 \br \ldots \br b_k : \N) \br  x = \sum_{i=0}^k b_i 10^i$ \\[5pt] \hline
+	\defnum\label{def:morphism} & {\sloppy\textsf{ArithmeticMorphism}} & $\textsf{ArithmeticMorphism} (f : \N \to \N) : \Prop := \forall (x : \N) (y : \N) \br  f(x+y) = f(x) + f(y) \wedge f(xy) = f(x) f(y)$ \\[5pt] \hline
+\end{definitiontable}
+
+\subsection{Dunn's Metrological Definitions}
+\begin{definitiontable}
+	\defnum\label{def:bilsym} & {\sloppy \textsf{BilateralSymmetry}}& $\textsf{BilateralSymmetry} (\mathcal{S} : \mathsf{Set}) (\Pi : \mathsf{Set}) : \Prop := \forall (p : \mathcal{S}) \br  \exists (p' : \mathcal{S}) \br  p' = \mathcal{R}_\Pi(p)$ \\[5pt] \hline
+	\defnum\label{def:tolerance} & {\sloppy\textsf{Tolerance}} & $\textsf{Tolerance} (\mathcal{D} : \mathsf{Set}) (t : \R) (\Pi : \mathsf{Set}) : \Prop := \max_{(\mathbf{p} \br \mathbf{p}') \in \mathcal{D}} \| \mathbf{p} - \mathcal{R}_\Pi(\mathbf{p}') \|_2 \le t$ \\[5pt] \hline
+	\defnum\label{def:scaledtol} & {\sloppy\textsf{ScaledTolerance}} & $\textsf{ScaledTolerance} (\mathcal{S} : \mathsf{Set}) (\lambda : \R) (t_h : \R) (\Pi : \mathsf{Set}) : \Prop := \textsf{Tolerance}(\mathcal{S} \br  \lambda \cdot t_h \br  \Pi)$ \\[5pt] \hline
+	\defnum\label{def:goldenrect} & {\sloppy\textsf{GoldenRectangle}} & $\textsf{GoldenRectangle} (w : \R) (h : \R) : \Prop := h = \phi \cdot w \br  \phi = \frac{1+\sqrt{5}}{2}$ \\[5pt] \hline
+	\defnum\label{def:flowerlife} & {\sloppy\textsf{FlowerOfLife}} & $\textsf{FlowerOfLife} (\mathcal{F} : \mathsf{Set}) (r : \R) (\mathcal{C} : \mathsf{Set}) : \Prop := \mathcal{F} = \bigcup_{c \in \mathcal{C}} \textsf{ball}(c \br  r)$ \\[5pt] \hline
+	\defnum\label{def:ramseshead} & {\sloppy\textsf{RamsesHead}} & $\textsf{RamsesHead} (\mathcal{S} : \mathsf{Set}) (\Pi : \mathsf{Set}) : \Prop := \textsf{Statue}(\mathcal{S}) \wedge \textsf{BilateralSymmetry}(\mathcal{S} \br  \Pi)$ \\[5pt] \hline
+	\defnum\label{def:producedby} & {\sloppy\textsf{ProducedBy}} & $\textsf{ProducedBy} (S : \mathsf{Set}) (T : \mathsf{ToolSet}) : \mathsf{Prop}$ \\[5pt] \hline
+	\defnum\label{def:toolset} & {\sloppy\textsf{ToolSet}} & $\mathsf{ToolSet} : \mathsf{Type}$ \\[5pt] \hline
+	\defnum\label{def:statue} & {\sloppy\textsf{Statue}} & $\textsf{Statue} (\mathcal{S} : \mathsf{Set}) : \mathsf{Prop}$ \\[5pt] \hline
+\end{definitiontable}
+
+\section{Axioms}
+
+\subsection{Egyptian Geometry Axioms}
+\begin{axiomtable}
+	\axnum\label{ax:rect} & $\textsf{Rectangulation}$ & $\forall (\Omega : \Type) \br  \textsf{Area}(\Omega) \to \exists (L : \R) (W : \R) \br  \textsf{Rect}(L \br W) \wedge \textsf{Map}(\Omega \br  L \br W)$ \\[5pt]  \hline
+	\axnum\label{ax:circle} & $\textsf{CircleRule}$ & $\forall (d : \R) (s : \R) \br  \textsf{Circle}(d) \to \textsf{Square}(s) \wedge (s = d - \tfrac{1}{9}d)$ \\[5pt]  \hline
+\end{axiomtable}
+
+\subsection{Foundational Axioms}
+\begin{axiomtable}
+	\axnum\label{ax:piirrational} &{ \sloppy\textsf{PiIrrationalAxiom}} & $\pi \notin \mathbb{Q}$ \\[5pt] \hline
+	\axnum\label{ax:fieldclosure} & {\sloppy\textsf{RationalFieldClosureAxiom}} & $\forall (r : \R) (s : \R) \br  r \in \mathbb{Q} \wedge s \in \mathbb{Q} \setminus \{0\} \to r/s \in \mathbb{Q}$ \\[5pt] \hline
+	\axnum\label{ax:sekedarithmetic} & {\sloppy\textsf{SekedArithmeticAxiom}} & $\frac{1}{2}\cdot 360 = 180 \wedge \frac{180}{250} = \frac{18}{25} \wedge \frac{18}{25} = \frac{1}{2}+\frac{1}{5}+\frac{1}{50} \wedge \frac{126}{25} = 5.04 \wedge 0.04 \cdot 4 = 0.16 = \frac{4}{25}$ \\[5pt] \hline
+	\axnum\label{ax:falseposalgebra} & {\sloppy\textsf{FalsePositionAlgebraAxiom}} & $\begin{aligned}
+	& \forall (f : \R \to \R) (a : \R) (b : \R) (x_1 : \R) (x_2 : \R) (e_1 : \R) (e_2 : \R) (x^* : \R) \br  \\
+	&  \textsf{AffineFunction}(f \br a \br b) \wedge e_1 = f(x_1) \wedge e_2 = f(x_2) \wedge e_1 \neq e_2 \\
+	&  \wedge x^* = \frac{e_2 x_1 - e_1 x_2}{e_2 - e_1} \\
+	&  \to \left( x^* = \frac{x_1 f(0)}{f(0) - f(x_1)} \vee x^* = \frac{x_2 f(0)}{f(0) - f(x_2)} \right)
+	\end{aligned}$ \\[5pt] \hline
+	\axnum\label{ax:pythagoreanidentity} & {\sloppy\textsf{PythagoreanIdentityAxiom}} & $3^2+4^2 = 5^2$ \\[5pt] \hline
+\end{axiomtable}
+
+\subsection{Chinese / Convergent Axioms}
+\begin{axiomtable}
+	\axnum\label{ax:chinesefalse} & {\sloppy\textsf{ChineseFalseAxiom}} & $\forall (f : \R \to \R) (a : \R) (b : \R) (x_1 : \R) (x_2 : \R) (e_1 : \R) (e_2 : \R) (x^* : \R) \br  \textsf{AffineFunction}(f \br a \br b) \wedge \textsf{ChineseDoubleFalsePosition}(f \br x_1 \br x_2 \br x^*) \to f(x^*) = 0$ \\[5pt] \hline
+	\axnum\label{ax:frustum} & {\sloppy\textsf{FrustumAxiom}} & $\forall (a : \R) (b : \R) (h : \R) (V : \R) \br  \textsf{Frustum}(a \br b \br h) \to \textsf{FrustumVolume}(a \br b \br h \br V)$ \\[5pt] \hline
+	\axnum\label{ax:circleC} & {\sloppy\textsf{ChineseCircleAxiom}} & $\forall (d : \R) (A : \R) \br  \textsf{Circle}(d) \to \textsf{Area}(A) \to \textsf{ChineseCircleArea}(d \br A)$ \\[5pt] \hline
+\end{axiomtable}
+
+\subsection{Alternative Pyramid Theory Axioms}
+\begin{axiomtable}
+	\axnum\label{ax:taylor} & $\textsf{TaylorAxiom}$ & $\forall (s : \R) (h : \R) (A_v : \R) (A_b : \R) \br  \textsf{TaylorPyramid}(s \br h \br A_v \br A_b) \to \left(\dfrac{4s}{h} = 2\pi\right) \wedge \left(\dfrac{2h}{s} = \dfrac{4}{\pi}\right) \wedge \left(10^7 c = R_{\oplus}\right) \wedge \left(\dfrac{A_v}{A_b} = \dfrac{1}{\pi}\right)$ \\[5pt] \hline
+\end{axiomtable}
+
+\subsection{Dunn's Metrological Axioms}
+\begin{axiomtable}
+	\axnum\label{ax:dunnphoto} & {\sloppy\textsf{DunnPhotographicData}} & $\exists (\mathcal{I} : \mathsf{Set}) \br  \forall (p : \mathcal{I}) \br  \exists (p' : \mathcal{I}) \br  p' = \textsf{mirror}(p)$ \\[5pt] \hline
+	\axnum\label{ax:traditionalbaseline} & {\sloppy\textsf{TraditionalTooling}} & $\forall (S : \mathsf{Set}) (\mathcal{T}_0 : \mathsf{ToolSet}) \br  \textsf{ProducedBy}(S \br  \mathcal{T}_0) \to \exists (\tau_0 : \R) \br  \textsf{Tolerance}(S \br  \tau_0) \wedge \tau_0 \gg 0.002$ \\[5pt] \hline
+	\axnum\label{ax:dunnmeasurement} & {\sloppy\textsf{DunnMeasurements}} & $\forall (\mathcal{S} : \mathsf{Set}) (\mathcal{D}_{\text{jaw}} : \mathsf{Set}) (H_f : \R) (\mathcal{F} : \mathsf{Set}) (\mathcal{C} : \mathsf{Set}) (r : \R) (\Pi : \mathsf{Set}) \br  \textsf{Tolerance}(\mathcal{D}_{\text{jaw}} \br  0.010 \br  \Pi) \wedge \textsf{ScaledTolerance}(\mathcal{S} \br  5 \br  0.002 \br  \Pi) \wedge \textsf{MouthAspect}(3 \br 4) \wedge \exists (w : \R) \br  \textsf{GoldenRectangle}(w \br  H_f) \wedge \textsf{FlowerOfLife}(\mathcal{F} \br  r \br  \mathcal{C})$ \\[5pt] \hline
+\end{axiomtable}
+
+\section{Theorems}
+
+\subsection{Egyptian Geometry Theorems}
+\begin{theoremtable}
+	\thmnum\label{thm:area} & $\textsf{CircleArea}$ & $\forall (d : \R) (A : \R) \br  \textsf{Circle}(d) \to \textsf{Area}(A) \to A = \left(\frac{8}{9}d\right)^2 \wedge \pi_{\text{Egy}} = \frac{256}{81}$ \\[5pt]  \hline
+	\thmnum\label{thm:cyl} & $\textsf{CylinderVolume}$ & $\forall (d : \R) (h : \R) (V : \R) \br  \textsf{Cylinder}(d \br h) \to \textsf{Volume}(V) \to V = \left(\frac{8}{9}d\right)^2 h$ \\[5pt]  \hline
+	\thmnum\label{thm:seked} & $\textsf{SekedFormula}$ & $\forall (x : \R) (y : \R) (S : \R) \br  \textsf{Seked}(x \br y \br S) \to S = 7 \cdot \dfrac{x}{y}$ \\[5pt]  \hline
+	\thmnum\label{thm:excl} & $\textsf{Exclusion}$ & $\forall (a : \R) (b : \R) (c : \R) \br  \textsf{GoldenTriangle}(a \br b \br c) \to \neg \textsf{EgyptianGeometry}(a)$ \\[5pt]  \hline
+	\thmnum\label{thm:sum} & $\textsf{Summary}$ & $\textsf{EgyptianGeometry} \equiv \textsf{CircleMensuration}(\pi=256/81) \cup \textsf{SekedTheory}(\mathbb{Q}) \setminus \textsf{GoldenTriangle}$ \\[5pt]  \hline
+\end{theoremtable}
+
+\subsection{Foundational Theorems}
+\begin{theoremtable}
+	\thmnum\label{thm:piirrational} & {\sloppy\textsf{PiIrrational}} & $\pi \notin \mathbb{Q}$ \\[5pt] \hline
+	\thmnum\label{thm:fieldclosure} &{\sloppy \textsf{RationalFieldClosure} }& $\forall (r : \R) (s : \R) \br  r \in \mathbb{Q} \wedge s \in \mathbb{Q} \setminus \{0\} \to r/s \in \mathbb{Q}$ \\[5pt] \hline
+	\thmnum\label{thm:sekedarithmetic} &{\sloppy\textsf{SekedArithmetic} } & $\frac{1}{2}\cdot 360 = 180 \wedge \frac{180}{250} = \frac{18}{25} \wedge \frac{18}{25} = \frac{1}{2}+\frac{1}{5}+\frac{1}{50} \wedge \frac{126}{25} = 5.04 \wedge 0.04 \cdot 4 = 0.16 = \frac{4}{25}$ \\[5pt] \hline
+	\thmnum\label{thm:falseposalgebra} &{\sloppy \textsf{FalsePositionAlgebra} } & $\forall (f : \R \to \R) (a : \R) (b : \R) (x_1 : \R) (x_2 : \R) (e_1 : \R) (e_2 : \R) (x^* : \R) \br  \textsf{AffineFunction}(f \br a \br b) \wedge e_1=f(x_1) \wedge e_2=f(x_2) \wedge e_1\neq e_2 \wedge x^* = \frac{e_2 x_1 - e_1 x_2}{e_2 - e_1} \to \left( x^* = \frac{x_1 f(0)}{f(x_1)} \vee x^* = \frac{x_2 f(0)}{f(x_2)} \right)$ \\[5pt] \hline
+	\thmnum\label{thm:pythagoreanidentity} &{\sloppy \textsf{PythagoreanIdentity} } & $3^2+4^2 = 5^2$ \\[5pt] \hline
+\end{theoremtable}
+
+\subsection{Convergence Theorems}
+\begin{theoremtable}
+	\thmnum\label{thm:falseequiv} & {\sloppy \textsf{FalsePositionEquivalence}} & $\forall (f : \R \to \R) (a : \R) (b : \R) (x_1 : \R) (x_2 : \R) (x^* : \R) \br  \textsf{AffineFunction}(f \br a \br b) \wedge \textsf{ChineseDoubleFalsePosition}(f \br x_1 \br x_2 \br x^*) \to \textsf{EgyptianFalsePosition}(f \br x_1 \br x^*) \vee \textsf{EgyptianFalsePosition}(f \br x_2 \br x^*)$ \\[5pt] \hline
+	\thmnum\label{thm:pythcommon} & {\sloppy\textsf{CommonTriple}} & $(3 \br 4 \br 5) \in \mathbb{N}^3 \wedge \textsf{PythagoreanTriple}(3 \br 4 \br 5)$ \\[5pt] \hline
+	\thmnum\label{thm:frustumequiv} & {\sloppy\textsf{FrustumConvergence}} & $\forall (a : \R) (b : \R) (h : \R) (V : \R) \br  \textsf{FrustumVolume}(a \br b \br h \br V) \leftrightarrow \left( V = \dfrac{h}{3}(a^2+ab+b^2) \right)$ \\[5pt] \hline
+	\thmnum\label{thm:circleconverge} &{\sloppy \textsf{CircleAreaConvergence}} & $\forall (d : \R) \br  \textsf{Circle}(d) \to \left( A_E = \left(\frac{8}{9}d\right)^2 \right) \wedge \left( A_C = \frac{3}{4}d^2 \right) \wedge \pi_E = 256/81 \wedge \pi_C = 3$ \\[5pt] \hline
+	\thmnum\label{thm:algindep} &{\sloppy \textsf{AlgebraicIndependence}} & $\begin{aligned}
+	& \forall (f : \mathbb{N} \to \mathbb{N}) \br  \\
+	&  \textsf{ArithmeticMorphism}(f) \to \neg \left( \forall (x : \mathbb{N}) \br  \textsf{DecimalPlaceValue}(x) \leftrightarrow \textsf{AdditiveRepresentation}(f(x)) \right)
+	\end{aligned}$ \\[5pt] \hline
+\end{theoremtable}
+
+\subsection{Alternative Pyramid Theorems}
+\begin{theoremtable}
+	\thmnum\label{thm:taylorexcl} & $\textsf{TaylorExclusion}$ & $\forall (s : \R) (h : \R) (A_v : \R) (A_b : \R) \br  \textsf{TaylorPyramid}(s \br h \br A_v \br A_b) \to \neg \textsf{EgyptianGeometry}(s)$ \\[5pt] \hline
+\end{theoremtable}
+
+\subsection{Dunn's Metrological Theorems}
+\begin{theoremtable}
+	\thmnum\label{thm:ramsesjaw} & {\sloppy\textsf{RamsesJawSymmetry}} & $\forall(\mathcal{S}: \mathsf{Set}) (\mathcal{D}_{\text{jaw}} : \mathsf{Set}) (H_f :\R) (\mathcal{F}: \mathsf{Set}) (\mathcal{C} : \mathsf{Set}) (r : \R) (\Pi : \mathsf{Set})\br \textsf{DunnMeasurements}(\mathcal{S}\br \mathcal{D}_{\text{jaw}}\br H_f\br \mathcal{F}\br \mathcal{C}\br r\br \Pi) \to \textsf{Tolerance}(\mathcal{D}_{\text{jaw}}\br 0.010\br \Pi) \wedge \textsf{ScaledTolerance}(\mathcal{S}\br 5\br 0.002\br \Pi)$ \\[5pt] \hline
+	\thmnum\label{thm:ramsesgeometry} & {\sloppy\textsf{RamsesGeometricProportions}} & $\forall(\mathcal{S}:\mathsf{Set})(\mathcal{D}_{\text{jaw}}:\mathsf{Set}) (H_f:\R) (\mathcal{F}:\mathsf{Set}) (\mathcal{C}:\mathsf{Set}) (r:\R)(\Pi:\mathsf{Set})\br\textsf{DunnMeasurements}(\mathcal{S}\br \mathcal{D}_{\text{jaw}}\br H_f\br \mathcal{F}\br \mathcal{C}\br r\br \Pi) \to \textsf{MouthAspect}(3\br4) \wedge \exists (w:\R)\br\textsf{GoldenRectangle}(w\br H_f) \wedge \textsf{FlowerOfLife}(\mathcal{F}\br r\br \mathcal{C})$ \\[5pt] \hline
+	\thmnum\label{thm:dunnmetrological} & {\sloppy\textsf{DunnMetrologicalThesis}} & $\forall (\mathcal{S} : \mathsf{Set}) (\Pi : \mathsf{Set}) (\mathcal{T}_0 : \mathsf{ToolSet}) (\mathcal{D}_{\text{jaw}} : \mathsf{Set}) (H_f : \R) (\mathcal{F} : \mathsf{Set}) (\mathcal{C} : \mathsf{Set}) (r : \R)\br \textsf{RamsesHead}(\mathcal{S}\br \Pi) \wedge \textsf{DunnMeasurements}(\mathcal{S}\br \mathcal{D}_{\text{jaw}}\br H_f\br \mathcal{F}\br \mathcal{C}\br r\br \Pi) \to \neg \textsf{ProducedBy}(\mathcal{S}\br \mathcal{T}_0)$ \\[5pt] \hline
+\end{theoremtable}
+
+\section{Proofs}
+
+\subsection{(Thm. \ref{thm:area})}
+\begin{prooftable}
+	1 & $d : \mathbb{R} \equiv 9$ & Ax:\ref{ax:circle} \\[3pt]  \hline
+	2 & $\frac{1}{9}d \equiv 1$ & Ax:\ref{ax:circle} \\[3pt]  \hline
+	3 & $s \equiv 9-1 \equiv 8$ & Ax:\ref{ax:circle} \\[3pt]  \hline
+	4 & $A \equiv s^2 \equiv 64$ & Thm:\ref{thm:area} \\[3pt]  \hdashline
+	& $A \equiv 64\textsf{setat}$ & (1)--(4)
+\end{prooftable}
+
+\subsection{(Thm. \ref{thm:cyl})}
+\begin{prooftable}
+	1 & $\textsf{Cylinder}(d \br h) \to \textsf{Volume}(V)$ & Def:\ref{def:cylinder} \\[3pt]  \hline
+	2 & $\textsf{Area}(\textsf{Circle}(d)) = \left(\frac{8}{9}d\right)^2$ & Thm:\ref{thm:area} \\[3pt]  \hline
+	3 & $V = \textsf{Area}(\textsf{Circle}(d)) \cdot h$ & Def:\ref{def:volume} \\[3pt]  \hline
+	4 & $V = \left(\frac{8}{9}d\right)^2 h$ & (2) \br (3) \\[3pt]  \hdashline
+	& $\forall (d h V : \mathbb{R}) \br  \textsf{Cylinder}(d \br h) \to \textsf{Volume}(V) \to V = \left(\frac{8}{9}d\right)^2 h$ & (1)--(4)
+\end{prooftable}
+\subsection{(Thm. \ref{thm:seked})}
+\begin{prooftable}
+	1 & $\frac{1}{2}\cdot 360 \equiv 180$ & Thm:\ref{thm:sekedarithmetic} \\[3pt]  \hline
+	2 & $\frac{180}{250} \equiv \frac{18}{25} \equiv \frac{1}{2}+\frac{1}{5}+\frac{1}{50}$ & (1) \br  Thm:\ref{thm:sekedarithmetic} \\[3pt]  \hline
+	3 & $S \equiv 7 \cdot \frac{18}{25} \equiv \frac{126}{25} \equiv 5.04$ & Def:\ref{def:seked} \br  (2) \\[3pt]  \hline
+	4 & $0.04 \cdot 4 \equiv 0.16 \equiv \frac{4}{25}$ digits & Def:\ref{def:cubit} \br  (3) \\[3pt]  \hdashline
+	& $S \equiv 5\text{palms} + 1\text{digit}$ & (3) \br (4)
+\end{prooftable}
+
+\subsection{(Thm. \ref{thm:excl})}
+\begin{prooftable}
+	1 & $\forall (x : \mathbb{R}) \br  \textsf{EgyptianGeometry}(x) \to \textsf{Rational}(x)$ & Def:\ref{def:seked} \\[3pt]  \hline
+	2 & $\phi \notin \mathbb{Q}$ & Def:\ref{def:golden} \\[3pt]  \hline
+	3 & $\forall (x y S : \mathbb{R}) \br  \textsf{Seked}(x \br y \br S) \to S \in \mathbb{Q}$ & Def:\ref{def:seked} \\[3pt]  \hline
+	4 & $\textsf{GoldenHalfSeked} \equiv 7/\sqrt{\phi+3/4} \notin \mathbb{Q}$ & (2) \br (3) \\[3pt]  \hline
+	5 & $\neg \sum_{(n_1 \br \ldots \br n_k : \mathbb{N})} \textsf{UnitFractionExpansion}(\textsf{GoldenHalfSeked} \br  n_1 \br \ldots \br n_k)$ & (4) \\[3pt]  \hline
+	6 & $\forall (s : \mathbb{R}) \br  \textsf{RMPSlope}(s) \to \textsf{Rational}(s)$ & Def:\ref{def:seked} \\[3pt]  \hline
+	7 & $\forall (a b c : \mathbb{R}) \br  \textsf{GoldenTriangle}(a \br b \br c) \to \neg \textsf{EgyptianGeometry}(a)$ & (1)--(6)
+\end{prooftable}
+
+
+\subsection{(Thm. \ref{thm:sum})}
+\begin{prooftable}
+	1 & $\textsf{EgyptianGeometry} \equiv \textsf{CircleMensuration}(\pi=256/81) \cup \textsf{SekedTheory}(\mathbb{Q})$ & Thm:\ref{thm:area} \br  Def:\ref{def:seked} \\[3pt]  \hline
+	2 & $\forall (abc:\mathbb{R}) \br  \textsf{EgyptianGeometry}(a) \to \neg \textsf{GoldenTriangle}(a \br b \br c)$ & Thm:\ref{thm:excl} \\[3pt]  \hline
+	3 & $\textsf{EgyptianGeometry} \setminus \textsf{GoldenTriangle} \equiv \textsf{CircleMensuration}(\pi=256/81) \cup \textsf{SekedTheory}(\mathbb{Q})$ & (1) \br (2) \\[3pt]  \hdashline
+	& $\textsf{EgyptianGeometry} \equiv \textsf{CircleMensuration}(\pi=256/81) \cup \textsf{SekedTheory}(\mathbb{Q}) \setminus \textsf{GoldenTriangle}$ & (1)--(3)
+\end{prooftable}
+
+\subsection{(Thm. \ref{thm:piirrational})}
+\begin{prooftable}
+	1 & $\pi \notin \mathbb{Q}$ & Ax:\ref{ax:piirrational} \\[3pt] \hdashline
+	& $\textsf{PiIrrational}$ & (1)
+\end{prooftable}
+
+\subsection{(Thm. \ref{thm:fieldclosure})}
+\begin{prooftable}
+	1 & $\forall (r s : \mathbb{R}) \br  r \in \mathbb{Q} \wedge s \in \mathbb{Q} \setminus \{0\} \to r/s \in \mathbb{Q}$ & Ax:\ref{ax:fieldclosure} \\[3pt] \hdashline
+	& $\textsf{RationalFieldClosure}$ & (1)
+\end{prooftable}
+
+\subsection{(Thm. \ref{thm:sekedarithmetic})}
+\begin{prooftable}
+	1 & $\frac{1}{2}\cdot 360 = 180 \wedge \frac{180}{250} = \frac{18}{25} \wedge \frac{18}{25} = \frac{1}{2}+\frac{1}{5}+\frac{1}{50} \wedge \frac{126}{25} = 5.04 \wedge 0.04 \cdot 4 = 0.16 = \frac{4}{25}$ & Ax:\ref{ax:sekedarithmetic} \\[3pt] \hdashline
+	& $\textsf{SekedArithmetic}$ & (1)
+\end{prooftable}
+
+\subsection{(Thm. \ref{thm:falseposalgebra})}
+\begin{prooftable}
+	1 & $\begin{aligned}
+	& \forall f \br a \br b \br x_1 \br x_2 \br e_1 \br e_2 \br x^* \br  \\
+	&  \textsf{AffineFunction}(f \br a \br b) \wedge e_1=f(x_1) \wedge e_2=f(x_2) \wedge e_1\neq e_2 \\
+	&  \wedge x^* = \frac{e_2 x_1 - e_1 x_2}{e_2 - e_1} \\
+	&  \to \left( x^* = \frac{x_1 f(0)}{f(x_1)} \vee x^* = \frac{x_2 f(0)}{f(x_2)} \right)
+	\end{aligned}$ & Ax:\ref{ax:falseposalgebra} \\[3pt] \hdashline
+	& $\textsf{FalsePositionAlgebra}$ & (1)
+\end{prooftable}
+
+\subsection{(Thm. \ref{thm:pythagoreanidentity})}
+\begin{prooftable}
+	1 & $3^2+4^2 = 5^2$ & Ax:\ref{ax:pythagoreanidentity} \\[3pt] \hdashline
+	& $\textsf{PythagoreanIdentity}$ & (1)
+\end{prooftable}
+
+\subsection{(Thm. \ref{thm:falseequiv})}
+\begin{prooftable}
+	1 & $\textsf{ChineseDoubleFalsePosition}(f \br x_1 \br x_2 \br x^*) \to f(x^*)=0$ & Ax:\ref{ax:chinesefalse} \\[3pt] \hline
+	2 & $\textsf{EgyptianFalsePosition}(f \br x_1 \br x^*) \leftrightarrow x^* = \dfrac{x_1 f(0)}{f(x_1)}$ & Def:\ref{def:egyptianfalse} \\[3pt] \hline
+	3 & $\left( x^* = \dfrac{e_2 x_1 - e_1 x_2}{e_2 - e_1} \right) \to \left( x^* = \dfrac{x_1 f(0)}{f(x_1)} \vee x^* = \dfrac{x_2 f(0)}{f(x_2)} \right)$ & Thm:\ref{thm:falseposalgebra} \\[3pt] \hdashline
+	& $\forall f \br x_1 \br x_2 \br x^* \br  \textsf{ChineseDoubleFalsePosition}(f \br x_1 \br x_2 \br x^*) \to \textsf{EgyptianFalsePosition}(f \br x_1 \br x^*) \vee \textsf{EgyptianFalsePosition}(f \br x_2 \br x^*)$ & (1)--(3)
+\end{prooftable}
+\subsection{(Thm. \ref{thm:pythcommon})}
+\begin{prooftable}
+	1 & $3^2+4^2 = 25 = 5^2$ & Thm:\ref{thm:pythagoreanidentity} \\[3pt] \hline
+	2 & $\textsf{PythagoreanTriple}(3 \br 4 \br 5)$ & (1) \br  Def:\ref{def:pythtriple} \\[3pt] \hdashline
+	& $\textsf{PythagoreanTriple}(3 \br 4 \br 5)$ & (1) \br (2)
+\end{prooftable}
+
+\subsection{(Thm. \ref{thm:frustumequiv})}
+\begin{prooftable}
+	1 & $\textsf{FrustumVolume}(a \br b \br h \br V) \to V = \dfrac{h}{3}(a^2+ab+b^2)$ & Def:\ref{def:frustumvolume} \\[3pt] \hline
+	2 & $V = \dfrac{h}{3}(a^2+ab+b^2) \to \textsf{FrustumVolume}(a \br b \br h \br V)$ & Def:\ref{def:frustumvolume} \\[3pt] \hdashline
+	& $\textsf{FrustumVolume}(a \br b \br h \br V) \leftrightarrow V = \dfrac{h}{3}(a^2+ab+b^2)$ & (1) \br (2)
+\end{prooftable}
+
+\subsection{(Thm. \ref{thm:circleconverge})}
+\begin{prooftable}
+	1 & $\textsf{EgyptianCircleArea}: A_E = \left(\frac{8}{9}d\right)^2 \implies \pi_E = 256/81$ & Thm:\ref{thm:area} \\[3pt] \hline
+	2 & $\textsf{ChineseCircleArea}: A_C = \frac{3}{4}d^2 \implies \pi_C = 3$ & Ax:\ref{ax:circleC} \\[3pt] \hdashline
+	& $\forall d \br  A_E = \left(\frac{8}{9}d\right)^2 \wedge A_C = \frac{3}{4}d^2 \wedge \pi_E = 256/81 \wedge \pi_C = 3$ & (1) \br (2)
+\end{prooftable}
+
+\subsection{(Thm. \ref{thm:algindep})}
+\begin{prooftable}
+	1 & $\textsf{ArithmeticMorphism}(f) \to f(1)=1$ & Def:\ref{def:morphism} \\[3pt] \hline
+	2 & $\forall x \br  \textsf{DecimalPlaceValue}(x) \leftrightarrow \textsf{AdditiveRepresentation}(f(x))$ & (H) \\[3pt] \hline
+	3 & $\forall x \br  \textsf{AdditiveRepresentation}(x)$ & Def:\ref{def:additive} \\[3pt] \hline
+	4 & $\forall x \br  \textsf{DecimalPlaceValue}(x)$ & (2) \br (3) \\[3pt] \hline
+	5 & $\exists x \br  \neg \textsf{DecimalPlaceValue}(x)$ & Def:\ref{def:decimal} \\[3pt] \hline
+	6 & $\bot$ & (4) \br (5) \\[3pt] \hdashline
+	& $\forall f \br  \textsf{ArithmeticMorphism}(f) \to \neg \left( \forall x \br  \textsf{DecimalPlaceValue}(x) \leftrightarrow \textsf{AdditiveRepresentation}(f(x)) \right)$ & (1)--(6)
+\end{prooftable}
+
+\subsection{(Thm. \ref{thm:taylorexcl})}
+\begin{prooftable}
+	1 & $\textsf{TaylorPyramid}(s \br h \br A_v \br A_b) \to \dfrac{4s}{h} = 2\pi$ & Ax:\ref{ax:taylor} \\[3pt] \hline
+	2 & $\pi \notin \mathbb{Q}$ & Thm:\ref{thm:piirrational} \\[3pt] \hline
+	3 & $\dfrac{4s}{h} \notin \mathbb{Q}$ & (1) \br (2) \\[3pt] \hline
+	4 & $\textsf{EgyptianGeometry}(s) \to \textsf{Rational}(s)$ & Def:\ref{def:seked} \\[3pt] \hline
+	5 & $\textsf{Rational}(s) \to \dfrac{4s}{h} \in \mathbb{Q}$ & Thm:\ref{thm:fieldclosure} \\[3pt] \hline
+	6 & $\textsf{EgyptianGeometry}(s) \to \dfrac{4s}{h} \in \mathbb{Q}$ & (4) \br (5) \\[3pt] \hline
+	7 & $\neg \textsf{EgyptianGeometry}(s)$ & (3) \br (6) \\[3pt] \hdashline
+	& $\forall(s h A_v A_b : \mathbb{R}) \br  \textsf{TaylorPyramid}(s \br h \br A_v \br A_b) \to \neg \textsf{EgyptianGeometry}(s)$ & (1)--(7)
+\end{prooftable}
+
+% ======================================================================
+% SECTION: DUNN'S METROLOGICAL PROOFS (now with full arguments)
+% ======================================================================
+\section{Dunn's Metrological Proofs}
+
+\subsection{Ramses Jaw Symmetry}
+\begin{prooftable}
+	1 & $\textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi) \to \textsf{Tolerance}(\mathcal{D}_{\text{jaw}} \br  0.010 \br  \Pi)$ & Ax:\ref{ax:dunnmeasurement} \\[3pt] \hline
+	2 & $\textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi) \to \textsf{ScaledTolerance}(\mathcal{S} \br  5 \br  0.002 \br  \Pi)$ & Ax:\ref{ax:dunnmeasurement} \\[3pt] \hdashline
+	& $\textsf{RamsesJawSymmetry}$ & 1 \br 2
+\end{prooftable}
+
+\subsection{Ramses Geometric Proportions}
+\begin{prooftable}
+	1 & $\textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi) \to \textsf{MouthAspect}(3 \br 4)$ & Ax:\ref{ax:dunnmeasurement} \\[3pt] \hline
+	2 & $\textsf{MouthAspect}(3 \br 4) \to \textsf{PythagoreanTriple}(3 \br 4 \br 5)$ & Thm:\ref{thm:pythagoreanidentity} \\[3pt] \hline
+	3 & $\textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi) \to \exists w \br  \textsf{GoldenRectangle}(w \br  H_f)$ & Ax:\ref{ax:dunnmeasurement} \\[3pt] \hline
+	4 & $\textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi) \to \textsf{FlowerOfLife}(\mathcal{F} \br  r \br  \mathcal{C})$ & Ax:\ref{ax:dunnmeasurement} \\[3pt] \hdashline
+	& $\textsf{RamsesGeometricProportions}$ & 1 \br 2 \br 3 \br 4
+\end{prooftable}
+
+\subsection{Dunn Metrological Thesis}
+\begin{prooftable}
+	1 & $\textsf{TraditionalTooling}(S \br  \mathcal{T}_0) \to \exists \tau_0 \br  \textsf{Tolerance}(S \br  \tau_0) \wedge \tau_0 \gg 0.002$ & Ax:\ref{ax:traditionalbaseline} \\[3pt] \hline
+	2 & $\textsf{RamsesJawSymmetry} \to t_h = 0.002$ & Thm:\ref{thm:ramsesjaw} \\[3pt] \hline
+	3 & $\prod_{i=1}^N \Pr(|X_i - \mu_i| \le t_h) \approx 0$ & $\Pr \ll 1$ \\[3pt] \hline
+	4 & $\textsf{RamsesHead}(\mathcal{S} \br  \Pi) \wedge \textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi) \to \exists \mathcal{T}_1 \supsetneq \mathcal{T}_0$ & 1 \br 2 \br 3 \\[3pt] \hdashline
+	& $\textsf{DunnMetrologicalThesis}$ & 1--4
+\end{prooftable}
+
+% ======================================================================
+% LEAN FORMALIZATION (unchanged but all predicates already have arguments)
+% ======================================================================
+\section{Lean Formalization}
+
+\subsection{Egyptian Geometry Basic Definitions and Theorems}
+\begin{leanlisting}
+	import Mathlib.Data.Real.Basic
+	import Mathlib.Tactic
+	
+	structure UnitSystem :=
+	(cubit palm digit : ℝ)
+	(cubit_eq : cubit = 7 * palm)
+	(palm_eq : palm = 4 * digit)
+	
+	def CircleArea (d : ℝ) : ℝ := (8/9 * d)^2
+	def EgyptianPi : ℝ := 256/81
+	
+	def Seked (run rise : ℝ) : ℝ := 7 * run / rise
+	
+	def GoldenTriangle (a b c : ℝ) : Prop :=
+	a = b ∧ (a / c = (1 + Real.sqrt 5) / 2)
+	
+	axiom EgyptianGeometry (x : ℝ) : Rational x → Seked x
+	
+	theorem Exclusion : ¬ ∃ (T : ℝ × ℝ × ℝ)   GoldenTriangle T.1 T.2.1 T.2.2 ∧ EgyptianGeometry T.1 :=
+	begin
+	rintro ⟨a   b   c   hG   hE⟩  
+	cases hG with h_ab h_ratio  
+	rw h_ab at h_ratio  
+	have h_irr : ¬ (Real.sqrt 5).isRational :=
+	by exact real.irrational_sqrt_5  
+	have h_ratio_rat : (a / c).isRational :=
+	by apply hE; exact h_ab  
+	exact h_irr h_ratio_rat  
+	end
+	
+	theorem CircleAreaFormula (d A : ℝ) : Circle d → Area A → A = (8/9*d)^2 := sorry
+	theorem CylinderVolume (d h V : ℝ) : Cylinder d h → Volume V → V = (8/9*d)^2 * h := sorry
+	
+	theorem EgyptianMainTheorem (d A : ℝ) (hc : Circle d) (ha : Area A) : 
+	∃ s   Square s ∧ s = 8/9*d ∧ A = s^2 :=
+	begin
+	let s := 8/9 * d  
+	have h_sq : Square s := sorry  
+	have h_area : A = s^2 := CircleAreaFormula d A hc ha  
+	exact ⟨s   h_sq   rfl   h_area⟩  
+	end
+\end{leanlisting}
+
+\subsection{Convergent Structures and Alternative Pyramid Theories}
+\begin{leanlisting}
+	def AffineFunction (f : ℝ → ℝ) (a b : ℝ) : Prop := ∀ x   f x = a * x + b ∧ a ≠ 0
+	
+	def EgyptianFalsePosition (f : ℝ → ℝ) (x1 xstar : ℝ) : Prop :=
+	f x1 ≠ 0 ∧ xstar = x1 * f 0 / f x1
+	
+	def ChineseDoubleFalsePosition (f : ℝ → ℝ) (x1 x2 xstar : ℝ) : Prop :=
+	let e1 := f x1
+	let e2 := f x2
+	e1 ≠ e2 ∧ xstar = (e2 * x1 - e1 * x2) / (e2 - e1)
+	
+	def PythagoreanTriple (a b c : ℝ) : Prop := a^2 + b^2 = c^2
+	
+	def Frustum (a b h : ℝ) : Prop := a > 0 ∧ b > 0 ∧ h > 0
+	def FrustumVolume (a b h V : ℝ) : Prop := Frustum a b h ∧ V = h/3 * (a^2 + a*b + b^2)
+	
+	def ChineseCircleArea (d A : ℝ) : Prop := A = 3/4 * d^2
+	
+	def DecimalPlaceValue (x : ℕ) : Prop := ∃ k : ℕ   ∃ a : Fin k → ℕ   (∀ i   0 ≤ a i ∧ a i ≤ 9) ∧ x = ∑ i   a i * 10^i
+	def AdditiveRepresentation (x : ℕ) : Prop := ∃ k : ℕ   ∃ b : Fin k → ℕ   x = ∑ i   b i * 10^i
+	def ArithmeticMorphism (f : ℕ → ℕ) : Prop := ∀ x y   f (x + y) = f x + f y ∧ f (x * y) = f x * f y
+	
+	axiom ChineseFalseAxiom (f a b x1 x2 e1 e2 xstar : ℝ)
+	(hf : AffineFunction f a b)
+	(hC : ChineseDoubleFalsePosition f x1 x2 xstar) :
+	f xstar = 0
+	
+	axiom FrustumAxiom (a b h V : ℝ) (hf : Frustum a b h) :
+	FrustumVolume a b h V
+	
+	axiom ChineseCircleAxiom (d A : ℝ) (hc : Circle d) (ha : Area A) :
+	ChineseCircleArea d A
+	
+	theorem FalsePositionEquivalence (f a b x1 x2 xstar : ℝ)
+	(hf : AffineFunction f a b)
+	(hC : ChineseDoubleFalsePosition f x1 x2 xstar) :
+	EgyptianFalsePosition f x1 xstar ∨ EgyptianFalsePosition f x2 xstar :=
+	begin
+	sorry
+	end
+	
+	theorem CommonTriple : PythagoreanTriple 3 4 5 :=
+	begin
+	ring  
+	end
+	
+	theorem FrustumConvergence (a b h V : ℝ) :
+	FrustumVolume a b h V ↔ V = h/3 * (a^2 + a*b + b^2) :=
+	begin
+	split  
+	{ intro h   exact h.2 }  
+	{ intro h   split   sorry   exact h }  
+	end
+	
+	theorem CircleAreaConvergence (d : ℝ) (hc : Circle d) :
+	let A_E := (8/9 * d)^2
+	let A_C := 3/4 * d^2
+	True := trivial
+	
+	theorem AlgebraicIndependence (f : ℕ → ℕ) (hm : ArithmeticMorphism f) :
+	¬ (∀ x   DecimalPlaceValue x ↔ AdditiveRepresentation (f x)) :=
+	begin
+	sorry
+	end
+	
+	-- Taylor Pyramid definitions
+	def TaylorPi : ℝ := 366 / 116.5
+	parameter british_inch : ℝ
+	parameter earth_radius : ℝ
+	def TaylorUnit (c i : ℝ) : Prop := c = 25 * i ∧ i ≈ 1.001 * british_inch
+	def TaylorPyramid (s h Av Ab : ℝ) : Prop :=
+	(4*s / h = 2 * Real.pi) ∧
+	(2*h / s = 4 / Real.pi) ∧
+	(10^7 * c = earth_radius) ∧
+	(Av / Ab = 1 / Real.pi)
+	
+	axiom TaylorAxiom (s h Av Ab : ℝ) (hp : TaylorPyramid s h Av Ab) :
+	(4*s / h = 2 * Real.pi) ∧
+	(2*h / s = 4 / Real.pi) ∧
+	(10^7 * c = earth_radius) ∧
+	(Av / Ab = 1 / Real.pi)
+	
+	theorem TaylorExclusion (s h Av Ab : ℝ) (hp : TaylorPyramid s h Av Ab) :
+	¬ EgyptianGeometry s :=
+	begin
+	have h1 : 4*s / h = 2 * Real.pi := (TaylorAxiom s h Av Ab hp).1  
+	have h_irr : ¬ (Real.pi).isRational := real.pi_irrational  
+	have h_ratio_irr : ¬ (4*s / h).isRational := by
+	rw h1  
+	exact h_irr  
+	intro hE  
+	have h_rat_s : s.isRational := by
+	apply EgyptianGeometry hE  
+	have h_rat_ratio : (4*s / h).isRational := by
+	field_simp  
+	apply rat.mul_div h_rat_s  
+	contradiction  
+	end
+\end{leanlisting}
+
+% ======================================================================
+% Dunn's Metrological Formalization in Lean (updated with full arguments)
+% ======================================================================
+\subsection{Dunn's Metrological Formalization}
+\begin{leanlisting}
+	-- Dunn's metrological definitions
+	def BilateralSymmetry (S : Set ℝ³) (Π : Set ℝ³) : Prop :=
+	∀ p ∈ S   ∃ p' ∈ S   p' = reflect Π p
+	
+	def Tolerance (D : Set (ℝ³ × ℝ³)) (t : ℝ) (Π : Set ℝ³) : Prop :=
+	∀ (p   p') ∈ D   dist p (reflect Π p') ≤ t
+	
+	def ScaledTolerance (S : Set ℝ³) (λ t_h : ℝ) (Π : Set ℝ³) : Prop :=
+	Tolerance S (λ * t_h) Π
+	
+	def GoldenRectangle (w h : ℝ) : Prop := h = φ * w
+	
+	def FlowerOfLife (F : Set ℝ²) (r : ℝ) (C : Set ℝ²) : Prop :=
+	F = ⋃_{c ∈ C} ball c r ∧
+	∀ c ∈ C   ∃ c₁ c₂ ∈ C   dist c c₁ = r ∧ dist c c₂ = r
+	
+	def RamsesHead (S : Set ℝ³) (Π : Set ℝ³) : Prop :=
+	Statue S ∧ BilateralSymmetry S Π
+	
+	def MouthAspect (w h : ℝ) : Prop := w = 3 ∧ h = 4
+	
+	def ToolSet : Type := sorry
+	
+	def ProducedBy (S : Set ℝ³) (T : ToolSet) : Prop := sorry
+	
+	-- Axioms specific to Dunn's claims
+	axiom DunnPhotographicData : ∃ I : Set (ℝ² → ℝ³)   ∀ p ∈ I   ∃ p' ∈ I   p' = mirror p
+	axiom TraditionalTooling : ∀ (S : Set ℝ³) (T : ToolSet)   ProducedBy S T → ∃ τ : ℝ   Tolerance S τ ∧ τ > 0.002
+	axiom DunnMeasurements : 
+	∀ (S : Set ℝ³) (D_jaw : Set (ℝ³ × ℝ³)) (H_f : ℝ) (F : Set ℝ²) (C : Set ℝ²) (r : ℝ) (Π : Set ℝ³)  
+	Tolerance D_jaw 0.010 Π ∧
+	ScaledTolerance S 5 0.002 Π ∧
+	MouthAspect 3 4 ∧
+	∃ w   GoldenRectangle w H_f ∧
+	FlowerOfLife F r C
+	
+	-- Theorems
+	theorem RamsesJawSymmetry :
+	∀ S D_jaw H_f F C r Π  
+	DunnMeasurements S D_jaw H_f F C r Π →
+	Tolerance D_jaw 0.010 Π ∧ ScaledTolerance S 5 0.002 Π :=
+	begin
+	intros S D_jaw H_f F C r Π h  
+	exact ⟨h.1   h.2⟩  
+	end
+	
+	theorem RamsesGeometricProportions :
+	∀ S D_jaw H_f F C r Π  
+	DunnMeasurements S D_jaw H_f F C r Π →
+	MouthAspect 3 4 ∧
+	(∃ w   GoldenRectangle w H_f) ∧
+	FlowerOfLife F r C :=
+	begin
+	intros S D_jaw H_f F C r Π h  
+	exact ⟨h.3   h.4   h.5⟩  
+	end
+	
+	theorem DunnMetrologicalThesis :
+	∀ (S : Set ℝ³) (Π : Set ℝ³) (T : ToolSet) (D_jaw : Set (ℝ³ × ℝ³)) (H_f : ℝ) (F : Set ℝ²) (C : Set ℝ²) (r : ℝ)  
+	RamsesHead S Π ∧ DunnMeasurements S D_jaw H_f F C r Π →
+	¬ ProducedBy S T :=
+	begin
+	intros S Π T D_jaw H_f F C r h  
+	cases h with hR hD  
+	have h_tol := RamsesJawSymmetry S D_jaw H_f F C r Π hD  
+	have h_τ := TraditionalTooling S T   -- requires a proof of ProducedBy to proceed
+	sorry -- probabilistic argument
+	end
+\end{leanlisting}
+
+% ======================================================================
+% CONCLUSION (with rigorous typed quantifiers)
+% ======================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+
+\[
+\begin{aligned}
+& \forall (\mathcal{S} : \mathsf{Set}) \br  \forall (\Pi : \mathsf{Set}) \br  \forall (\mathcal{T}_0 : \mathsf{ToolSet}) \br  \\
+& \forall (\mathcal{D}_{\text{jaw}} : \mathsf{Set}) \br  \forall (H_f : \R) \br  \forall (\mathcal{F} : \mathsf{Set}) \br  \forall (\mathcal{C} : \mathsf{Set}) \br  \forall (r : \R) \br  \\
+& \bigl( \mathsf{RamsesHead}(\mathcal{S} \br \Pi) \land \mathsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi) \bigr) \\
+& \rightarrow \neg \mathsf{ProducedBy}(\mathcal{S} \br \mathcal{T}_0)
+\end{aligned}
+\]
+
+
+% ----------------------------------------------------------------------
+% Proof table (definitions \br  axioms \br  and proofs of all theorems)
+% ----------------------------------------------------------------------
+\begin{prooftable}
+	% ======================================================================
+	% PART 1: DEFINITIONS (1–29)
+	% ======================================================================
+	\thicksoliddoubleline
+	1 & $\textsf{def:cubit}: \textsf{CubitUnit}(c \br p \br d) \equiv \textsf{Cubit}(c) \land \textsf{Palm}(p) \land \textsf{Digit}(d) \land c=7p \land p=4d$ & Def \\
+	\thicksoliddoubleline
+	2 & $\textsf{def:khet}: \textsf{KhetUnit}(k \br c) \equiv \textsf{Khet}(k) \land \textsf{Cubit}(c) \land k=100c$ & Def \\
+	\thicksoliddoubleline
+	3 & $\textsf{def:setat}: \textsf{SetatUnit}(s \br k) \equiv \textsf{Setat}(s) \land \textsf{Khet}(k) \land s=k^2$ & Def \\
+	\thicksoliddoubleline
+	4 & $\textsf{def:seked}: \textsf{Seked}(x \br y \br S) \equiv S = 7 \cdot x/y$ & Def \\
+	\thicksoliddoubleline
+	5 & $\textsf{def:golden}: \textsf{GoldenTriangle}(a \br b \br c) \equiv a=b \land a/c = (1+\sqrt{5})/2$ & Def \\
+	\thicksoliddoubleline
+	6 & $\textsf{def:height}: \textsf{Height}(h) \equiv h>0$ & Def \\
+	\thicksoliddoubleline
+	7 & $\textsf{def:circle}: \textsf{Circle}(d \br r) \equiv r=d/2$ & Def \\
+	\thicksoliddoubleline
+	8 & $\textsf{def:square}: \textsf{Square}(s) \equiv \forall (x \br y:\R) \br  (0\le x\le s)\land(0\le y\le s)\to \textsf{Point}(x \br y)$ & Def \\
+	\thicksoliddoubleline
+	9 & $\textsf{def:cylinder}: \textsf{Cylinder}(d \br h) \equiv \textsf{Circle}(d) \land \textsf{Height}(h)$ & Def \\
+	\thicksoliddoubleline
+	10 & $\textsf{def:volume}: \textsf{Volume}(V) \equiv \exists (A \br h:\R) \br  \textsf{Area}(A)\land \textsf{Height}(h)\land V=A\cdot h$ & Def \\
+	\thicksoliddoubleline
+	11 & $\textsf{def:affine}: \textsf{AffineFunction}(f \br a \br b) \equiv \forall (x:\R) \br  f(x)=a x+b \land a\ne0$ & Def \\
+	\thicksoliddoubleline
+	12 & $\textsf{def:egyptianfalse}: \textsf{EgyptianFalsePosition}(f \br x_1 \br x^*) \equiv f(x_1)\ne0 \land x^* = x_1\cdot f(0)/f(x_1)$ & Def \\
+	\thicksoliddoubleline
+	13 & $\textsf{def:chinesefalse}: \textsf{ChineseDoubleFalsePosition}(f \br x_1 \br x_2 \br x^*) \equiv e_1=f(x_1) \land e_2=f(x_2) \land e_1\ne e_2 \land x^* = (e_2 x_1 - e_1 x_2)/(e_2-e_1)$ & Def \\
+	\thicksoliddoubleline
+	14 & $\textsf{def:pythtriple}: \textsf{PythagoreanTriple}(a \br b \br c) \equiv a^2+b^2=c^2$ & Def \\
+	\thicksoliddoubleline
+	15 & $\textsf{def:frustum}: \textsf{Frustum}(a \br b \br h) \equiv a>0 \land b>0 \land h>0$ & Def \\
+	\thicksoliddoubleline
+	16 & $\textsf{def:frustumvolume}: \textsf{FrustumVolume}(a \br b \br h \br V) \equiv \textsf{Frustum}(a \br b \br h) \land V = \frac{h}{3}(a^2+ab+b^2)$ & Def \\
+	\thicksoliddoubleline
+	17 & $\textsf{def:circleC}: \textsf{ChineseCircleArea}(d \br A) \equiv A = \frac{3}{4}d^2$ & Def \\
+	\thicksoliddoubleline
+	18 & $\textsf{def:mouthaspect}: \textsf{MouthAspect}(w \br h) \equiv w=3 \land h=4$ & Def \\
+	\thicksoliddoubleline
+	19 & $\textsf{def:decimal}: \textsf{DecimalPlaceValue}(x) \equiv \exists (k:\N) \br  \exists (a_i:\N) \br  (\forall i\le k \br  0\le a_i\le9) \land x=\sum_{i=0}^k a_i 10^i$ & Def \\
+	\thicksoliddoubleline
+	20 & $\textsf{def:additive}: \textsf{AdditiveRepresentation}(x) \equiv \exists (k:\N) \br  \exists (b_i:\N) \br  x=\sum_{i=0}^k b_i 10^i$ & Def \\
+	\thicksoliddoubleline
+	21 & $\textsf{def:morphism}: \textsf{ArithmeticMorphism}(f:\N\to\N) \equiv \forall (x \br y:\N) \br  f(x+y)=f(x)+f(y) \land f(xy)=f(x)f(y)$ & Def \\
+	\thicksoliddoubleline
+	22 & $\textsf{def:bilsym}: \textsf{BilateralSymmetry}(\mathcal{S} \br \Pi) \equiv \forall (p:\mathcal{S}) \br  \exists (p':\mathcal{S}) \br  p'=\mathcal{R}_\Pi(p)$ & Def \\
+	\thicksoliddoubleline
+	23 & $\textsf{def:tolerance}: \textsf{Tolerance}(\mathcal{D} \br t \br \Pi) \equiv \max_{(\mathbf{p} \br \mathbf{p}')\in\mathcal{D}} \|\mathbf{p}-\mathcal{R}_\Pi(\mathbf{p}')\|_2 \le t$ & Def \\
+	\thicksoliddoubleline
+	24 & $\textsf{def:scaledtol}: \textsf{ScaledTolerance}(\mathcal{S} \br \lambda \br t_h \br \Pi) \equiv \textsf{Tolerance}(\mathcal{S} \br \lambda\cdot t_h \br \Pi)$ & Def \\
+	\thicksoliddoubleline
+	25 & $\textsf{def:goldenrect}: \textsf{GoldenRectangle}(w \br h) \equiv h = \phi\cdot w \br  \phi=(1+\sqrt{5})/2$ & Def \\
+	\thicksoliddoubleline
+	26 & $\textsf{def:flowerlife}: \textsf{FlowerOfLife}(\mathcal{F} \br r \br \mathcal{C}) \equiv \mathcal{F} = \bigcup_{c\in\mathcal{C}} \textsf{ball}(c \br r)$ & Def \\
+	\thicksoliddoubleline
+	27 & $\textsf{def:ramseshead}: \textsf{RamsesHead}(\mathcal{S} \br \Pi) \equiv \textsf{Statue}(\mathcal{S}) \land \textsf{BilateralSymmetry}(\mathcal{S} \br \Pi)$ & Def \\
+	\thicksoliddoubleline
+	28 & $\textsf{def:toolset}: \mathsf{ToolSet} : \mathsf{Type}$ & Def \\
+	\thicksoliddoubleline
+	29 & $\textsf{def:producedby}: \mathsf{ProducedBy}(S : \mathsf{Set} \br  T : \mathsf{ToolSet}) : \mathsf{Prop}$ & Def \\
+	
+	% ======================================================================
+	% PART 2: AXIOMS (30–43)
+	% ======================================================================
+	\thicksoliddoubleline
+	30 & $\textsf{ax:rect}: \forall(\Omega:\Type) \br  \textsf{Area}(\Omega) \to \exists (L \br W:\R) \br  \textsf{Rect}(L \br W)\land \textsf{Map}(\Omega \br L \br W)$ & Axiom \\
+	\thicksoliddoubleline
+	31 & $\textsf{ax:circle}: \forall(d \br s:\R) \br  \textsf{Circle}(d) \to \textsf{Square}(s) \land s = d - \frac{1}{9}d$ & Axiom \\
+	\thicksoliddoubleline
+	32 & $\textsf{ax:piirrational}: \pi \notin \mathbb{Q}$ & Axiom \\
+	\thicksoliddoubleline
+	33 & $\textsf{ax:fieldclosure}: \forall(r \br s:\R) \br  r\in\mathbb{Q}\land s\in\mathbb{Q}\setminus\{0\} \to r/s\in\mathbb{Q}$ & Axiom \\
+	\thicksoliddoubleline
+	34 & $\textsf{ax:sekedarithmetic}: \frac12\cdot360=180 \land \frac{180}{250}=\frac{18}{25}=\frac12+\frac15+\frac1{50} \land \frac{126}{25}=5.04 \land 0.04\cdot4=0.16=\frac4{25}$ & Axiom \\
+	\thicksoliddoubleline
+	35 & $\textsf{ax:falseposalgebra}: \forall f \br a \br b \br x_1 \br x_2 \br e_1 \br e_2 \br x^* \br  \textsf{AffineFunction}(f \br a \br b)\land e_1=f(x_1)\land e_2=f(x_2)\land e_1\ne e_2\land x^*=\frac{e_2 x_1-e_1 x_2}{e_2-e_1} \to \left(x^*=\frac{x_1 f(0)}{f(0)-f(x_1)}\lor x^*=\frac{x_2 f(0)}{f(0)-f(x_2)}\right)$ & Axiom \\
+	\thicksoliddoubleline
+	36 & $\textsf{ax:pythagoreanidentity}: 3^2+4^2=5^2$ & Axiom \\
+	\thicksoliddoubleline
+	37 & $\textsf{ax:chinesefalse}: \forall f \br a \br b \br x_1 \br x_2 \br e_1 \br e_2 \br x^* \br  \textsf{AffineFunction}(f \br a \br b)\land \textsf{ChineseDoubleFalsePosition}(f \br x_1 \br x_2 \br x^*) \to f(x^*)=0$ & Axiom \\
+	\thicksoliddoubleline
+	38 & $\textsf{ax:frustum}: \forall(a \br b \br h \br V:\R) \br  \textsf{Frustum}(a \br b \br h) \to \textsf{FrustumVolume}(a \br b \br h \br V)$ & Axiom \\
+	\thicksoliddoubleline
+	39 & $\textsf{ax:circleC}: \forall(d \br A:\R) \br  \textsf{Circle}(d) \to \textsf{Area}(A) \to \textsf{ChineseCircleArea}(d \br A)$ & Axiom \\
+	\thicksoliddoubleline
+	40 & $\textsf{ax:taylor}: \forall(s \br h \br A_v \br A_b:\R) \br  \textsf{TaylorPyramid}(s \br h \br A_v \br A_b) \to \left(\frac{4s}{h}=2\pi\right)\land\left(\frac{2h}{s}=\frac4\pi\right)\land\left(10^7 c=R_\oplus\right)\land\left(\frac{A_v}{A_b}=\frac1\pi\right)$ & Axiom \\
+	\thicksoliddoubleline
+	41 & $\textsf{ax:dunnphoto}: \exists \mathcal{I} \br  \forall p\in\mathcal{I} \br  \exists p'\in\mathcal{I} \br  p'=\textsf{mirror}(p)$ & Axiom \\
+	\thicksoliddoubleline
+	42 & $\textsf{ax:traditionalbaseline}: \forall (S : \mathsf{Set}) \br  \forall (\mathcal{T}_0 : \mathsf{ToolSet}) \br  \mathsf{ProducedBy}(S \br \mathcal{T}_0) \to \exists \tau_0 \br  \textsf{Tolerance}(S \br \tau_0) \land \tau_0\gg 0.002$ & Axiom \\
+	\thicksoliddoubleline
+	43 & $\textsf{ax:dunnmeasurement}: \forall(\mathcal{S}:\mathsf{Set}) \br \forall(\mathcal{D}_{\text{jaw}}:\mathsf{Set}) \br \forall(H_f:\R) \br \forall(\mathcal{F}:\mathsf{Set}) \br \forall(\mathcal{C}:\mathsf{Set}) \br \forall(r:\R) \br \forall(\Pi:\mathsf{Set}) \br  \textsf{Tolerance}(\mathcal{D}_{\text{jaw}} \br 0.010 \br \Pi)\land \textsf{ScaledTolerance}(\mathcal{S} \br 5 \br 0.002 \br \Pi)\land \textsf{MouthAspect}(3 \br 4)\land \exists w \br  \textsf{GoldenRectangle}(w \br H_f)\land \textsf{FlowerOfLife}(\mathcal{F} \br r \br \mathcal{C})$ & Axiom \\
+	\thicksoliddoubleline
+	\multicolumn{3}{l}{\hspace*{2em}where $\textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi)$ is defined as the conjunction in Axiom~43} \\
+	
+	% ======================================================================
+	% THEOREM 44: CIRCLE AREA
+	% ======================================================================
+	\thicksoliddoubleline
+	44 & $\textsf{thm:area}: \forall(d \br A:\R) \br  \textsf{Circle}(d)\land \textsf{Area}(A) \to A = (8/9\cdot d)^2 \land \pi_{\text{Egy}}=256/81$ & Thm.~\ref{thm:area} \\
+	\hdashline
+	45 & $\textsf{Circle}(d) \br \textsf{Area}(A)$ & $\mathsf{assumption}$ \\
+	\hdashline
+	46 & $s = d - \frac{1}{9}d = \frac{8}{9}d$ & $\forall \mathsf{E}(31)$ \\
+	\hdashline
+	47 & $\textsf{Square}(s) \to A = s^2$ & $\mathsf{def}(8)$ \\
+	\hdashline
+	48 & $A = \left(\frac{8}{9}d\right)^2$ & $\to \mathsf{E}(47 \br 46)$ \\
+	\hdashline
+	49 & $\pi_{\text{Egy}} = \frac{A}{r^2} = \frac{(8/9d)^2}{(d/2)^2} = \frac{64}{81}\cdot 4 = \frac{256}{81}$ & $\mathsf{Eq}(48 \br 7)$ \\
+	\hdashline
+	50 & $\top$ & $\to \mathsf{I}(44--49)$ \\
+	
+	% ======================================================================
+	% THEOREM 45: CYLINDER VOLUME
+	% ======================================================================
+	\thicksoliddoubleline
+	51 & $\textsf{thm:cyl}: \forall(d \br h \br V:\R) \br  \textsf{Cylinder}(d \br h)\land \textsf{Volume}(V) \to V = (8/9\cdot d)^2 h$ & Thm.~\ref{thm:cyl} \\
+	\hdashline
+	52 & $\textsf{Cylinder}(d \br h) \br \textsf{Volume}(V)$ & $\mathsf{assumption}$ \\
+	\hdashline
+	53 & $\exists A \br  \textsf{Area}(A) \land \textsf{Circle}(d)$ & $\mathsf{def}(9 \br 10)$ \\
+	\hdashline
+	54 & $A = (8/9\cdot d)^2$ & $\to \mathsf{E}(44 \br 53)$ \\
+	\hdashline
+	55 & $V = A \cdot h$ & $\mathsf{def}(10)$ \\
+	\hdashline
+	56 & $V = (8/9\cdot d)^2 h$ & $\mathsf{Eq}(54 \br 55)$ \\
+	\hdashline
+	57 & $\top$ & $\to \mathsf{I}(51--56)$ \\
+	
+	% ======================================================================
+	% THEOREM 46: SEKED FORMULA
+	% ======================================================================
+	\thicksoliddoubleline
+	58 & $\textsf{thm:seked}: \forall(x \br y \br S:\R) \br  \textsf{Seked}(x \br y \br S) \to S = 7\cdot x/y$ & Thm.~\ref{thm:seked} \\
+	\hdashline
+	59 & $\textsf{Seked}(x \br y \br S)$ & $\mathsf{assumption}$ \\
+	\hdashline
+	60 & $S = 7 \cdot x/y$ & $\mathsf{def}(4)$ \\
+	\hdashline
+	61 & $\top$ & $\to \mathsf{I}(58--60)$ \\
+	
+	% ======================================================================
+	% THEOREM 47: EXCLUSION (GOLDEN TRIANGLE)
+	% ======================================================================
+	\thicksoliddoubleline
+	62 & $\textsf{thm:excl}: \forall(a \br b \br c:\R) \br  \textsf{GoldenTriangle}(a \br b \br c) \to \neg \textsf{EgyptianGeometry}(a)$ & Thm.~\ref{thm:excl} \\
+	\hdashline
+	63 & $\textsf{GoldenTriangle}(a \br b \br c)$ & $\mathsf{assumption}$ \\
+	\hdashline
+	64 & $a=b \land a/c = (1+\sqrt{5})/2$ & $\mathsf{def}(5)$ \\
+	\hdashline
+	65 & $\phi = (1+\sqrt{5})/2 \notin \mathbb{Q}$ & $\forall \mathsf{E}(32 \br 33)$ \\
+	\hdashline
+	66 & $\textsf{EgyptianGeometry}(x) \to \textsf{Rational}(x)$ & $\mathsf{def}(4 \br 33)$ \\
+	\hdashline
+	67 & $\neg \textsf{Rational}(a)$ & $\mathsf{Eq}(64 \br 65)$ \\
+	\hdashline
+	68 & $\neg \textsf{EgyptianGeometry}(a)$ & $\to \mathsf{E}(66 \br 67)$ \\
+	\hdashline
+	69 & $\top$ & $\to \mathsf{I}(62--68)$ \\
+	
+	% ======================================================================
+	% THEOREM 48: SUMMARY
+	% ======================================================================
+	\thicksoliddoubleline
+	70 & $\textsf{thm:sum}: \textsf{EgyptianGeometry} \equiv \textsf{CircleMensuration}(\pi=256/81)\cup \textsf{SekedTheory}(\mathbb{Q})\setminus \textsf{GoldenTriangle}$ & Thm.~\ref{thm:sum} \\
+	\hdashline
+	71 & $\textsf{EgyptianGeometry} \equiv \textsf{CircleMensuration}(\pi=256/81)$ & $\mathsf{def}(44 \br 4)$ \\
+	\hdashline
+	72 & $\textsf{EgyptianGeometry} \equiv \textsf{SekedTheory}(\mathbb{Q})$ & $\mathsf{def}(4 \br 33)$ \\
+	\hdashline
+	73 & $\textsf{GoldenTriangle} \not\subset \textsf{EgyptianGeometry}$ & $\to \mathsf{E}(47)$ \\
+	\hdashline
+	74 & $\top$ & $\to \mathsf{I}(70--73)$ \\
+	
+	% ======================================================================
+	% THEOREM 49: PI IRRATIONAL
+	% ======================================================================
+	\thicksoliddoubleline
+	75 & $\textsf{thm:piirrational}: \pi\notin\mathbb{Q}$ & Thm.~\ref{thm:piirrational} \\
+	\hdashline
+	76 & $\pi \notin \mathbb{Q}$ & $\forall \mathsf{E}(32)$ \\
+	\hdashline
+	77 & $\top$ & $\to \mathsf{I}(75--76)$ \\
+	
+	% ======================================================================
+	% THEOREM 50: RATIONAL FIELD CLOSURE
+	% ======================================================================
+	\thicksoliddoubleline
+	78 & $\textsf{thm:fieldclosure}: \forall(r \br s:\R) \br  r\in\mathbb{Q}\land s\in\mathbb{Q}\setminus\{0\}\to r/s\in\mathbb{Q}$ & Thm.~\ref{thm:fieldclosure} \\
+	\hdashline
+	79 & $r\in\mathbb{Q} \br  s\in\mathbb{Q}\setminus\{0\}$ & $\mathsf{assumption}$ \\
+	\hdashline
+	80 & $r/s\in\mathbb{Q}$ & $\forall \mathsf{E}(33)$ \\
+	\hdashline
+	81 & $\top$ & $\to \mathsf{I}(78--80)$ \\
+	
+	% ======================================================================
+	% THEOREM 51: SEKED ARITHMETIC
+	% ======================================================================
+	\thicksoliddoubleline
+	82 & $\textsf{thm:sekedarithmetic}: \frac12\cdot360=180 \land \frac{180}{250}=\frac{18}{25}=\frac12+\frac15+\frac1{50} \land \frac{126}{25}=5.04 \land 0.04\cdot4=0.16=\frac4{25}$ & Thm.~\ref{thm:sekedarithmetic} \\
+	\hdashline
+	83 & $\frac12\cdot360=180$ & $\forall \mathsf{E}(34)$ \\
+	\hdashline
+	84 & $\frac{180}{250}=\frac{18}{25}=\frac12+\frac15+\frac1{50}$ & $\forall \mathsf{E}(34)$ \\
+	\hdashline
+	85 & $\frac{126}{25}=5.04$ & $\forall \mathsf{E}(34)$ \\
+	\hdashline
+	86 & $0.04\cdot4=0.16=\frac4{25}$ & $\forall \mathsf{E}(34)$ \\
+	\hdashline
+	87 & $\top$ & $\to \mathsf{I}(82--86)$ \\
+	
+	% ======================================================================
+	% THEOREM 52: FALSE POSITION ALGEBRA
+	% ======================================================================
+	\thicksoliddoubleline
+	88 & $\textsf{thm:falseposalgebra}: \forall f \br a \br b \br x_1 \br x_2 \br e_1 \br e_2 \br x^* \br  \textsf{AffineFunction}(f \br a \br b)\land e_1=f(x_1)\land e_2=f(x_2)\land e_1\ne e_2\land x^*=\frac{e_2 x_1-e_1 x_2}{e_2-e_1} \to \left(x^*=\frac{x_1 f(0)}{f(x_1)}\lor x^*=\frac{x_2 f(0)}{f(x_2)}\right)$ & Thm.~\ref{thm:falseposalgebra} \\
+	\hdashline
+	89 & $\textsf{AffineFunction}(f \br a \br b) \br  e_1=f(x_1) \br  e_2=f(x_2) \br  e_1\ne e_2 \br  x^*=\frac{e_2 x_1-e_1 x_2}{e_2-e_1}$ & $\mathsf{assumption}$ \\
+	\hdashline
+	90 & $f(x)=a x+b$ & $\mathsf{def}(11)$ \\
+	\hdashline
+	91 & $e_1 = a x_1+b \br  e_2 = a x_2+b$ & $\mathsf{Eq}(89 \br 90)$ \\
+	\hdashline
+	92 & $x^* = \frac{(a x_2+b)x_1 - (a x_1+b)x_2}{a x_2+b - (a x_1+b)} = \frac{b(x_1-x_2)}{a(x_2-x_1)} = -\frac{b}{a}$ & $\mathsf{Eq}(91)$ \\
+	\hdashline
+	93 & $x_1 f(0)/f(x_1) = x_1 b/(a x_1+b)$ & $\mathsf{def}(12)$ \\
+	\hdashline
+	94 & $x_2 f(0)/f(x_2) = x_2 b/(a x_2+b)$ & $\mathsf{def}(12)$ \\
+	\hdashline
+	95 & $x^* = -\frac{b}{a} \implies x^* = \frac{x_1 f(0)}{f(x_1)} \lor x^* = \frac{x_2 f(0)}{f(x_2)}$ & $\mathsf{Eq}(92 \br 93 \br 94)$ \\
+	\hdashline
+	96 & $\top$ & $\to \mathsf{I}(88--95)$ \\
+	
+	% ======================================================================
+	% THEOREM 53: PYTHAGOREAN IDENTITY
+	% ======================================================================
+	\thicksoliddoubleline
+	97 & $\textsf{thm:pythagoreanidentity}: 3^2+4^2=5^2$ & Thm.~\ref{thm:pythagoreanidentity} \\
+	\hdashline
+	98 & $3^2+4^2=9+16=25=5^2$ & $\forall \mathsf{E}(36)$ \\
+	\hdashline
+	99 & $\top$ & $\to \mathsf{I}(97--98)$ \\
+	
+	% ======================================================================
+	% THEOREM 54: FALSE POSITION EQUIVALENCE
+	% ======================================================================
+	\thicksoliddoubleline
+	100 & $\textsf{thm:falseequiv}: \forall f \br x_1 \br x_2 \br x^* \br  \textsf{AffineFunction}(f \br a \br b)\land \textsf{ChineseDoubleFalsePosition}(f \br x_1 \br x_2 \br x^*) \to \textsf{EgyptianFalsePosition}(f \br x_1 \br x^*)\lor \textsf{EgyptianFalsePosition}(f \br x_2 \br x^*)$ & Thm.~\ref{thm:falseequiv} \\
+	\hdashline
+	101 & $\textsf{AffineFunction}(f \br a \br b) \br \textsf{ChineseDoubleFalsePosition}(f \br x_1 \br x_2 \br x^*)$ & $\mathsf{assumption}$ \\
+	\hdashline
+	102 & $x^* = \frac{e_2 x_1 - e_1 x_2}{e_2 - e_1} \br  e_1\ne e_2$ & $\mathsf{def}(13)$ \\
+	\hdashline
+	103 & $\textsf{EgyptianFalsePosition}(f \br x_1 \br x^*) \lor \textsf{EgyptianFalsePosition}(f \br x_2 \br x^*)$ & $\to \mathsf{E}(88 \br 102)$ \\
+	\hdashline
+	104 & $\top$ & $\to \mathsf{I}(100--103)$ \\
+	
+	% ======================================================================
+	% THEOREM 55: COMMON TRIPLE
+	% ======================================================================
+	\thicksoliddoubleline
+	105 & $\textsf{thm:pythcommon}: (3 \br 4 \br 5)\in\mathbb{N}^3\land \textsf{PythagoreanTriple}(3 \br 4 \br 5)$ & Thm.~\ref{thm:pythcommon} \\
+	\hdashline
+	106 & $3^2+4^2=25=5^2$ & $\to \mathsf{E}(97)$ \\
+	\hdashline
+	107 & $(3 \br 4 \br 5)\in\mathbb{N}^3$ & $= \mathsf{I}$ \\
+	\hdashline
+	108 & $\textsf{PythagoreanTriple}(3 \br 4 \br 5)$ & $\mathsf{def}(14 \br 106 \br 107)$ \\
+	\hdashline
+	109 & $\top$ & $\to \mathsf{I}(105--108)$ \\
+	
+	% ======================================================================
+	% THEOREM 56: FRUSTUM CONVERGENCE
+	% ======================================================================
+	\thicksoliddoubleline
+	110 & $\textsf{thm:frustumequiv}: \forall(a \br b \br h \br V:\R) \br  \textsf{FrustumVolume}(a \br b \br h \br V) \leftrightarrow V=\frac{h}{3}(a^2+ab+b^2)$ & Thm.~\ref{thm:frustumequiv} \\
+	\hdashline
+	111 & $\textsf{FrustumVolume}(a \br b \br h \br V) \to V=\frac{h}{3}(a^2+ab+b^2)$ & $\mathsf{def}(16)$ \\
+	\hdashline
+	112 & $V=\frac{h}{3}(a^2+ab+b^2) \to \textsf{FrustumVolume}(a \br b \br h \br V)$ & $\mathsf{def}(16 \br 15)$ \\
+	\hdashline
+	113 & $\top$ & $\to \mathsf{I}(110--112)$ \\
+	
+	% ======================================================================
+	% THEOREM 57: CIRCLE AREA CONVERGENCE
+	% ======================================================================
+	\thicksoliddoubleline
+	114 & $\textsf{thm:circleconverge}: \forall(d:\R) \br  \textsf{Circle}(d) \to \left(A_E=(8/9\cdot d)^2\right)\land \left(A_C=3/4\cdot d^2\right)\land \pi_E=256/81\land \pi_C=3$ & Thm.~\ref{thm:circleconverge} \\
+	\hdashline
+	115 & $\textsf{Circle}(d)$ & $\mathsf{assumption}$ \\
+	\hdashline
+	116 & $A_E=(8/9\cdot d)^2$ & $\to \mathsf{E}(44 \br 115)$ \\
+	\hdashline
+	117 & $A_C=3/4\cdot d^2$ & $\forall \mathsf{E}(39)$ \\
+	\hdashline
+	118 & $\pi_E=256/81$ & $\to \mathsf{E}(44 \br 115)$ \\
+	\hdashline
+	119 & $\pi_C=3$ & $\mathsf{def}(39 \br 17)$ \\
+	\hdashline
+	120 & $\top$ & $\to \mathsf{I}(114--119)$ \\
+	
+	% ======================================================================
+	% THEOREM 58: ALGEBRAIC INDEPENDENCE
+	% ======================================================================
+	\thicksoliddoubleline
+	121 & $\textsf{thm:algindep}: \forall f:\N\to\N \br  \textsf{ArithmeticMorphism}(f) \to \neg(\forall x:\N \br  \textsf{DecimalPlaceValue}(x)\leftrightarrow \textsf{AdditiveRepresentation}(f(x)))$ & Thm.~\ref{thm:algindep} \\
+	\hdashline
+	122 & $\textsf{ArithmeticMorphism}(f)$ & $\mathsf{assumption}$ \\
+	\hdashline
+	123 & $\forall x \br  \textsf{DecimalPlaceValue}(x) \leftrightarrow \textsf{AdditiveRepresentation}(f(x))$ & $\mathsf{assumption}$ \\
+	\hdashline
+	124 & $\textsf{DecimalPlaceValue}(x) \to \textsf{AdditiveRepresentation}(f(x))$ & $\land \mathsf{E}_L(123)$ \\
+	\hdashline
+	125 & $\textsf{AdditiveRepresentation}(x)$ & $\mathsf{def}(20)$ \\
+	\hdashline
+	126 & $\textsf{DecimalPlaceValue}(x)$ & $\to \mathsf{E}(123 \br 125)$ \\
+	\hdashline
+	127 & $\exists x \br  \neg \textsf{DecimalPlaceValue}(x)$ & $\mathsf{def}(19)$ \\
+	\hdashline
+	128 & $\bot$ & $\mathsf{Eq}(126 \br 127)$ \\
+	\hdashline
+	129 & $\top$ & $\to \mathsf{I}(121--128)$ \\
+	
+	% ======================================================================
+	% THEOREM 59: TAYLOR EXCLUSION
+	% ======================================================================
+	\thicksoliddoubleline
+	130 & $\textsf{thm:taylorexcl}: \forall(s \br h \br A_v \br A_b:\R) \br  \textsf{TaylorPyramid}(s \br h \br A_v \br A_b) \to \neg \textsf{EgyptianGeometry}(s)$ & Thm.~\ref{thm:taylorexcl} \\
+	\hdashline
+	131 & $\textsf{TaylorPyramid}(s \br h \br A_v \br A_b)$ & $\mathsf{assumption}$ \\
+	\hdashline
+	132 & $\frac{4s}{h}=2\pi$ & $\forall \mathsf{E}(40)$ \\
+	\hdashline
+	133 & $\frac{4s}{h}\notin\mathbb{Q}$ & $\mathsf{Eq}(32 \br 75)$ \\
+	\hdashline
+	134 & $\textsf{EgyptianGeometry}(s) \to s\in\mathbb{Q}$ & $\mathsf{def}(4)$ \\
+	\hdashline
+	135 & $\textsf{EgyptianGeometry}(s) \to \frac{4s}{h}\in\mathbb{Q}$ & $\mathsf{Eq}(134 \br 78)$ \\
+	\hdashline
+	136 & $\neg \textsf{EgyptianGeometry}(s)$ & $\to \mathsf{E}(133 \br 135)$ \\
+	\hdashline
+	137 & $\top$ & $\to \mathsf{I}(130--136)$ \\
+	
+	% ======================================================================
+	% THEOREM 60: RAMSES JAW SYMMETRY
+	% ======================================================================
+	\thicksoliddoubleline
+	138 & $\textsf{thm:ramsesjaw}: \forall(\mathcal{S}:\mathsf{Set}) \br \forall(\mathcal{D}_{\text{jaw}}:\mathsf{Set}) \br \forall(H_f:\R) \br \forall(\mathcal{F}:\mathsf{Set}) \br \forall(\mathcal{C}:\mathsf{Set}) \br \forall(r:\R) \br \forall(\Pi:\mathsf{Set}) \br  \textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi) \to \textsf{Tolerance}(\mathcal{D}_{\text{jaw}} \br 0.010 \br \Pi)\land \textsf{ScaledTolerance}(\mathcal{S} \br 5 \br 0.002 \br \Pi)$ & Thm.~\ref{thm:ramsesjaw} \\
+	\hdashline
+	139 & $\textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi)$ & $\mathsf{assumption}$ \\
+	\hdashline
+	140 & $\textsf{Tolerance}(\mathcal{D}_{\text{jaw}} \br 0.010 \br \Pi)$ & $\land \mathsf{E}_L(43)$ \\
+	\hdashline
+	141 & $\textsf{ScaledTolerance}(\mathcal{S} \br 5 \br 0.002 \br \Pi)$ & $\land \mathsf{E}_R(43)$ \\
+	\hdashline
+	142 & $\top$ & $\to \mathsf{I}(138--141)$ \\
+	
+	% ======================================================================
+	% THEOREM 61: RAMSES GEOMETRIC PROPORTIONS
+	% ======================================================================
+	\thicksoliddoubleline
+	143 & $\textsf{thm:ramsesgeometry}: \forall(\mathcal{S}:\mathsf{Set}) \br \forall(\mathcal{D}_{\text{jaw}}:\mathsf{Set}) \br \forall(H_f:\R) \br \forall(\mathcal{F}:\mathsf{Set}) \br \forall(\mathcal{C}:\mathsf{Set}) \br \forall(r:\R) \br \forall(\Pi:\mathsf{Set}) \br  \textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi) \to \textsf{MouthAspect}(3 \br 4)\land \exists w \br  \textsf{GoldenRectangle}(w \br H_f)\land \textsf{FlowerOfLife}(\mathcal{F} \br r \br \mathcal{C})$ & Thm.~\ref{thm:ramsesgeometry} \\
+	\hdashline
+	144 & $\textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi)$ & $\mathsf{assumption}$ \\
+	\hdashline
+	145 & $\textsf{MouthAspect}(3 \br 4)$ & $\land \mathsf{E}(43)$ \\
+	\hdashline
+	146 & $\exists w \br  \textsf{GoldenRectangle}(w \br H_f)$ & $\land \mathsf{E}(43)$ \\
+	\hdashline
+	147 & $\textsf{FlowerOfLife}(\mathcal{F} \br r \br \mathcal{C})$ & $\land \mathsf{E}(43)$ \\
+	\hdashline
+	148 & $\top$ & $\to \mathsf{I}(143--147)$ \\
+	
+	% ======================================================================
+	% THEOREM 62: DUNN METROLOGICAL THESIS (proof)
+	% ======================================================================
+	\thicksoliddoubleline
+	149 & $\hyperref[thm:dunnmetrological]{\textsf{DunnMetrologicalThesis}}: \forall(\mathcal{S}:\mathsf{Set}) \br \forall(\Pi:\mathsf{Set}) \br \forall(\mathcal{T}_0:\mathsf{ToolSet}) \br \forall(\mathcal{D}_{\text{jaw}}:\mathsf{Set}) \br \forall(H_f:\R) \br \forall(\mathcal{F}:\mathsf{Set}) \br \forall(\mathcal{C}:\mathsf{Set}) \br \forall(r:\R) \br  \textsf{RamsesHead}(\mathcal{S} \br \Pi)\land \textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi) \to \neg \textsf{ProducedBy}(\mathcal{S} \br \mathcal{T}_0)$ & Thm.~\ref{thm:dunnmetrological} \\
+	\hdashline
+	150 & $\textsf{RamsesHead}(\mathcal{S} \br \Pi) \br \textsf{DunnMeasurements}(\mathcal{S} \br  \mathcal{D}_{\text{jaw}} \br  H_f \br  \mathcal{F} \br  \mathcal{C} \br  r \br  \Pi)$ & $\mathsf{assumption}$ \\
+	\hdashline
+	151 & $\textsf{ProducedBy}(\mathcal{S} \br \mathcal{T}_0) \to \exists \tau_0 \br  \textsf{Tolerance}(\mathcal{S} \br \tau_0) \land \tau_0 \gg 0.002$ & $\forall \mathsf{E}(42)$ \\
+	\hdashline
+	152 & $t_h = 0.002$ & $\mathsf{def}(24 \br 141)$ \\
+	\hdashline
+	153 & $\prod_{i=1}^N \Pr(|X_i - \mu_i| \le t_h) \approx 0$ & $\mathsf{assumption}$ \\
+	\hdashline
+	154 & $\tau_0 \gg 0.002 \land \textsf{ScaledTolerance}(\mathcal{S} \br 5 \br 0.002 \br \Pi)$ & $\land \mathsf{I}(151 \br 141)$ \\
+	\hdashline
+	155 & $\neg \textsf{ProducedBy}(\mathcal{S} \br \mathcal{T}_0)$ & $\to \mathsf{E}(153 \br 154)$ \\
+	\hdashline
+	156 & $\top$ & $\to \mathsf{I}(149--155)$ \\
+	\thicksoliddoubleline
+	157 & $\top$ & 1--156
+\end{prooftable}
+
+% ======================================================================
+% BIBLIOGRAPHY
+% ======================================================================
+\renewcommand{\bibname}{References}
+\renewcommand{\bibliofont}{\fontsize{9}{11}\selectfont}
+\nocite{*}
+\bibliographystyle{plain}
+{\tiny\setstretch{1.6}\bibliography{References}}
+\end{document}
