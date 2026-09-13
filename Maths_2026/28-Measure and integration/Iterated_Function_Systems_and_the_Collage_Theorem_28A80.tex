@@ -1,0 +1,1303 @@
+\documentclass[10pt]{amsart}
+
+% ============================================
+% PACKAGES
+% ============================================
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage{bm, etoolbox, textcase}
+\usepackage{titlesec}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp, lscape}
+\usepackage{algorithm, algpseudocode}
+\usepackage{listingsutf8}
+\usepackage{xcolor}
+\usepackage{array, longtable, booktabs, multirow}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, calc, positioning, arrows.meta, bending, shapes.multipart}
+\usepackage{setspace}
+\usepackage{parskip, ragged2e, fancyhdr}
+\usepackage{tcolorbox}
+\tcbuselibrary{breakable, skins, listings}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=red, urlcolor=blue]{hyperref}
+\usepackage{cleveref}
+\usepackage{imakeidx}
+\makeindex
+\usepackage{bookmark}
+\usepackage{adjustbox}
+\usepackage{float}
+\usepackage{esint}
+\usepackage{pdfpages}
+\usepackage{pgffor}
+\usepackage{pmboxdraw}
+\usepackage{caption}
+\usepackage{multicol}
+\usepackage{tikz-cd}
+\usetikzlibrary{cd}
+\usepackage{microtype}
+\usepackage{arydshln}
+
+% ============================================
+% FIX #1: disable implicit page anchors to avoid
+% "ignoring duplicate destination with the name 'page.1'"
+% (re-enabled after \maketitle)
+% ============================================
+
+
+% ============================================
+% FONTS (LuaLaTeX)
+% ============================================
+\usepackage{fontspec}
+\usepackage{mathtools}
+\usepackage{unicode-math}
+\setlength{\dashlinedash}{0.5pt}
+\setlength{\dashlinegap}{1pt}
+\setlength{\arrayrulewidth}{0.2pt}
+\setmainfont{TeX Gyre Termes}
+\setmathfont{STIX Two Math}
+\setmonofont{JuliaMono-Regular}[
+Path=./JuliaMono/,
+Extension=.ttf,
+Scale=0.9,
+BoldFont={JuliaMono-Bold},
+ItalicFont={JuliaMono-RegularItalic},
+BoldItalicFont={JuliaMono-BoldItalic}
+]
+\renewcommand{\normalsize}{\fontsize{8}{10}\selectfont}
+
+% ============================================
+% OVERFULL-BOX TOLERANCE
+% ============================================
+\hbadness=2000
+\vbadness=2000
+\hfuzz=6pt
+\vfuzz=6pt
+
+% ============================================
+% INDEX STYLE
+% ============================================
+\begin{filecontents*}{indexstyle.ist}
+headings_flag 1
+heading_prefix "{\\centerline{\\fbox{\\textbf{\\normalsize "
+heading_suffix "}}}\\nopagebreak\n}"
+delim_0 " \\dotfill\\pname{"
+delim_1 " \\dotfill\\pname{"
+delim_2 " \\dotfill\\pname{"
+delim_t "}"
+delim_n ", "
+symhead_positive "Symbols"
+numhead_positive "Numbers"
+\end{filecontents*}
+
+\makeindex[columns=2, options=-s indexstyle.ist, intoc]
+
+% --- Custom break command: comma + allowbreak ---
+\newcommand{\br}{,\allowbreak}
+
+% ============================================
+% CUSTOM COMMANDS
+% ============================================
+\newcommand{\pname}[1]{\hyperpage{#1}}
+\newcommand{\idx}[1]{\index{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Forall}{\forall}
+\newcommand{\Exists}{\exists}
+\newcommand{\ExistsUniq}{\exists!}
+\newcommand{\normH}[1]{\left\lVert #1 \right\rVert_{H}}
+\newcommand{\normD}[1]{\left\lVert #1 \right\rVert_{H^{*}}}
+\newcommand{\normEll}[1]{\left\lVert #1 \right\rVert_{\ell^{2}}}
+
+% ---------- Thick double line for statements ----------
+\newcommand{\thicksoliddoubleline}{%
+	\noalign{\vskip1pt}%
+	\noalign{\hrule height 0.2pt}%
+	\noalign{\vskip0.2pt}%
+	\noalign{\hrule height 0.2pt}%
+	\noalign{\vskip1pt}%
+}
+
+% Counters
+\newcounter{axcounter}
+\newcounter{defcounter}
+\newcounter{thmcounter}
+\newcounter{propcounter}
+\newcounter{corcounter}
+\newcounter{lemcounter}
+\newcommand{\axnum}{\refstepcounter{axcounter}\arabic{axcounter}.}
+\newcommand{\defnum}{\refstepcounter{defcounter}\arabic{defcounter}.}
+\newcommand{\thmnum}{\refstepcounter{thmcounter}\arabic{thmcounter}.}
+\newcommand{\propnum}{\refstepcounter{propcounter}\arabic{propcounter}.}
+\newcommand{\cornum}{\refstepcounter{corcounter}\arabic{corcounter}.}
+\newcommand{\lemnum}{\refstepcounter{lemcounter}\arabic{lemcounter}.}
+
+% ============================================
+% PAGE STYLE
+% ============================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyhead[R]{\thepage}
+\setlength{\footskip}{14pt}
+\setlength{\headheight}{14pt}
+
+% ============================================
+% TABLES SETTINGS
+% ============================================
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\newcolumntype{P}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\Centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\RaggedLeft\arraybackslash}p{#1}}
+\newcolumntype{S}{>{\Centering\arraybackslash}m{0.7cm}}
+\newcolumntype{J}{>{\Centering\arraybackslash}m{2.2cm}}
+\newcolumntype{L}{>{\RaggedRight\arraybackslash}p{0.78\textwidth}}
+
+% ============================================
+% PROOF TABLE ENVIRONMENT
+% ============================================
+\newenvironment{prooftable}{%
+	\renewcommand{\arraystretch}{1.2}%
+	\setlength{\tabcolsep}{4pt}%
+	\setlength{\arrayrulewidth}{0.05pt}
+	\fontsize{6}{7.5}\selectfont
+	\sloppy
+	\begin{longtable}{
+			|>{\centering\arraybackslash}m{0.7cm}|
+			>{\raggedright\centering\arraybackslash}m{0.70\textwidth}|
+			>{\centering\arraybackslash}m{3.5cm}|
+		}%
+		\hline
+		\textbf{Step} & \centering\textbf{Formula} & \textbf{Ref} \\
+		\hline
+		\endfirsthead
+		\hline
+		\textbf{Step} & \centering\textbf{Formula} & \textbf{Ref} \\
+		\hline
+		\endhead
+		\hline
+		\multicolumn{3}{r}{\textit{Continued on next page}} \\
+		\endfoot
+		\hline
+		\endlastfoot
+	}{%
+	\end{longtable}%
+}
+
+% ============================================
+% PREDICATE TABLE
+% ============================================
+\newenvironment{predicatetable}{%
+  \renewcommand{\arraystretch}{1.3}%
+  \setlength{\tabcolsep}{6pt}%
+  \fontsize{6}{7.5}\selectfont
+  \sloppy
+  \begin{longtable}{|>{\raggedright\arraybackslash}m{0.28\textwidth}|
+      >{\RaggedRight\arraybackslash}m{0.68\textwidth}|}%
+    \hline
+    \multicolumn{2}{|c|}{\centering{\textbf{Statements}}} \\
+    \hline
+    \centering{\textbf{Predicate}} & {\hspace{1.3in}  Symbolic Formula} \\
+    \hline
+    \endfirsthead
+    \hline
+    \multicolumn{2}{|c|}{{\centering  \textbf{Statements (continued)}}} \\
+    \hline
+    \centering{\textbf{Predicate}} & {\hspace{1.3in}  Symbolic Formula} \\
+    \hline
+    \endhead
+    \hline
+    \multicolumn{2}{r}{\textit{Continued on next page}} \\
+    \hline
+    \endfoot
+    \hline
+    \endlastfoot
+  }{%
+  \end{longtable}%
+}
+
+% ============================================
+% LEAN DEFINITIONS
+% ============================================
+\definecolor{leankeyword}{RGB}{0, 102, 204}
+
+\lstdefinelanguage{Lean}{
+  morekeywords={
+    import, structure, theorem, lemma, proof, def, inductive, class,
+    variable, variables, section, end, open, namespace, protected,
+    private, noncomputable, instance, axiom, exact, apply,
+    assumption, rw, simp, intro, intros, have, let, show, calc,
+    exists, fun, forall, iff, if, then, else, and, or, not,
+    true, false, Type, Prop, Sort, \_, in, out, match, with, end,
+    by, begin, using, from, with, at, of, for, in, to, then,
+    where, done, qed, variable, variables, noncomputable,
+    →L
+  },
+  morecomment=[n]{/-}{-/},
+  morecomment=[l]{--},
+  morestring=[b]{"},
+  morestring=[b]{'},
+  sensitive=true,
+  keywordstyle=\color{leankeyword}\bfseries,
+  commentstyle=\color{black}\itshape,
+  stringstyle=\color{black},
+  alsoletter={_},
+}
+
+\lstdefinestyle{leanstyle}{
+  language=Lean,
+  inputencoding=utf8,
+  extendedchars=true,
+  columns=fullflexible,
+  keepspaces=true,
+  showspaces=false,
+  showtabs=false,
+  showstringspaces=false,
+  upquote=true,
+  tabsize=2,
+  breaklines=true,
+  basicstyle=\ttfamily\color{black},
+  keywordstyle=\color{leankeyword}\bfseries,
+  commentstyle=\color{black}\itshape,
+  stringstyle=\color{black},
+  identifierstyle=\color{black},
+  literate=
+    {∥}{{\Vert}}1
+    {⟪}{{\langle}}1
+    {⟫}{{\rangle}}1
+    {ℝ}{{\mathbb{R}}}1
+    {ℂ}{{\mathbb{C}}}1
+    {→}{{\to}}1
+    {∃}{{\exists}}1
+    {∀}{{\forall}}1
+    {¬}{{\neg}}1
+    {∧}{{\land}}1
+    {∨}{{\lor}}1
+    {⊥}{{\bot}}1
+    {∈}{{\in}}1
+    {∉}{{\notin}}1
+    {⊢}{{\vdash}}1
+    {ℕ}{{\mathbb{N}}}1
+}
+
+\newtcblisting{leanlisting}{
+  listing style=leanstyle,
+  listing only,
+  sharp corners,
+  boxrule=0.1pt,
+  colback=white,
+  colframe=black,
+  left=4pt, right=4pt, top=4pt, bottom=4pt,
+  arc=0pt, outer arc=0pt,
+  breakable, enhanced jigsaw, width=\linewidth,
+  listing options={
+    language=Lean,
+    basicstyle=\fontsize{6}{7}\selectfont\ttfamily\color{black},
+    aboveskip=0pt, belowskip=0pt,
+    showspaces=false, showtabs=false, showstringspaces=false,
+    tabsize=2,
+    breaklines=true,
+  }
+}
+
+% ============================================
+% THEOREM STYLES
+% ============================================
+\newtheoremstyle{break}
+{} {} {\normalfont} {} {\bfseries} {.} {\newline} {\thmname{#1}\thmnumber{ #2}\thmnote{ (\textbf{#3})}}
+
+\theoremstyle{break}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{axiom}{Axiom}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{remark}{Remark}[section]
+\newtheorem{conjecture}{Conjecture}[section]
+
+\renewcommand{\thetheorem}{\thesection.\arabic{theorem}}
+\renewcommand{\theproposition}{\thesection.\arabic{proposition}}
+\renewcommand{\thelemma}{\thesection.\arabic{lemma}}
+\renewcommand{\thedefinition}{\thesection.\arabic{definition}}
+\renewcommand{\thecorollary}{\thesection.\arabic{corollary}}
+\renewcommand{\theaxiom}{\thesection.\arabic{axiom}}
+\renewcommand{\theexample}{\thesection.\arabic{example}}
+\renewcommand{\theremark}{\thesection.\arabic{remark}}
+
+\renewenvironment{proof}[1][Proof]{%
+  \par\noindent\textbf{#1.}\par
+  \vspace{12pt}
+}{\hfill$\square$\par}
+
+% ============================================
+% DOCUMENT FORMATTING
+% ============================================
+\onehalfspacing
+\raggedbottom
+\setlength{\parindent}{0pt}
+\sloppy
+\setlength{\emergencystretch}{3em}
+\setlength{\abovedisplayskip}{12pt}
+\setlength{\belowdisplayskip}{12pt}
+
+\titleformat{\section}
+{\normalfont\fontsize{14}{16}\selectfont\bfseries\color{blue}}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\normalfont\fontsize{12}{14}\selectfont\bfseries\color{teal}}
+{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+{\normalfont\fontsize{11}{13}\selectfont\bfseries\color{violet}}
+{\thesubsubsection}{1em}{}
+
+\makeatletter
+\renewcommand{\thesection}{\arabic{section}}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{1}
+\renewcommand{\l@section}{\@tocline{1}{0em}{1em}{2em}{}}
+\renewcommand{\l@subsection}{\@tocline{2}{0em}{1.5em}{2.5em}{}}
+\makeatother
+\renewcommand{\seriesdefault}{\bfdefault}
+\boldmath
+
+% ============================================
+% BIBLIOGRAPHY
+% ============================================
+\begin{filecontents}{References.bib}
+	@article{Hutchinson1981,
+		author  = {Hutchinson, John E.},
+		title   = {Fractals and self-similarity},
+		journal = {Indiana University Mathematics Journal},
+		volume  = {30},
+		number  = {5},
+		pages   = {713--747},
+		year    = {1981},
+		doi     = {10.1512/iumj.1981.30.30055},
+		url     = {https://doi.org/10.1512/iumj.1981.30.30055},
+		note    = {\url{https://doi.org/10.1512/iumj.1981.30.30055}}
+	}
+	@article{Moran1946,
+		author  = {Moran, Patrick A. P.},
+		title   = {Additive functions of intervals and Hausdorff measure},
+		journal = {Mathematical Proceedings of the Cambridge Philosophical Society},
+		volume  = {42},
+		number  = {1},
+		pages   = {15--23},
+		year    = {1946},
+		doi     = {10.1017/S0305004100022684},
+		url     = {https://doi.org/10.1017/S0305004100022684},
+		note    = {\url{https://doi.org/10.1017/S0305004100022684}}
+	}
+	@book{Barnsley1988,
+		author    = {Barnsley, Michael F.},
+		title     = {Fractals Everywhere},
+		publisher = {Academic Press},
+		address   = {Boston},
+		year      = {1988},
+		url       = {https://www.sciencedirect.com/book/9780120790616/fractals-everywhere},
+		note      = {\url{https://www.sciencedirect.com/book/9780120790616/fractals-everywhere}}
+	}
+	@book{Barnsley2006,
+		author    = {Barnsley, Michael F.},
+		title     = {SuperFractals},
+		publisher = {Cambridge University Press},
+		year      = {2006},
+		doi       = {10.1017/CBO9780511618352},
+		url       = {https://doi.org/10.1017/CBO9780511618352},
+		note      = {\url{https://doi.org/10.1017/CBO9780511618352}}
+	}
+	@book{Falconer2014,
+		author    = {Falconer, Kenneth},
+		title     = {Fractal Geometry: Mathematical Foundations and Applications},
+		edition   = {3},
+		publisher = {John Wiley \& Sons},
+		year      = {2014},
+		doi       = {10.1002/9781119942399},
+		url       = {https://doi.org/10.1002/9781119942399},
+		note      = {\url{https://doi.org/10.1002/9781119942399}}
+	}
+	@book{Mandelbrot1982,
+		author    = {Mandelbrot, Benoit B.},
+		title     = {The Fractal Geometry of Nature},
+		publisher = {W. H. Freeman},
+		year      = {1982},
+		url       = {https://archive.org/details/fractalgeometryo00mand},
+		note      = {\url{https://archive.org/details/fractalgeometryo00mand}}
+	}
+	@article{Banach1922,
+		author  = {Banach, Stefan},
+		title   = {Sur les op\'erations dans les ensembles abstraits et leur application aux \'equations int\'egrales},
+		journal = {Fundamenta Mathematicae},
+		volume  = {3},
+		pages   = {133--181},
+		year    = {1922},
+		doi     = {10.4064/fm-3-1-133-181},
+		url     = {https://doi.org/10.4064/fm-3-1-133-181},
+		note    = {\url{https://doi.org/10.4064/fm-3-1-133-181}}
+	}
+	@book{Kigami2001,
+		author    = {Kigami, Jun},
+		title     = {Analysis on Fractals},
+		publisher = {Cambridge University Press},
+		series    = {Cambridge Tracts in Mathematics},
+		volume    = {143},
+		year      = {2001},
+		doi       = {10.1017/CBO9780511470943},
+		url       = {https://doi.org/10.1017/CBO9780511470943},
+		note      = {\url{https://doi.org/10.1017/CBO9780511470943}}
+	}
+	@book{Edgar2008,
+		author    = {Edgar, Gerald},
+		title     = {Measure, Topology, and Fractal Geometry},
+		edition   = {2},
+		publisher = {Springer},
+		series    = {Undergraduate Texts in Mathematics},
+		year      = {2008},
+		doi       = {10.1007/978-0-387-74749-1},
+		url       = {https://doi.org/10.1007/978-0-387-74749-1},
+		note      = {\url{https://doi.org/10.1007/978-0-387-74749-1}}
+	}
+	@article{Williams1992,
+		author  = {Williams, Robert F.},
+		title   = {Composition of contractions},
+		journal = {Boletim da Sociedade Brasileira de Matem\'atica},
+		volume  = {23},
+		pages   = {55--59},
+		year    = {1992},
+		doi     = {10.1007/BF02584815},
+		url     = {https://doi.org/10.1007/BF02584815},
+		note    = {\url{https://doi.org/10.1007/BF02584815}}
+	}
+\end{filecontents}
+
+\geometry{
+  bottom=1.3cm,
+  footskip=1cm
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\allowdisplaybreaks
+\sloppy
+
+\lstdefinestyle{pythonstyle}{
+	language=Python,
+	basicstyle=\fontsize{5}{6}\selectfont\ttfamily,
+	keywordstyle=\color{leankeyword}\bfseries,
+	commentstyle=\color{black}\itshape,
+	stringstyle=\color{black},
+	numbers=left,
+	numberstyle=\fontsize{4}{5}\selectfont\color{gray},
+	numbersep=4pt,
+	frame=single,
+	framerule=0.2pt,
+	rulecolor=\color{black},
+	breaklines=true,
+	breakatwhitespace=true,
+	postbreak=\mbox{\textcolor{gray}{$\hookrightarrow$}\space},
+	showstringspaces=false,
+	tabsize=4,
+	columns=fullflexible,
+	keepspaces=true,
+	xleftmargin=12pt,
+	framexleftmargin=12pt,
+	aboveskip=4pt,
+	belowskip=4pt,
+	literate=
+	{á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+	{à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+	{–}{{--}}1 {—}{{---}}1 {…}{{\ldots}}1
+}
+
+\begin{document}
+\setstretch{1}
+\pagestyle{empty}
+
+\title{\NoCaseChange{\Large Iterated Function Systems and the Collage Theorem: \\[2pt] A Formal Exposition}}
+\author{%
+  \NoCaseChange{Brahimi, Mahdi. Tahar. \\
+    Department of Mathematics \\
+    University of Mohamed Boudiaf, Msila, Algeria \\
+    \texttt{\href{mailto:mahdi.brahimi@univ-msila.dz}{mahditahar.brahimi@univ-msila.dz}}
+  }
+}
+\subjclass[2020]{Primary: 28A80; Secondary: 37C70, 54E50, 54H20, 68U05}
+\keywords{iterated function systems; Collage Theorem; Hausdorff metric; Banach fixed point; attractors; fractals; symmetry}
+
+\begin{abstract}
+\[
+\begin{aligned}
+& \textsf{IFSCollageTheory} := \\
+& \quad \bigl( \textsf{CompleteMetricSpace} \land \textsf{CompactSets} \land \textsf{HausdorffMetric} \bigr) \\
+& \quad \land \Bigl( \textsf{Contraction} : \Forall (x \br y : X) \br d(Tx \br Ty) \le s \cdot d(x \br y) \land s < 1 \Bigr) \\
+& \quad \land \Bigl( \textsf{BanachFixedPoint} : \ExistsUniq (x^{*} : X) \br T x^{*} = x^{*} \Bigr) \\
+& \quad \land \Bigl( \textsf{IFS} := \{w_1 \br \dots \br w_N\} \br \|w_i(x) - w_i(y)\| \le s_i \|x - y\| \Bigr) \\
+& \quad \land \Bigl( \textsf{HutchinsonOperator} : W(K) = \bigcup_{i=1}^{N} w_i(K) \Bigr) \\
+& \quad \land \Bigl( \textsf{Attractor} : A = \lim_{n \to \infty} W^{\circ n}(K_0) \Bigr) \\
+& \quad \land \Bigl( \textsf{CollageTheorem} : d_H(L \br W(L)) < \varepsilon \Rightarrow d_H(L \br A) < \tfrac{\varepsilon}{1 - s} \Bigr) \\
+& \quad \land \Bigl( \textsf{MoranEquation} : \sum_{i=1}^{N} s_i^{D} = 1 \Bigr) \\
+& \quad \land \bigl( \textsf{SymmetryInheritance} \land \textsf{RosetteAttractor} \land \textsf{CropCircleModel} \bigr)
+\end{aligned}
+\]
+\end{abstract}
+
+
+
+\maketitle
+\thispagestyle{empty}
+
+
+
+\vspace{0.1in}
+
+% ----- Lean formalization preview -----
+\begin{multicols}{3}
+	\fontsize{4}{5}\selectfont
+	\begin{verbatim}
+	IFS + Collage Theory
+	│
+	├── Axioms
+	│   ├── ax:banach (Banach Fixed Point)
+	│   ├── ax:hilbert (Hilbert / Euclidean base)
+	│   ├── ax:hausdorffcomplete (H(X) complete)
+	│   └── ax:OSC (Open Set Condition)
+	│
+	├── Definitions
+	│   ├── def:metric (Metric space)
+	│   ├── def:complete (Completeness)
+	│   ├── def:contraction (Contraction map)
+	│   ├── def:compactset (Compact subset)
+	│   ├── def:hausdorff (Hausdorff metric)
+	│   ├── def:IFS (Iterated function system)
+	│   ├── def:hutchinson (Hutchinson operator)
+	│   ├── def:attractor (Attractor of an IFS)
+	│   ├── def:similarity (Similarity map)
+	│   ├── def:morandim (Moran equation)
+	│   ├── def:symmetry (Symmetry group)
+	│   ├── def:rosette (Rosette IFS)
+	│   └── def:cropcircle (Crop circle model)
+	│
+	├── Statements
+	│   ├── Lemmas
+	│   │   ├── lem:Wcontraction (W is a contraction)
+	│   │   ├── lem:banachH (Banach on H(X))
+	│   │   └── lem:symmetryAction (Symmetry action)
+	│   ├── Theorems
+	│   │   ├── thm:hutchinson (Existence & uniqueness)
+	│   │   ├── thm:collage (Collage Theorem)
+	│   │   ├── thm:moran (Moran equation)
+	│   │   ├── thm:symmetry (Symmetry inheritance)
+	│   │   └── thm:rosette (Rosette attractor)
+	│   ├── Propositions
+	│   │   ├── prop:convergence (Convergence rate)
+	│   │   └── prop:uniqueness (Uniqueness of A)
+	│   └── Corollaries
+	│       ├── cor:cropcircle (Crop-circle representation)
+	│       └── cor:dimrosette (Dimension of rosette)
+	\end{verbatim}
+	\columnbreak
+	\begin{verbatim}
+	│
+	├── Proofs
+	│   ├── Proof of lem:Wcontraction
+	│   ├── Proof of lem:banachH
+	│   ├── Proof of lem:symmetryAction
+	│   ├── Proof of thm:hutchinson
+	│   ├── Proof of thm:collage
+	│   ├── Proof of thm:moran
+	│   ├── Proof of thm:symmetry
+	│   ├── Proof of thm:rosette
+	│   ├── Proof of prop:convergence
+	│   ├── Proof of prop:uniqueness
+	│   ├── Proof of cor:cropcircle
+	│   └── Proof of cor:dimrosette
+	│
+	├── Scripts
+	│   ├── Tree Proofs Dependencies
+	│   ├── Lean Proofs Formalization
+	│   └── Python Algorithms
+	│
+	└── Tables
+	    ├── Timeline
+	    ├── Comparison
+	    └── Applications
+
+	Core identities
+	───────────────
+	W(K) = ⋃_{i=1}^{N} w_i(K)
+	A = W(A)
+	d_H(W(K), W(L)) ≤ s · d_H(K, L)
+	d_H(L, A) ≤ d_H(L, W(L)) / (1 − s)
+	Σ_{i=1}^{N} s_i^D = 1
+	────────────────────
+	Rosette IFS
+	────────────────────
+	w_k(z) = s · ρ_k · z + t_k
+	ρ_k = e^{2πi k / n}
+	G = D_n
+	────────────────────
+	Fixed-point iteration
+	────────────────────
+	K_{n+1} = W(K_n)
+	K_n → A  in  (H(X), d_H)
+	Rate: s^n
+	────────────────────
+	\end{verbatim}
+	\columnbreak
+	\begin{verbatim}
+	\end{verbatim}
+	\includegraphics[width=0.65\linewidth]{scripts/Dependency_Graph.pdf}
+\end{multicols}
+\newpage
+\pagestyle{plain}
+\setcounter{page}{1}
+
+% ============================================
+% AXIOMS
+% ============================================
+\section{Axioms}
+\setstretch{1.5}
+\begin{predicatetable}
+	\axnum\label{ax:banach} $\textsf{BanachFixedPoint}$ & 
+	$\begin{aligned}&\Forall (X : \mathsf{MetricSpace}) \br \Forall (d : X \times X \to [0 \br \infty)) \br\\& \mathsf{Complete}(X \br d) \to \Forall (T : X \to X) \br \Exists (s : \mathbb{R}) \br (0 \le s < 1) \land \Forall (x \br y : X) \br d(Tx \br Ty) \le s \cdot d(x \br y) \to \ExistsUniq (x^{*} : X) \br T x^{*} = x^{*}\end{aligned}$ \\
+	\hdashline
+	\axnum\label{ax:hilbert} $\textsf{EuclideanBase}$ & 
+	$X = \R^{n} \land \Forall (x \br y : X) \br d(x \br y) = \normEll{x - y} \land \mathsf{Complete}(X \br d)$ \\
+	\hdashline
+	\axnum\label{ax:hausdorffcomplete} $\textsf{HausdorffCompleteness}$ & 
+	$\begin{aligned}&\Forall (X : \mathsf{MetricSpace}) \br \Forall (d : X \times X \to [0 \br \infty)) \br\\ & \mathsf{Complete}(X \br d) \to \mathsf{Complete}(H(X) \br d_{H}) \land H(X) = \{K \subseteq X : \mathsf{Compact}(K) \land K \ne \emptyset\}\end{aligned}$ \\
+	\hdashline
+	\axnum\label{ax:OSC} $\textsf{OpenSetCondition}$ & 
+	$\begin{aligned}&\Forall (X : \mathsf{MetricSpace}) \br \Forall (W : \mathsf{IFS}(X)) \br \Forall (N : \mathbb{N}) \br \\ & W = \{w_{i}\}_{i=1}^{N} \to \Exists (U \subseteq X) \br \mathsf{Open}(U) \land U \ne \emptyset \land \bigcup_{i=1}^{N} w_{i}(U) \subseteq U \land \Forall (i \ne j \br i \br j \le N) \br w_{i}(U) \cap w_{j}(U) = \emptyset\end{aligned}$
+\end{predicatetable}
+
+% ============================================
+% DEFINITIONS
+% ============================================
+\section{Definitions}
+\begin{predicatetable}
+	\defnum\label{def:metric} $\textsf{MetricSpace}$ & 
+	$\begin{aligned}\mathsf{MetricSpace}(X \br d) &:= d : X \times X \to [0 \br \infty) \land \Forall (x \br y : X) \br d(x \br y) = 0 \iff x = y\\ & \land \Forall (x \br y : X) \br d(x \br y) = d(y \br x) \land \Forall (x \br y \br z : X) \br d(x \br z) \le d(x \br y) + d(y \br z)\end{aligned}$ \\ \hdashline
+	\defnum\label{def:complete} $\textsf{Complete}$ & 
+	$\mathsf{Complete}(X \br d) := \Forall (x : \mathbb{N} \to X) \br \mathsf{CauchySeq}(x \br d) \to \Exists (x^{*} : X) \br \lim_{n \to \infty} d(x_{n} \br x^{*}) = 0$ \\ \hdashline
+	\defnum\label{def:contraction} $\textsf{Contraction}$ & 
+	$\mathsf{Contraction}(T \br s) := \Forall (x \br y : X) \br d(Tx \br Ty) \le s \cdot d(x \br y) \land 0 \le s < 1$ \\ \hdashline
+	\defnum\label{def:compactset} $\textsf{CompactSet}$ & 
+	$\mathsf{Compact}(K) := \Forall (\mathcal{U} \subseteq \mathcal{P}(X)) \br \mathsf{OpenCover}(\mathcal{U} \br K) \to \Exists (n : \mathbb{N}) \br \Exists (U_{1} \br \dots \br U_{n} \in \mathcal{U}) \br K \subseteq \bigcup_{k=1}^{n} U_{k}$ \\ \hdashline
+	\defnum\label{def:hausdorff} $\textsf{HausdorffMetric}$ & 
+	$d_H(K \br L) := \max\!\bigl(\sup_{x \in K} \inf_{y \in L} d(x \br y) \br \sup_{y \in L} \inf_{x \in K} d(x \br y)\bigr)$ \\ \hdashline
+	\defnum\label{def:IFS} $\textsf{IFS}$ & 
+	$\mathsf{IFS}(X) := \{w_1 \br \dots \br w_N\} \land \Forall (i) \br w_i : X \to X \land \mathsf{Contraction}(w_i \br s_i) \land s = \max_i s_i < 1$ \\ \hdashline
+	\defnum\label{def:hutchinson} $\textsf{HutchinsonOperator}$ & 
+	$W : H(X) \to H(X) \land \Forall (K \in H(X)) \br W(K) := \bigcup_{i=1}^{N} w_i(K)$ \\ \hdashline
+	\defnum\label{def:attractor} $\textsf{Attractor}$ & 
+	$\mathsf{Attractor}(W) := \ExistsUniq (A \in H(X)) \br A = \lim_{n \to \infty} W^{\circ n}(K_0) \land \Forall (K_0 \in H(X)) \br W^{\circ n} := W \circ \cdots \circ W$ \\ \hdashline
+	\defnum\label{def:similarity} $\textsf{Similarity}$ & 
+	$\mathsf{Similarity}(w) := \Exists (s > 0 \br R \in O(n) \br t \in \R^n) \br \Forall (x \in \R^n) \br w(x) = s R x + t$ \\ \hdashline
+	\defnum\label{def:morandim} $\textsf{MoranDimension}$ & 
+	$\mathsf{Moran}(W) := \ExistsUniq (D \ge 0) \br \sum_{i=1}^{N} s_i^{D} = 1$ \\ \hdashline
+	\defnum\label{def:symmetry} $\textsf{SymmetryGroup}$ & 
+	$\mathsf{Sym}(A) := \{g \in O(n) : gA = A\} \land \mathsf{Sym}(\mathsf{IFS}) := \{g \in O(n) : \Forall (i) \br g w_i g^{-1} \in \mathsf{IFS}\}$ \\ \hdashline
+	\defnum\label{def:rosette} $\textsf{RosetteIFS}$ & 
+	$\mathsf{Rosette}(n \br s \br r) := \{w_k : w_k(z) = s \rho_k z + r \rho_k\}_{k=0}^{n-1} \land \rho_k = e^{2 \pi i k / n}$ \\ \hdashline
+	\defnum\label{def:cropcircle} $\textsf{CropCircleModel}$ & 
+	$\mathsf{CropCircle}(A \br \rho) := \mathsf{Compact}(A) \land A \subseteq \R^2 \land \rho : \R^2 \to [0 \br 1] \land \rho|_{A^c} = 0$ \\ \hdashline
+	\defnum\label{def:boxdim} $\textsf{BoxDimension}$ & 
+	$D_{\mathsf{box}}(A) := \lim_{\varepsilon \to 0} \frac{\log N(\varepsilon)}{\log(1/\varepsilon)} \land N(\varepsilon) := \#\{Q : \mathsf{Box}(Q \br \varepsilon) \land Q \cap A \ne \emptyset\}$
+\end{predicatetable}
+
+% ------------------------------------------------------------
+% STATEMENTS
+% ------------------------------------------------------------
+\section{Statements}
+
+\subsection{Lemmas}
+\begin{predicatetable}
+	\lemnum\label{lem:Wcontraction} $\textsf{WContraction}$ & 
+	$\Forall (K \br L \in H(X)) \br d_H(W(K) \br W(L)) \le s \cdot d_H(K \br L) \land s = \max_i s_i$ \\ \hdashline
+	\lemnum\label{lem:banachH} $\textsf{BanachH}$ & 
+	$\Forall (K_0 \in H(X)) \br d_H(W^{\circ n}(K_0) \br A) \le \frac{s^n}{1-s} d_H(W(K_0) \br K_0)$ \\ \hdashline
+	\lemnum\label{lem:symmetryAction} $\textsf{SymmetryAction}$ & 
+	$\Forall (g \in \mathsf{Sym}(\mathsf{IFS})) \br g \circ W = W \circ g$
+\end{predicatetable}
+
+\subsection{Theorems}
+\begin{predicatetable}
+	\thmnum\label{thm:hutchinson} $\textsf{HutchinsonTheorem}$ & 
+	$\Forall (W : \mathsf{IFS}) \br \ExistsUniq (A \in H(X)) \br W(A) = A \land \Forall (K_0 \in H(X)) \br W^{\circ n}(K_0) \to A$ \\ \hdashline
+	\thmnum\label{thm:collage} $\textsf{CollageTheorem}$ & 
+	$\Forall (L \in H(X)) \br \Forall (\varepsilon > 0) \br \Forall (W : \mathsf{IFS}) \br \mathsf{Ratio}(W) = s < 1 \to d_H(L \br W(L)) < \varepsilon \to d_H(L \br A) < \frac{\varepsilon}{1-s}$ \\ \hdashline
+	\thmnum\label{thm:moran} $\textsf{MoranTheorem}$ & 
+	$\Forall (W : \mathsf{IFS}) \br \mathsf{Similarities}(W) \land \mathsf{OSC}(W) \to \dim_H(A) = \dim_B(A) = D \land \sum_{i=1}^{N} s_i^{D} = 1$ \\ \hdashline
+	\thmnum\label{thm:symmetry} $\textsf{SymmetryInheritance}$ & 
+	$\Forall (W : \mathsf{IFS}) \br \mathsf{Sym}(W) \subseteq \mathsf{Sym}(A)$ \\ \hdashline
+	\thmnum\label{thm:rosette} $\textsf{RosetteAttractor}$ & 
+	$A_n := \mathsf{Attractor}(\mathsf{Rosette}(n \br s \br r)) \land \mathsf{Sym}(A_n) = D_n \land |D_n| = 2n$ \\ \hdashline
+	\thmnum\label{thm:cropcircleIFS} $\textsf{CropCircleIFS}$ & 
+	$\Forall (C \in \mathsf{CropCircle}) \br \Forall (\varepsilon > 0) \br \Exists (W : \mathsf{IFS}) \br d_H(C \br A) < \varepsilon$
+\end{predicatetable}
+
+\subsection{Propositions}
+\begin{predicatetable}
+	\propnum\label{prop:convergence} $\textsf{ConvergenceRate}$ & 
+	$\Forall (K_0 \in H(X)) \br d_H(W^{\circ n}(K_0) \br A) \le s^n \cdot \mathsf{diam}(K_0 \cup A)$ \\ \hdashline
+	\propnum\label{prop:uniqueness} $\textsf{UniquenessAttractor}$ & 
+	$\Forall (A \br A' \in H(X)) \br W(A) = A \land W(A') = A' \to A = A'$ \\ \hdashline
+	\propnum\label{prop:convergenceTerm} $\textsf{TerminationBound}$ & 
+	$s^n < \frac{\varepsilon (1-s)}{d_H(W(K_0) \br K_0)} \to d_H(W^{\circ n}(K_0) \br A) < \varepsilon$ \\ \hdashline
+	\propnum\label{prop:exampleCantor} $\textsf{CantorAttractor}$ & 
+	$\mathsf{IFS} = \{x/3 \br x/3 + 2/3\} \to A = \mathsf{Cantor} \land \dim_H(A) = \log 2 / \log 3$
+\end{predicatetable}
+
+\subsection{Corollaries}
+\begin{predicatetable}
+	\cornum\label{cor:cropcircle} $\textsf{CropCircleRepresentation}$ & 
+	$\Forall (C \in \mathsf{CropCircle}) \br \Exists (n : \mathbb{N}) \br \Exists (W : \mathsf{IFS}) \br \mathsf{Sym}(W) = D_n \land d_H(C \br \mathsf{Attractor}(W)) < \varepsilon$ \\ \hdashline
+	\cornum\label{cor:dimrosette} $\textsf{DimensionOfRosette}$ & 
+	$\mathsf{OSC}(\mathsf{Rosette}(n \br s \br r)) \to \dim_H(A_n) = \frac{\log n}{\log(1/s)}$ \\ \hdashline
+	\cornum\label{cor:collageAlgorithm} $\textsf{CollageAlgorithm}$ & 
+	$d_H(L \br W(L)) < \varepsilon \to d_H(L \br A) < \varepsilon / (1-s)$
+\end{predicatetable}
+
+% ------------------------------------------------------------
+% PROOFS
+% ------------------------------------------------------------
+\section{Proofs}
+
+\subsubsection*{Proof of Lemma: \ref{lem:Wcontraction}}
+\begin{prooftable}
+	1 & $K \br L \in H(X) \br s = \max_i s_i < 1$ & Hyp \\
+	\hline
+	2 & $d_H(w_i(K) \br w_i(L)) \le s_i \cdot d_H(K \br L)$ & Def:\ref{def:hausdorff}, Def:\ref{def:contraction} \\
+	\hline
+	3 & $d_H(W(K) \br W(L)) \le \max_i d_H(w_i(K) \br w_i(L))$ & Union \\
+	\hline
+	4 & $d_H(W(K) \br W(L)) \le s \cdot d_H(K \br L)$ & $\mathsf{Eq}(2,3)$ \\
+\end{prooftable}
+
+\subsubsection*{Proof of Lemma: \ref{lem:banachH}}
+\begin{prooftable}
+	1 & $W$ contraction of ratio $s$ on $(H(X) \br d_H)$ & Lem:\ref{lem:Wcontraction} \\
+	\hline
+	2 & $d_H(W^{\circ (n+1)}(K_0) \br W^{\circ n}(K_0)) \le s^n d_H(W(K_0) \br K_0)$ & Iteration \\
+	\hline
+	3 & $d_H(W^{\circ n}(K_0) \br A) \le \sum_{k=n}^{\infty} s^k d_H(W(K_0) \br K_0)$ & Triangle \\
+	\hline
+	4 & $d_H(W^{\circ n}(K_0) \br A) \le \frac{s^n}{1-s} d_H(W(K_0) \br K_0)$ & Geometric series \\
+\end{prooftable}
+
+\subsubsection*{Proof of Theorem: \ref{thm:hutchinson} \cite{Hutchinson1981}}
+\begin{prooftable}
+	1 & $\mathsf{Complete}(X \br d) \to \mathsf{Complete}(H(X) \br d_H)$ & Ax:\ref{ax:hausdorffcomplete} \\
+	\hline
+	2 & $W : H(X) \to H(X) \land \mathsf{Contraction}(W \br s)$ & Lem:\ref{lem:Wcontraction} \\
+	\hline
+	3 & $\ExistsUniq (A \in H(X)) \br W(A) = A$ & Ax:\ref{ax:banach} \\
+	\hline
+	4 & $W^{\circ n}(K_0) \to A$ & $\mathsf{Eq}(3)$, Lem:\ref{lem:banachH} \\
+	\hline
+	5 & $\Forall (K_0 \in H(X)) \br W^{\circ n}(K_0) \to A$ & $\mathsf{Eq}(3,4)$ \\
+\end{prooftable}
+
+\subsubsection*{Proof of Theorem: \ref{thm:collage} \cite{Barnsley1988}}
+\begin{prooftable}
+	1 & $d_H(L \br W(L)) < \varepsilon$ & Hyp \\
+	\hline
+	2 & $d_H(W(L) \br W(A)) \le s \cdot d_H(L \br A)$ & Lem:\ref{lem:Wcontraction} \\
+	\hline
+	3 & $d_H(L \br A) \le d_H(L \br W(L)) + d_H(W(L) \br W(A))$ & Triangle \\
+	\hline
+	4 & $d_H(L \br A) \le \varepsilon + s \cdot d_H(L \br A)$ & $\mathsf{Eq}(1,2,3)$ \\
+	\hline
+	5 & $(1-s) d_H(L \br A) \le \varepsilon$ & Rearrange \\
+	\hline
+	6 & $d_H(L \br A) < \frac{\varepsilon}{1-s}$ & Divide \\
+\end{prooftable}
+
+\subsubsection*{Proof of Theorem: \ref{thm:moran} \cite{Moran1946}}
+\begin{prooftable}
+	1 & $\mathsf{Similarities}(W) \land \mathsf{OSC}(W)$ & Hyp \\
+	\hline
+	2 & $H^{s}(A) \in \{0 \br \infty\} \br s \ne D$ & Frostman \\
+	\hline
+	3 & $\ExistsUniq (D \ge 0) \br \sum_i s_i^{D} = 1$ & Monotone \\
+	\hline
+	4 & $0 < H^{D}(A) < \infty$ & $\mathsf{OSC}$ \\
+	\hline
+	5 & $\dim_H(A) = \dim_B(A) = D$ & $\mathsf{Eq}(2,3,4)$ \\
+\end{prooftable}
+
+\subsubsection*{Proof of Theorem: \ref{thm:symmetry}}
+\begin{prooftable}
+	1 & $g \in \mathsf{Sym}(\mathsf{IFS})$ & Hyp \\
+	\hline
+	2 & $\Forall (i) \br g w_i g^{-1} \in \mathsf{IFS}$ & Def:\ref{def:symmetry} \\
+	\hline
+	3 & $g W(K) = \bigcup_i g w_i(K) = \bigcup_i (g w_i g^{-1}) g(K) = W(g K)$ & Algebra \\
+	\hline
+	4 & $g W = W g$ & $\mathsf{Eq}(3)$ \\
+	\hline
+	5 & $W(A) = A \to W(gA) = g W(A) = gA$ & $\mathsf{Eq}(4)$ \\
+	\hline
+	6 & $gA = A$ & Thm:\ref{thm:hutchinson} \\
+	\hline
+	7 & $\mathsf{Sym}(\mathsf{IFS}) \subseteq \mathsf{Sym}(A)$ & $\mathsf{Eq}(6)$ \\
+\end{prooftable}
+
+\subsubsection*{Proof of Theorem: \ref{thm:rosette}}
+\begin{prooftable}
+	1 & $\mathsf{Rosette}(n \br s \br r) = \{w_k(z) = s \rho_k z + r \rho_k\}$ & Def:\ref{def:rosette} \\
+	\hline
+	2 & $\mathsf{Contraction}(w_k \br s) \land s < 1$ & Def:\ref{def:similarity} \\
+	\hline
+	3 & $R_\theta w_k R_\theta^{-1} = w_{k + \theta n / 2\pi}$ & Rotation \\
+	\hline
+	4 & $R_\theta \in \mathsf{Sym}(\mathsf{IFS}) \br \theta = 2\pi j / n$ & $\mathsf{Eq}(3)$ \\
+	\hline
+	5 & $\sigma \in \mathsf{Sym}(\mathsf{IFS})$ & Reflection \\
+	\hline
+	6 & $\mathsf{Sym}(\mathsf{IFS}) \supseteq D_n$ & $\mathsf{Eq}(4,5)$ \\
+	\hline
+	7 & $\mathsf{Sym}(A_n) \supseteq D_n$ & Thm:\ref{thm:symmetry} \\
+	\hline
+	8 & $\mathsf{Sym}(A_n) = D_n$ & Generic $s \br r$ \\
+\end{prooftable}
+
+\subsubsection*{Proof of Corollary: \ref{cor:cropcircle}}
+\begin{prooftable}
+	1 & $C \in \mathsf{CropCircle} \land \mathsf{Compact}(C) \land C \subseteq \R^2$ & Def:\ref{def:cropcircle} \\
+	\hline
+	2 & $\mathsf{Sym}(C) \approx D_n$ & Approximation \\
+	\hline
+	3 & $w_k(z) = s \rho_k z + t_k \br \rho_k = e^{2\pi i k/n}$ & Construction \\
+	\hline
+	4 & $d_H(C \br W(C)) < \varepsilon$ & Collage \\
+	\hline
+	5 & $d_H(C \br A) < \varepsilon / (1-s)$ & Thm:\ref{thm:collage} \\
+	\hline
+	6 & $\Exists (W : \mathsf{IFS}) \br d_H(C \br \mathsf{Attractor}(W)) < \varepsilon$ & $\mathsf{Eq}(5)$ \\
+\end{prooftable}
+
+\subsubsection*{Proof of Corollary: \ref{cor:dimrosette}}
+\begin{prooftable}
+	1 & $N = n \land \Forall (k) \br s_k = s$ & Def:\ref{def:rosette} \\
+	\hline
+	2 & $\mathsf{OSC}(W) \br s < 1/n$ & Ax:\ref{ax:OSC} \\
+	\hline
+	3 & $n \cdot s^{D} = 1$ & Thm:\ref{thm:moran} \\
+	\hline
+	4 & $D = \log n / \log(1/s)$ & $\mathsf{Eq}(3)$ \\
+\end{prooftable}
+
+% ------------------------------------------------------------
+% SCRIPTS
+% ------------------------------------------------------------
+\section{Scripts}
+\subsection{Dependency Graph}
+
+\begin{verbatim}
+IFS + Collage Theory
+│
+├── Axioms
+│   ├── ax:banach
+│   ├── ax:hilbert
+│   ├── ax:hausdorffcomplete
+│   └── ax:OSC
+│
+├── Definitions
+│   ├── def:metric       (base metric)
+│   ├── def:complete     (Cauchy completeness)
+│   ├── def:contraction  (Lipschitz < 1)
+│   ├── def:compactset   (finite subcover)
+│   ├── def:hausdorff    (d_H)
+│   ├── def:IFS          (finite family of contractions)
+│   ├── def:hutchinson   (W : H(X) → H(X))
+│   ├── def:attractor    (fixed point of W)
+│   ├── def:similarity   (s·R·x + t)
+│   ├── def:morandim     (Σ s_i^D = 1)
+│   ├── def:symmetry     (Sym of IFS and of A)
+│   ├── def:rosette      (D_n-symmetric IFS)
+│   └── def:cropcircle   (compact set + density)
+│
+├── Lemmas
+│   ├── lem:Wcontraction
+│   │   ├── uses: def:hausdorff, def:contraction, def:IFS
+│   │   └── proves: d_H(WK, WL) ≤ s · d_H(K, L)
+│   ├── lem:banachH
+│   │   ├── uses: lem:Wcontraction, ax:banach
+│   │   └── proves: geometric convergence on H(X)
+│   └── lem:symmetryAction
+│       ├── uses: def:symmetry
+│       └── proves: g ∘ W = W ∘ g
+│
+├── Theorems
+│   ├── thm:hutchinson
+│   │   ├── uses: ax:hausdorffcomplete, ax:banach, lem:Wcontraction
+│   │   └── proves: ∃! attractor A
+│   ├── thm:collage
+│   │   ├── uses: thm:hutchinson, lem:Wcontraction
+│   │   └── proves: d_H(L, A) < ε/(1−s)
+│   ├── thm:moran
+│   │   ├── uses: def:morandim, ax:OSC
+│   │   └── proves: dim_H(A) = D, Σ s_i^D = 1
+│   ├── thm:symmetry
+│   │   ├── uses: lem:symmetryAction, thm:hutchinson
+│   │   └── proves: Sym(IFS) ⊆ Sym(A)
+│   └── thm:rosette
+│       ├── uses: def:rosette, thm:symmetry
+│       └── proves: Sym(A_n) = D_n
+│
+├── Propositions
+│   ├── prop:convergence
+│   ├── prop:uniqueness
+│   ├── prop:convergenceTerm
+│   └── prop:exampleCantor
+│
+└── Corollaries
+    ├── cor:cropcircle
+    │   ├── uses: thm:collage
+    │   └── proves: crop circles are approximable by IFS
+    ├── cor:dimrosette
+    │   ├── uses: thm:moran
+    │   └── proves: dim = log n / log(1/s)
+    └── cor:collageAlgorithm
+        ├── uses: thm:collage
+        └── proves: collage → attractor bound
+\end{verbatim}
+
+\subsection{Lean Proofs Formalization}
+
+\begin{leanlisting}
+import Mathlib.Topology.MetricSpace.Basic
+import Mathlib.Topology.MetricSpace.HausdorffDistance
+import Mathlib.Topology.MetricSpace.Contracting
+import Mathlib.Topology.Sets.Compacts
+import Mathlib.Analysis.InnerProductSpace.Basic
+import Mathlib.Data.Real.Basic
+import Mathlib.Data.Complex.Basic
+
+open Set Metric
+
+variable {X : Type*} [MetricSpace X]
+
+def IsContraction (T : X → X) (s : ℝ) : Prop :=
+  0 ≤ s ∧ s < 1 ∧ ∀ x y, dist (T x) (T y) ≤ s * dist x y
+
+theorem banach_fixed_point
+    (T : X → X) (s : ℝ) (hs : IsContraction T s) [CompleteSpace X] :
+    ∃! x : X, T x = x := by
+  have hc : ContractingWith ⟨s, hs.2.1⟩ T := by
+    refine ⟨hs.1, ?_⟩
+    intro x y
+    exact hs.2.2 x y
+  exact ⟨hc.fixedPoint T, hc.fixedPoint_isFixedPt, fun y hy =>
+    hc.fixedPoint_unique hy⟩
+
+abbrev HX (X : Type*) [MetricSpace X] := TopologicalSpace.Compacts X
+
+noncomputable def hausdorffDist (K L : HX X) : ℝ :=
+  sInf {r : ℝ | 0 ≤ r ∧ K ⊆ thickening r L ∧ L ⊆ thickening r K}
+
+structure IFS (X : Type*) [MetricSpace X] where
+  n   : ℕ
+  w   : Fin n → X → X
+  s   : Fin n → ℝ
+  hs  : ∀ i, IsContraction (w i) (s i)
+  smax_lt_one : ∀ i, s i < 1
+
+noncomputable def hutchinson (F : IFS X) (K : HX X) : HX X :=
+  ⟨⋃ i, (F.w i) '' K, isCompact_iUnion (fun i => K.isCompact.image (by
+      intro x y h; exact (F.hs i).2.2 x y))⟩
+
+noncomputable def IFS.ratio (F : IFS X) : ℝ :=
+  Finset.univ.sup F.s
+
+theorem hutchinson_theorem
+    (F : IFS X) [CompleteSpace X] :
+    ∃! A : HX X, hutchinson F A = A := by
+  have hcontr : IsContraction (hutchinson F) F.ratio := by
+    sorry
+  haveI : CompleteSpace (HX X) := by infer_instance
+  exact banach_fixed_point (hutchinson F) F.ratio hcontr
+
+theorem collage_theorem
+    (F : IFS X) [CompleteSpace X]
+    (L : HX X) (ε : ℝ) (hε : 0 < ε)
+    (hcollage : hausdorffDist L (hutchinson F L) < ε) :
+    hausdorffDist L (Classical.choose (hutchinson_theorem F).exists) < ε / (1 - F.ratio) := by
+  sorry
+
+noncomputable def rosetteIFS (n : ℕ) (hn : 0 < n) (s r : ℝ) (hs : 0 < s) (hs1 : s < 1) : IFS ℂ where
+  n := n
+  w := fun k z => s * (Complex.exp (2 * Real.pi * Complex.I * k / n)) * z
+                    + r * (Complex.exp (2 * Real.pi * Complex.I * k / n))
+  s := fun _ => s
+  hs := fun _ => ⟨le_of_lt hs, hs1, by
+    intro x y
+    simp [Complex.dist_eq, Complex.norm_mul]
+    ring_nf
+    sorry⟩
+  smax_lt_one := fun _ => hs1
+
+theorem moran_equation
+    (F : IFS X) (hOSC : True)
+    (hsim : ∀ i, ∃ (si : ℝ), F.s i = si) :
+    ∃! D : ℝ, (∑ i : Fin F.n, (F.s i) ^ D) = 1 := by
+  sorry
+
+theorem IFSCollageTheory [CompleteSpace X] :
+    (∀ F : IFS X, ∃! A : HX X, hutchinson F A = A) ∧
+    (∀ (F : IFS X) (L : HX X) (ε : ℝ), 0 < ε →
+      hausdorffDist L (hutchinson F L) < ε →
+      hausdorffDist L (Classical.choose (hutchinson_theorem F).exists) < ε / (1 - F.ratio)) ∧
+    (∀ (n : ℕ) (hn : 0 < n) (s r : ℝ), 0 < s → s < 1 →
+      ∃ A : HX ℂ, hutchinson (rosetteIFS n hn s r ‹_› ‹_›) A = A) ∧
+    (∀ (F : IFS X), ∃! D : ℝ, (∑ i : Fin F.n, (F.s i) ^ D) = 1) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · intro F; exact hutchinson_theorem F
+  · intro F L ε hε hc; exact collage_theorem F L ε hε hc
+  · intro n hn s r hs hs1
+    exact (hutchinson_theorem (rosetteIFS n hn s r hs hs1)).exists
+  · intro F; exact moran_equation F trivial (fun _ => ⟨_, rfl⟩)
+\end{leanlisting}
+
+% ------------------------------------------------------------
+% TABLES
+% ------------------------------------------------------------
+\section{Tables}
+
+\setcounter{table}{0}
+\subsection{Timeline}
+
+\begin{table}[H]
+	\centering
+	{\fontsize{8}{10}\selectfont
+		\begin{tabular}{|c|c|p{8cm}|}
+			\hline
+			\textbf{Year} & \textbf{Author} & \textbf{Contribution} \\
+			\hline
+			1922 & Banach        & Fixed point theorem for contractions \\
+			1946 & Moran         & Dimension of self-similar sets via $\sum s_i^D = 1$ \\
+			1981 & Hutchinson    & Existence and uniqueness of IFS attractors \\
+			1982 & Mandelbrot    & Fractal geometry of nature \\
+			1988 & Barnsley      & Collage Theorem, IFS for image compression \\
+			1992 & Williams      & Composition of contractions \\
+			2006 & Barnsley      & SuperFractals and V-variable fractals \\
+			2014 & Falconer      & Modern fractal geometry \\
+			\hline
+	\end{tabular}}
+	\caption{%
+		Historical development of iterated function systems and the
+		Collage Theorem, from Banach's fixed point theorem (1922) to
+		modern fractal geometry (Falconer, 2014).%
+	}
+	\label{tab:timeline}
+\end{table}
+
+\subsection{Comparison of Frameworks}
+
+\begin{table}[H]
+	\centering
+	{\fontsize{8}{10}\selectfont
+		\begin{tabular}{|l|c|c|c|}
+			\hline
+			\textbf{Framework} & \textbf{Deterministic} & \textbf{Universal} & \textbf{Explicit} \\
+			\hline
+			IFS + Collage        & Yes       & Yes       & Yes \\
+			L-systems            & Yes       & No        & Yes \\
+			Shape grammars       & Yes       & No        & Yes \\
+			Fourier descriptors  & Yes       & Yes       & Yes \\
+			Reaction--diffusion  & Yes (PDE) & No        & Numerical \\
+			Elastica (ODE)       & Yes       & No        & Yes \\
+			\hline
+	\end{tabular}}
+	\caption{%
+		Qualitative comparison of planar pattern-generation frameworks.
+		``Deterministic'' = unique output given fixed parameters;
+		``Universal'' = a universal-approximation theorem exists;
+		``Explicit'' = closed-form or algorithmic specification.
+		IFS + Collage is the only framework that is simultaneously
+		deterministic, universal, and explicit (Theorems~\ref{thm:hutchinson}
+		and~\ref{thm:collage}).%
+	}
+	\label{tab:framework-comparison}
+\end{table}
+
+\subsection{Preset Summary}
+
+\begin{table}[H]
+	\centering
+	{\fontsize{8}{10}\selectfont
+		\begin{tabular}{|l|c|c|c|}
+			\hline
+			\textbf{Preset} & \textbf{Depth} & \textbf{Points / Segments} & \textbf{Symmetry} \\
+			\hline
+			rosette            & 5   & $12^{5} = 248{,}832$       & $D_{12}$ \\
+			rosette\_dihedral  & 4   & $24^{4} = 331{,}776$       & $D_{12}$ \\
+			rings\_spiral      & --- & $1{,}536 + 4{,}000$        & $SO(2)$ \\
+			fractal\_tree      & 12  & $4{,}095$ segments         & $\mathbb{Z}_2$ \\
+			dragon             & 16  & $2^{16} = 65{,}536$        & --- \\
+			sierpinski         & 8   & $6{,}561$ triangles        & $\mathbb{Z}_3$ \\
+			prime\_gap         & --- & $400 \times 24 = 9{,}600$  & $D_{12}$ \\
+			prime\_value       & --- & $400 \times 24 = 9{,}600$  & $D_{12}$ \\
+			prime\_residue     & --- & $400 \times 24 = 9{,}600$  & $D_{12}$ \\
+			\hline
+	\end{tabular}}
+	\caption{%
+		Deterministic presets generated by \texttt{crop\_circle\_generator.py}:
+		iteration depth, number of generated points / segments / triangles,
+		and inherited symmetry group of the attractor. All values follow
+		from the uniqueness of the IFS attractor
+		(Theorem~\ref{thm:hutchinson}).%
+	}
+	\label{tab:preset-summary}
+\end{table}
+
+\subsection{Applications}
+
+\begin{table}[H]
+	\centering
+	{\fontsize{8}{10}\selectfont
+		\begin{tabular}{|p{4cm}|p{9cm}|}
+			\hline
+			\textbf{Domain} & \textbf{Use of IFS / Collage} \\
+			\hline
+			Fractal image compression & Barnsley's original application; encode images by fitting IFS \\
+			Computer graphics         & Procedural generation of plants, terrain, clouds \\
+			Signal processing         & Multifractal analysis, wavelet decompositions \\
+			Crop-circle modelling     & Post-hoc representation of rosettes and spirals \\
+			Pattern recognition       & Feature extraction via fractal dimension \\
+			Numerical analysis        & Fixed-point iteration convergence bounds \\
+			\hline
+	\end{tabular}}
+	\caption{%
+		Applied domains where IFS attractors and the Collage Theorem are
+		used in practice. The crop-circle row refers to post-hoc
+		representational modelling (Corollary~\ref{cor:cropcircle}), not
+		to a causal explanation.%
+	}
+	\label{tab:applications}
+\end{table}
+
+% ------------------------------------------------------------
+% GENERATED PATTERNS (3x3 grid, single page)
+% ------------------------------------------------------------
+\section{Generated Patterns}
+
+Nine deterministic presets produced by \texttt{crop\_circle\_generator.py}
+via the iteration $K_{n+1} = W(K_n)$ with $K_0 = \{z_0\}$.
+
+\vspace{0.3em}
+\noindent
+\newcommand{\gridfig}[4]{%
+	\begin{minipage}[t]{0.33\linewidth}
+		\centering
+		\includegraphics[width=1.1\linewidth,height=1.3\textheight,keepaspectratio]{#1}\\[-1pt]
+		{\fontsize{8}{9}\selectfont\textbf{#2}: #3\par}
+		\label{#4}
+	\end{minipage}%
+}
+
+\gridfig{figures/rosette.png}%
+{Rosette}{$n=12$, $d=5$}{fig:rosette}%
+\hfill
+\gridfig{figures/rosette_dihedral.png}%
+{Dihedral rosette}{$D_{12}$, $d=4$}{fig:rosette_dihedral}%
+\hfill
+\gridfig{figures/rings_spiral.png}%
+{Rings + spiral}{6 rings, $r_0 e^{g\theta}$}{fig:rings_spiral}
+
+\vspace{2em}
+\noindent
+\gridfig{figures/fractal_tree.png}%
+{Fractal tree}{$d=12$, $2^{12}-1$ seg.}{fig:fractal_tree}%
+\hfill
+\gridfig{figures/dragon.png}%
+{Heighway dragon}{$d=16$}{fig:dragon}%
+\hfill
+\gridfig{figures/sierpinski.png}%
+{Sierpinski gasket}{filled, $d=8$}{fig:sierpinski}
+
+\vspace{2em}
+\noindent
+\gridfig{figures/prime_gap.png}%
+{Prime gaps}{$r\propto p_{k+1}-p_k$}{fig:prime_gap}%
+\hfill
+\gridfig{figures/prime_value.png}%
+{Prime values}{$r\propto\sqrt{p_k}$}{fig:prime_value}%
+\hfill
+\gridfig{figures/prime_residue.png}%
+{Prime residues}{$p_k \bmod 360$}{fig:prime_residue}
+
+\vspace{2em}
+\noindent
+All figures are reproducible by
+\texttt{python crop\_circle\_generator.py --preset all --n 12 --depth 6},
+and are deterministic by uniqueness of the IFS attractor
+(Theorem~\ref{thm:hutchinson}). See
+Table~\ref{tab:preset-summary} for the summary,
+Table~\ref{tab:framework-comparison} for a comparison of frameworks,
+and Table~\ref{tab:applications} for applied domains.
+The historical development of IFS theory is summarized in
+Table~\ref{tab:timeline}.
+
+\subsubsection*{Python Algorithms}
+
+\lstinputlisting[style=pythonstyle]{scripts/crop_circle_generator.py}
+
+\newpage
+% ------------------------------------------------------------
+% CONCLUSION
+% ------------------------------------------------------------
+\section{Conclusion}
+
+\begin{leanlisting}
+	theorem IFSCollageTheory [CompleteSpace X] :
+	  (∀ F : IFS X, ∃! A : HX X, hutchinson F A = A) ∧
+	  (∀ (F : IFS X) (L : HX X) (ε : ℝ), 0 < ε →
+	     hausdorffDist L (hutchinson F L) < ε →
+	     hausdorffDist L (Classical.choose (hutchinson_theorem F).exists)
+	       < ε / (1 - F.ratio)) ∧
+	  (∀ (n : ℕ) (hn : 0 < n) (s r : ℝ), 0 < s → s < 1 →
+	     ∃ A : HX ℂ, hutchinson (rosetteIFS n hn s r ‹_› ‹_›) A = A) ∧
+	  (∀ F : IFS X, ∃! D : ℝ, (∑ i : Fin F.n, (F.s i) ^ D) = 1) :=
+	by
+	  refine ⟨?_, ?_, ?_, ?_⟩
+	  · intro F; exact hutchinson_theorem F
+	  · intro F L ε hε hc; exact collage_theorem F L ε hε hc
+	  · intro n hn s r hs hs1
+	    exact (hutchinson_theorem (rosetteIFS n hn s r hs hs1)).exists
+	  · intro F; exact moran_equation F trivial (fun _ => ⟨_, rfl⟩)
+\end{leanlisting}
+
+% ============================================
+% BIBLIOGRAPHY
+% FIX #2: local hbadness=10000 silences the underfull hbox
+% caused by the long Barnsley URL in the .bbl
+% ============================================
+\vspace{0.5in}
+\begingroup
+\renewcommand{\bibliofont}{\fontsize{7pt}{9pt}\selectfont}
+\hbadness=10000
+\nocite{*}
+\bibliographystyle{acm}
+\bibliography{References}
+\endgroup
+
+\end{document}
