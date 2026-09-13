@@ -1,0 +1,187 @@
+digraph IFSCollageDependencies {
+	graph [bb="0,0,599,1369",
+		fontname=Helvetica,
+		rankdir=LR,
+		splines=polyline
+	];
+	node [color=black,
+		fontname=Helvetica,
+		label="\N",
+		penwidth=1,
+		shape=box,
+		style=filled
+	];
+	edge [color=black,
+		style=dashed
+	];
+	main_thm	 [fillcolor=lightblue,
+		height=0.5,
+		label="IFSCollageTheory (Main)",
+		pos="87.5,796.5",
+		width=2.4306];
+	module1	 [fillcolor=lightyellow,
+		height=1.1528,
+		label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td bgcolor="#FFD966"><b>Module 1: Foundations — Metric Spaces</b></td></tr>
+				<tr><td bgcolor="#FFB3B3">Axioms: ax:hilbert</td></tr>
+				<tr><td bgcolor="#B3FFB3">Definitions: def:metric, def:complete, def:compactset</td></tr>
+			</table>
+		>,
+		pos="417.5,1327.5",
+		shape=plaintext,
+		width=5.0417];
+	main_thm -> module1	 [label=uses,
+		lp="205.5,1224",
+		pos="e,269.53,1286 94.102,814.73 121.04,902.41 236,1276.5 236,1276.5 236,1276.5 245.39,1279.2 259.88,1283.2"];
+	module2	 [fillcolor=lightyellow,
+		height=1.5,
+		label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td bgcolor="#FFD966"><b>Module 2: Contractions &amp; Banach</b></td></tr>
+				<tr><td bgcolor="#FFB3B3">Axioms: ax:banach</td></tr>
+				<tr><td bgcolor="#B3FFB3">Definitions: def:contraction</td></tr>
+				<tr><td bgcolor="#B3B3FF">Theorems: banach_fixed_point</td></tr>
+			</table>
+		>,
+		pos="417.5,1213.5",
+		shape=plaintext,
+		width=3.625];
+	main_thm -> module2	 [label=uses,
+		lp="205.5,1114",
+		pos="e,286.76,1168.2 96.017,814.54 126.07,886.68 236,1150.5 236,1150.5 236,1150.5 253.35,1156.6 277.28,1164.9"];
+	module3	 [fillcolor=lightyellow,
+		height=1.1528,
+		label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td bgcolor="#FFD966"><b>Module 3: Hausdorff Metric on H(X)</b></td></tr>
+				<tr><td bgcolor="#FFB3B3">Axioms: ax:hausdorffcomplete</td></tr>
+				<tr><td bgcolor="#B3FFB3">Definitions: def:hausdorff</td></tr>
+			</table>
+		>,
+		pos="417.5,1099.5",
+		shape=plaintext,
+		width=3.7361];
+	main_thm -> module3	 [label=uses,
+		lp="205.5,1025",
+		pos="e,282.95,1062.5 99.108,814.7 132.93,872.71 236,1049.5 236,1049.5 236,1049.5 251.42,1053.8 273.24,1059.8"];
+	module4	 [fillcolor=lightyellow,
+		height=1.1528,
+		label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td bgcolor="#FFD966"><b>Module 4: IFS &amp; Hutchinson Operator</b></td></tr>
+				<tr><td bgcolor="#B3FFB3">Definitions: def:IFS, def:hutchinson, def:similarity</td></tr>
+				<tr><td bgcolor="#D9B3FF">Lemmas: lem:Wcontraction</td></tr>
+			</table>
+		>,
+		pos="417.5,998.5",
+		shape=plaintext,
+		width=4.6528];
+	main_thm -> module4	 [label=uses,
+		lp="205.5,937",
+		pos="e,266.62,956.98 106,814.53 145.07,854.8 236,948.5 236,948.5 236,948.5 244.01,950.72 256.65,954.22"];
+	module5	 [fillcolor=lightyellow,
+		height=1.8472,
+		label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td bgcolor="#FFD966"><b>Module 5: Hutchinson Theorem</b></td></tr>
+				<tr><td bgcolor="#B3FFB3">Definitions: def:attractor</td></tr>
+				<tr><td bgcolor="#D9B3FF">Lemmas: lem:Wcontraction, lem:banachH</td></tr>
+				<tr><td bgcolor="#B3B3FF">Theorems: thm:hutchinson</td></tr>
+				<tr><td bgcolor="#E0E0E0">Propositions: prop:uniqueness, prop:convergence</td></tr>
+			</table>
+		>,
+		pos="417.5,872.5",
+		shape=plaintext,
+		width=4.75];
+	main_thm -> module5	 [label=uses,
+		lp="205.5,832",
+		pos="e,246.26,833.05 166.23,814.51 187.64,819.47 211.79,825.07 236.42,830.77"];
+	module6	 [fillcolor=lightyellow,
+		height=1.8472,
+		label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td bgcolor="#FFD966"><b>Module 6: Collage Theorem</b></td></tr>
+				<tr><td bgcolor="#D9B3FF">Lemmas: lem:Wcontraction</td></tr>
+				<tr><td bgcolor="#B3B3FF">Theorems: thm:collage</td></tr>
+				<tr><td bgcolor="#FFFFB3">Corollaries: cor:collageAlgorithm</td></tr>
+				<tr><td bgcolor="#E0E0E0">Propositions: prop:convergenceTerm</td></tr>
+			</table>
+		>,
+		pos="417.5,721.5",
+		shape=plaintext,
+		width=3.6528];
+	main_thm -> module6	 [label=uses,
+		lp="205.5,779",
+		pos="e,285.72,751.4 167.48,778.44 200.02,771 238.73,762.15 275.82,753.67"];
+	module7	 [fillcolor=lightyellow,
+		height=2.1944,
+		label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td bgcolor="#FFD966"><b>Module 7: Moran Equation &amp; Dimension</b></td></tr>
+				<tr><td bgcolor="#FFB3B3">Axioms: ax:OSC</td></tr>
+				<tr><td bgcolor="#B3FFB3">Definitions: def:morandim, def:boxdim</td></tr>
+				<tr><td bgcolor="#B3B3FF">Theorems: thm:moran</td></tr>
+				<tr><td bgcolor="#FFFFB3">Corollaries: cor:dimrosette</td></tr>
+				<tr><td bgcolor="#E0E0E0">Propositions: prop:exampleCantor</td></tr>
+			</table>
+		>,
+		pos="417.5,557.5",
+		shape=plaintext,
+		width=4.2083];
+	main_thm -> module7	 [label=uses,
+		lp="205.5,694",
+		pos="e,265.81,631.8 106.29,778.41 145.52,738.51 236,646.5 236,646.5 236,646.5 244.07,642.52 256.8,636.24"];
+	module8	 [fillcolor=lightyellow,
+		height=1.5,
+		label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td bgcolor="#FFD966"><b>Module 8: Symmetry Inheritance</b></td></tr>
+				<tr><td bgcolor="#B3FFB3">Definitions: def:symmetry, def:rosette</td></tr>
+				<tr><td bgcolor="#D9B3FF">Lemmas: lem:symmetryAction</td></tr>
+				<tr><td bgcolor="#B3B3FF">Theorems: thm:symmetry</td></tr>
+			</table>
+		>,
+		pos="417.5,406.5",
+		shape=plaintext,
+		width=3.6667];
+	main_thm -> module8	 [label=uses,
+		lp="205.5,564",
+		pos="e,285.32,452.28 96.64,778.45 127.56,709.9 236,469.5 236,469.5 236,469.5 252.62,463.7 275.78,455.62"];
+	module9	 [fillcolor=lightyellow,
+		height=1.8472,
+		label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td bgcolor="#FFD966"><b>Module 9: Rosette Attractor (D<sub>n</sub>)</b></td></tr>
+				<tr><td bgcolor="#B3FFB3">Definitions: def:rosette, def:similarity</td></tr>
+				<tr><td bgcolor="#D9B3FF">Lemmas: lem:symmetryAction</td></tr>
+				<tr><td bgcolor="#B3B3FF">Theorems: thm:rosette</td></tr>
+				<tr><td bgcolor="#FFFFB3">Corollaries: cor:dimrosette</td></tr>
+			</table>
+		>,
+		pos="417.5,267.5",
+		shape=plaintext,
+		width=3.5556];
+	main_thm -> module9	 [label=uses,
+		lp="205.5,472",
+		pos="e,289.18,321.11 94.373,778.46 121.81,694.21 236,343.5 236,343.5 236,343.5 254.49,335.71 279.64,325.13"];
+	module10	 [fillcolor=lightyellow,
+		height=2.5417,
+		label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td bgcolor="#FFD966"><b>Module 10: Crop-Circle Representation</b></td></tr>
+				<tr><td bgcolor="#FFB3B3">Axioms: ax:collage</td></tr>
+				<tr><td bgcolor="#B3FFB3">Definitions: def:cropcircle</td></tr>
+				<tr><td bgcolor="#D9B3FF">Lemmas: lem:anyCompactIFS</td></tr>
+				<tr><td bgcolor="#B3B3FF">Theorems: thm:cropcircleIFS</td></tr>
+				<tr><td bgcolor="#FFFFB3">Corollaries: cor:cropcircle</td></tr>
+				<tr><td bgcolor="#E0E0E0">Propositions: prop:vacuousIFS</td></tr>
+			</table>
+		>,
+		pos="417.5,91.5",
+		shape=plaintext,
+		width=4.125];
+	main_thm -> module10	 [label=uses,
+		lp="205.5,362",
+		pos="e,268.69,173.39 92.914,778.39 117.46,677.73 236,191.5 236,191.5 236,191.5 245.3,186.35 259.67,178.39"];
+}
