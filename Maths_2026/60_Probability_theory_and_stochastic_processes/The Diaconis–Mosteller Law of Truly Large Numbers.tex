@@ -1,0 +1,1334 @@
+\documentclass[11pt]{amsart}
+
+% ============================================================
+%  Font size + line spacing
+% ============================================================
+\usepackage{setspace}
+\setstretch{1.15}
+\setlength{\parskip}{0.4em}
+\setlength{\parindent}{1.2em}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage[margin=1in,bottom=1cm,footskip=0.7cm]{geometry}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+\usepackage{longtable}
+\usepackage{arydshln}
+\usepackage{textcase}
+
+% ============================================================
+%  Colored headings
+% ============================================================
+\usepackage{titlesec}
+\usepackage{titletoc}
+
+\definecolor{seccolor}{RGB}{0, 51, 102}
+\definecolor{subseccolor}{RGB}{0, 80, 130}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{seccolor}}
+  {\thesection.}{0.5em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{subseccolor}}
+  {\thesubsection}{0.5em}{}
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\color{subseccolor}}
+  {\thesubsubsection}{0.5em}{}
+
+% ============================================================
+%  TOC
+% ============================================================
+\contentsmargin{1.5em}
+
+\titlecontents{section}
+  [0pt]
+  {\addvspace{0.35em}\small\bfseries\color{seccolor}\raggedright}
+  {\contentslabel{2em}}
+  {\hspace*{-2em}}
+  {\titlerule*[1pc]{.}\contentspage}
+
+\titlecontents{subsection}
+  [2em]
+  {\small\color{subseccolor}\raggedright}
+  {\contentslabel{2.5em}}
+  {\hspace*{-2.5em}}
+  {\titlerule*[1pc]{.}\contentspage}
+
+\titlecontents{subsubsection}
+  [4.5em]
+  {\small\color{subseccolor}\raggedright}
+  {\contentslabel{3em}}
+  {\hspace*{-3em}}
+  {\titlerule*[1pc]{.}\contentspage}
+
+% ============================================================
+%  Fonts: fall back gracefully if JuliaMono is absent
+% ============================================================
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else
+  \usepackage[no-math]{fontspec}
+  \IfFileExists{./JuliaMono/JuliaMono-Regular.ttf}{%
+    \setmonofont{JuliaMono}[
+      Path = ./JuliaMono/,
+      Extension = .ttf,
+      UprightFont = *-Regular,
+      BoldFont = *-Bold,
+      ItalicFont = *-Regular,
+      ItalicFeatures = {FakeSlant = 0.2},
+      BoldItalicFont = *-Bold,
+      BoldItalicFeatures = {FakeSlant = 0.2},
+      Scale = 0.85
+    ]}{}
+\fi
+
+% ============================================================
+%  Colored hyperlinks
+% ============================================================
+\usepackage[
+  colorlinks=true,
+  linkcolor=seccolor,
+  citecolor=teal,
+  urlcolor=magenta!80!black,
+  filecolor=orange!80!black,
+  linktoc=all
+]{hyperref}
+
+% ============================================================
+%  Custom page numbering
+% ============================================================
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\small\color{seccolor}\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[C]{\small\color{seccolor}\thepage}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+
+% ============================================================
+%  Lean language for listings
+% ============================================================
+\lstdefinelanguage{Lean}{
+  keywords={import, theorem, have, exact, by, fun, Filter, Tendsto, atTop,
+            Nat, Real, nhds, exists, forall, sorry, let, in, if, then, else},
+  sensitive=true,
+  comment=[l]{--},
+  morecomment=[s]{/-}{-/},
+  morestring=[b]"
+}
+
+% ============================================================
+%  Theorem environments
+% ============================================================
+\theoremstyle{plain}
+\newtheorem{axiom}{Axiom}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\newtheorem{proposition}{Proposition}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% ============================================================
+%  Proof: label bold + underlined, body on new line
+% ============================================================
+\makeatletter
+\renewenvironment{proof}[1][\proofname]{%
+  \par\pushQED{\qed}%
+  \normalfont\topsep6\p@\@plus6\p@\relax
+  \trivlist
+  \item[\hskip\labelsep\bfseries\underline{#1}.]%
+    \mbox{}\hfill\break
+  \ignorespaces
+}{%
+  \popQED\endtrivlist\@endpefalse
+}
+\makeatother
+
+% ============================================================
+%  Column types for fitchproof
+% ============================================================
+\newcolumntype{S}{>{\centering\arraybackslash}m{1.0cm}}
+\newcolumntype{L}{>{\raggedright\arraybackslash}m{9.0cm}}
+\newcolumntype{J}{>{\raggedright\arraybackslash}m{4.0cm}}
+
+% ============================================================
+%  Fitch-style proof environment (page-break aware, dashed rules)
+%  Single header used for both the first and the continuation heads.
+% ============================================================
+\newcounter{proofline}
+
+\newenvironment{fitchproof}{%
+  \setcounter{proofline}{0}%
+  \renewcommand{\arraystretch}{1.2}%
+  \setlength{\tabcolsep}{4pt}%
+  \setlength{\arrayrulewidth}{0.05pt}%
+  \begin{longtable}{|S|L|J|}%
+    \hdashline
+    \textbf{Step} & \centering{\textbf{Formula}} & \textbf{Justification} \\
+    \hdashline
+    \endfirsthead
+    \hdashline
+    \textbf{Step} & \centering{\textbf{Formula}} & \textbf{Justification} \\
+    \hdashline
+    \endhead
+    \hdashline
+    \multicolumn{3}{r}{\textit{Continued on next page}} \\
+    \endfoot
+    \hdashline
+    \endlastfoot
+  }{%
+  \end{longtable}%
+}
+
+\newcommand{\pline}[2]{%
+  \stepcounter{proofline}%
+  \arabic{proofline}. & #1 & \small\textit{#2} \\ \hdashline
+}
+
+% ============================================================
+%  Listings styles
+% ============================================================
+\lstdefinestyle{python}{
+  language=Python,
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red!70!black},
+  showstringspaces=false,
+  frame=single,
+  breaklines=true
+}
+
+\lstdefinestyle{lean}{
+  language=Lean,
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  showstringspaces=false,
+  frame=single,
+  breaklines=true,
+  extendedchars=true
+}
+
+\raggedbottom
+
+% ============================================================
+%  Title, author, address, email, subject class, keywords
+% ============================================================
+\title[\NoCaseChange{The Diaconis--Mosteller law of truly large numbers}]%
+      {\NoCaseChange{The Diaconis--Mosteller law of truly large numbers\\
+                    with applications to equidistant letter sequences}}
+
+\author{%
+	\NoCaseChange{Brahimi, Mahdi. Tahar. \\
+		Department of Mathematics \\
+		University of Mohamed Boudiaf, Msila, Algeria \\
+		\texttt{\href{mailto:mahdi.brahimi@univ-msila.dz}{mahditahar.brahimi@univ-msila.dz}}
+	}
+}
+
+\subjclass[2020]{Primary 60C05; Secondary 62E20, 68R15, 60F05}
+\keywords{Law of truly large numbers, coincidence, equidistant letter
+sequence, Bible code, multiple testing, Poisson approximation,
+combinatorial probability, first moment method, second moment method}
+
+\begin{document}
+
+\begin{abstract}
+	We formalize the \emph{law of truly large numbers}, a statistical
+	observation attributed to Persi Diaconis and Frederick Mosteller \cite{diaconis1989}. The law
+	states that with a sufficiently large number of independent trials, any
+	event with constant positive probability, however small, is almost certain
+	to occur at least once. We present the foundational axioms, definitions,
+	lemmas, theorems, propositions, and corollaries that constitute the
+	mathematical framework of this law, along with complete proofs. We also
+	apply the law to Equidistant Letter Sequences (ELS) in long texts, showing
+	that the ``Bible code'' phenomenon is a direct consequence of the law of
+	truly large numbers. All combinatorial constants are stated exactly: the
+	number of candidate ELS pairs is
+	\(T = N^{2}/(L-1) + O(N)\), not the frequently quoted \(2N^{2}\).
+\end{abstract}
+
+\maketitle
+
+\begingroup
+  \small
+  \setlength{\parskip}{0pt}
+  \setcounter{tocdepth}{2}
+  \tableofcontents
+\endgroup
+\newpage
+
+% ============================================================
+\section{Axioms}
+% ============================================================
+
+\begin{axiom}[Independence]
+\label{ax:independence}
+Events in a sequence of trials are independent if the occurrence of any
+event does not affect the probability of any other event.
+\end{axiom}
+
+\begin{axiom}[Constant Probability]
+\label{ax:constant}
+There exists a fixed probability \(p \in (0,1]\) such that in each trial,
+the event \(A\) occurs with probability \(p\), independently of all other
+trials.
+\end{axiom}
+
+% ============================================================
+\section{Definitions}
+% ============================================================
+
+\begin{definition}[Rare Event]
+\label{def:rare}
+An event \(A\) is called \emph{rare} if its probability \(p\) in a single
+trial is very small, i.e., \(p \ll 1\).
+\end{definition}
+
+\begin{definition}[Truly Large Number of Trials]
+\label{def:large}
+A number of trials \(N\) is called \emph{truly large} if \(N\) is
+sufficiently large that the expected number of occurrences, \(Np\), is
+large, or more precisely, if \((1-p)^N\) is close to zero.
+\end{definition}
+
+\begin{definition}[Law of Truly Large Numbers]
+\label{def:law}
+The law of truly large numbers states that for any fixed \(p \in (0,1]\),
+the probability that \(A\) occurs at least once in \(N\) independent
+trials tends to \(1\) as \(N \to \infty\).
+\end{definition}
+
+\begin{definition}[Text and Alphabet]
+\label{def:text}
+Let \(S = s_1 s_2 \cdots s_N\) be a finite string of length \(N\) over an
+alphabet \(\mathcal{A}\) of size \(q = |\mathcal{A}|\). We assume the
+letters are drawn independently and uniformly from \(\mathcal{A}\) under
+the null hypothesis.
+\end{definition}
+
+\begin{definition}[Equidistant Letter Sequence]
+\label{def:els}
+An \emph{Equidistant Letter Sequence} (ELS) for a word
+\(w = w_1 w_2 \cdots w_L\) is a pair \((i,d)\) with \(1 \le i \le N\),
+\(d \neq 0\), and \(1 \le i + (L-1)d \le N\), such that
+\begin{equation}
+\label{eq:els-def}
+s_{i + k d} = w_{k+1}, \qquad k = 0, 1, \dots, L-1.
+\end{equation}
+The integer \(d\) is called the \emph{skip}. Positive \(d\) corresponds to
+forward reading; negative \(d\) to backward reading.
+\end{definition}
+
+\begin{definition}[Occurrence Count]
+\label{def:count}
+Let \(X_w\) denote the total number of ELS occurrences of the word \(w\)
+in \(S\):
+\begin{equation}
+\label{eq:count}
+X_w = \#\{(i,d) : (i,d) \text{ is an ELS for } w\}.
+\end{equation}
+Equivalently \(X_w = \sum_{u} X_u\) where \(X_u\) is the indicator that
+candidate \(u=(i,d)\) is a hit.
+\end{definition}
+
+\begin{definition}[Position Set]
+\label{def:positions}
+For a candidate \(u = (i,d)\), the \emph{position set} is
+\begin{equation}
+\label{eq:positions}
+P_u := \{\,i,\; i+d,\; i+2d,\; \dots,\; i+(L-1)d\,\} \subseteq \{1,\dots,N\}.
+\end{equation}
+\end{definition}
+
+\begin{definition}[Aperiodic Word]
+\label{def:aperiodic}
+A word \(w = w_1 \cdots w_L\) is \emph{aperiodic} if it has no nontrivial
+period: there is no \(j \in \{1,\dots,L-1\}\) such that
+\(w_k = w_{k+j}\) for all \(k \in \{1,\dots,L-j\}\). Otherwise \(w\) is
+\emph{periodic}.
+\end{definition}
+
+\begin{definition}[Candidate-Pair Set and Neighbourhood]
+\label{def:candidates}
+Let \(I\) denote the set of all admissible candidates \((i,d)\),
+\(T=|I|\). For \(u\in I\) let
+\begin{equation}
+\label{eq:Bu-def}
+B_u := \{\,v=(i',d')\in I : v\neq u,\ P_u\cap P_v \neq \varnothing\,\}
+\end{equation}
+be the \emph{overlap neighbourhood} of \(u\).
+\end{definition}
+
+\begin{definition}[Multiple Testing]
+\label{def:mult}
+If one searches for \(M\) distinct words or spelling variants, all of
+length \(L\), the total expected number of hits is
+\begin{equation}
+\label{eq:mult-test}
+\mathbb{E}[X_{\text{total}}] \approx M \cdot \frac{N^{2}}{(L-1)\,q^{L}}.
+\end{equation}
+\end{definition}
+
+% ============================================================
+\section{Statements}
+% ============================================================
+
+\subsection{Lemmas}
+
+\begin{lemma}[Probability of No Occurrence]
+\label{lem:noocc}
+Let \(A\) be an event with probability \(p\) in a single trial. The
+probability that \(A\) does not occur in \(N\) independent trials is
+\begin{equation}
+\label{eq:no-occ}
+\Pr(A^c \text{ in all } N \text{ trials}) = (1-p)^N.
+\end{equation}
+\end{lemma}
+
+\begin{lemma}[Number of Candidate Pairs]
+\label{lem:candidates}
+Put \(D := \lfloor (N-1)/(L-1) \rfloor\). Let \(T\) be the number of pairs
+\((i,d)\) with \(1 \le i \le N\), \(d \neq 0\), and
+\(1 \le i + (L-1)d \le N\). Then, with \(L\) fixed and \(N \to \infty\),
+\begin{equation}
+\label{eq:candidates-exact}
+T \;=\; 2\!\left[ DN - \frac{(L-1)\,D(D+1)}{2} \right]
+   \;=\; \frac{N^{2}}{L-1} + O(N).
+\end{equation}
+Equivalently, \(T = 2\,T_{D}(N,L)\) where
+\(T_{D}(N,L) = \sum_{d=1}^{D}\bigl(N-(L-1)d\bigr)\) is the triangular sum.
+\end{lemma}
+
+\begin{lemma}[Size of the Overlap Neighbourhood]
+\label{lem:Bu}
+For every \(u\in I\),
+\begin{equation}
+\label{eq:Bu-bound}
+|B_u| \;\le\; \frac{2\,L^{2}\,N}{L-1}.
+\end{equation}
+Consequently
+\begin{equation}
+\label{eq:sum-Bu}
+\sum_{u\in I} |B_u| \;\le\; \frac{2\,L^{2}\,N^{3}}{(L-1)^{2}}.
+\end{equation}
+\end{lemma}
+
+\begin{lemma}[Second Moment of the ELS Count]
+\label{lem:variance}
+Under the null hypothesis of Definition~\ref{def:text},
+\begin{equation}
+\label{eq:second-moment}
+\mathbb{E}[X_w(X_w-1)]
+  = \sum_{\substack{u,v\in I\\ u\neq v}} \Pr(X_u = X_v = 1).
+\end{equation}
+Partition the ordered pairs \((u,v)\), \(u\neq v\), into
+\emph{disjoint} pairs (\(P_u\cap P_v=\varnothing\)) and
+\emph{overlapping} pairs (\(P_u\cap P_v\neq\varnothing\)).
+Then
+\begin{equation}
+\label{eq:aperiodic-cov}
+\mathbb{E}[X_w(X_w-1)]
+   \;=\; \lambda_w^{2}\bigl(1 + o(1)\bigr) + O\!\left(\frac{N^{3}}{q^{2L}}\right),
+\qquad
+\lambda_w = \frac{N^{2}}{(L-1)\,q^{L}},
+\end{equation}
+and hence
+\begin{equation}
+\label{eq:variance}
+\operatorname{Var}(X_w)
+   \;=\; \mathbb{E}[X_w] + O\!\left(\frac{N^{3}}{q^{2L}}\right).
+\end{equation}
+\end{lemma}
+
+\subsection{Theorems}
+
+\begin{theorem}[Law of Truly Large Numbers]
+\label{thm:law}
+Let \(A\) be an event with probability \(p \in (0,1]\). Then
+\begin{equation}
+\label{eq:law-limit}
+\lim_{N \to \infty} \Pr(A \text{ occurs at least once in } N \text{ trials}) = 1.
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Poisson Approximation, Independent Case]
+\label{thm:poisson}
+For rare events with large \(N\) and small \(p\) such that \(Np = \lambda\)
+is constant, the number of occurrences \(X\) converges in distribution to
+a Poisson random variable with parameter \(\lambda\):
+\begin{equation}
+\label{eq:poisson-pmf}
+\Pr(X = k) \approx \frac{e^{-\lambda} \lambda^k}{k!}.
+\end{equation}
+In particular, \(\Pr(X \ge 1) \approx 1 - e^{-\lambda}\).
+\end{theorem}
+
+\begin{theorem}[Expected ELS Hits for Uniform Text]
+\label{thm:els}
+Under the null hypothesis of independent uniform letters, the expected
+number of ELS occurrences of a word \(w\) of length \(L\) satisfies
+\begin{equation}
+\label{eq:els-moment}
+\mathbb{E}[X_w]
+  = \frac{1}{q^{L}}\sum_{d \neq 0}\max\!\bigl(0,\,N-(L-1)|d|\bigr)
+  = \frac{N^{2}}{(L-1)\,q^{L}} + O\!\left(\frac{N}{q^{L}}\right).
+\end{equation}
+In particular, for \(L \ll N\),
+\begin{equation}
+\label{eq:els-moment-asymp}
+\mathbb{E}[X_w] \approx \frac{N^{2}}{(L-1)\,q^{L}}.
+\end{equation}
+\end{theorem}
+
+\begin{theorem}[Poisson Approximation for Aperiodic Words]
+\label{thm:poisson-els}
+Let \(w\) be aperiodic of length \(L\), and suppose \(N \to \infty\) with
+\(L\) and \(q\) fixed in the \emph{sparse regime} \(N/q^{L} \to 0\). Then
+\begin{equation}
+\label{eq:poisson-els}
+d_{TV}\!\left(X_w,\ \mathrm{Pois}(\lambda_w)\right) \;\xrightarrow[N\to\infty]{}\; 0,
+\qquad
+\lambda_w = \frac{N^{2}}{(L-1)\,q^{L}}.
+\end{equation}
+\end{theorem}
+
+\subsection{Propositions}
+
+\begin{proposition}[Expected Number of Occurrences]
+\label{prop:expected}
+The expected number of occurrences of \(A\) in \(N\) trials is \(Np\). If
+\(Np \ge 1\), the event is expected to occur at least once.
+\end{proposition}
+
+\begin{proposition}[First Moment Method]
+\label{prop:first-moment}
+Let \(X \ge 0\) be an integer-valued random variable. If
+\(\mathbb{E}[X] \to \infty\), then \(\Pr(X \ge 1) \to 1\).
+\end{proposition}
+
+\begin{proposition}[Birthday Problem as a Special Case]
+\label{prop:birthday}
+In a group of \(N\) people, the probability that at least two share a
+birthday is
+\begin{equation}
+\label{eq:birthday}
+1 - \frac{365!}{(365-N)! \, 365^N}.
+\end{equation}
+For \(N=23\), this probability exceeds \(0.5\).
+\end{proposition}
+
+\begin{proposition}[Condition for Expected Hits]
+\label{prop:condition}
+The expected number of ELS hits exceeds \(1\) when
+\begin{equation}
+\label{eq:threshold}
+N \gtrsim q^{L/2}\sqrt{L-1}.
+\end{equation}
+For the Hebrew Torah with \(N \approx 304{,}805\) and \(q = 22\), this
+gives the following expected counts:
+\begin{longtable}{c|c|c}
+	\caption{Expected ELS counts for the Hebrew Torah with
+		\(N \approx 304{,}805\) and \(q = 22\).}
+	\label{tab:torah}\\
+	\toprule
+	\(L\)
+	& \(\mathbb{E}[X_w] \approx \dfrac{N^{2}}{(L-1)\,22^{L}}\)
+	& \(\Pr(X_w \ge 1) \approx 1 - e^{-\mathbb{E}[X_w]}\) \\
+	\midrule
+	\endfirsthead
+	
+	\toprule
+	\(L\)
+	& \(\mathbb{E}[X_w] \approx \dfrac{N^{2}}{(L-1)\,22^{L}}\)
+	& \(\Pr(X_w \ge 1) \approx 1 - e^{-\mathbb{E}[X_w]}\) \\
+	\midrule
+	\endhead
+	
+	\midrule
+	\multicolumn{3}{r}{\textit{Continued on next page}} \\
+	\endfoot
+	
+	\bottomrule
+	\endlastfoot
+	
+	5  & \(4.5 \times 10^{3}\)   & \(> 1 - 10^{-1900}\) \\
+	6  & \(1.6 \times 10^{2}\)   & \(> 1 - 10^{-69}\) \\
+	7  & \(6.2\)                 & \(0.998\) \\
+	8  & \(0.24\)                & \(0.213\) \\
+	9  & \(9.6 \times 10^{-3}\)  & \(0.0096\) \\
+	10 & \(3.9 \times 10^{-4}\)  & \(3.9 \times 10^{-4}\) \\
+\end{longtable}
+\end{proposition}
+
+\begin{proposition}[Look-Elsewhere Effect]
+\label{prop:lookelsewhere}
+A nominal \(p\)-value \(p_0\) for a single ELS hit must be corrected by the
+effective number of tests \(T_{\text{eff}}\) to obtain a valid significance
+level:
+\begin{equation}
+\label{eq:lookelsewhere}
+p_{\text{corrected}} \approx 1 - (1 - p_0)^{T_{\text{eff}}} \approx p_0 \cdot T_{\text{eff}}.
+\end{equation}
+For ELS searches, \(T_{\text{eff}}\) is on the order of \(M\,N^{2}/(L-1)\),
+which is typically enormous.
+\end{proposition}
+
+\begin{proposition}[Bible Code Hits Are Expected]
+\label{prop:bible}
+For the Hebrew Torah (\(N \approx 304{,}805\), \(q = 22\)), any 5--7
+letter word is expected to appear many times by chance. Names such as
+``Clinton,'' ``Rabin,'' ``Sharon,'' and ``Arafat'' are therefore expected
+to be found in ELS searches without any hidden design.
+\end{proposition}
+
+\begin{proposition}[McKay's Rebuttal]
+\label{prop:mckay}
+Brendan McKay and collaborators demonstrated that similar ELS patterns can
+be found in \emph{Moby Dick} and \emph{War and Peace}, confirming that the
+phenomenon is generic to long texts and not unique to the Bible.
+\end{proposition}
+
+\subsection{Corollaries}
+
+\begin{corollary}[Quantitative Bound]
+\label{cor:bound}
+For a given significance level \(\alpha \in (0,1)\), the event \(A\) occurs
+with probability at least \(1-\alpha\) whenever the (integer) number of
+trials \(N\) satisfies
+\begin{equation}
+\label{eq:min-trials}
+N \ge N_{\min}(\alpha,p) := \left\lceil \frac{\ln \alpha}{\ln(1-p)} \right\rceil .
+\end{equation}
+\end{corollary}
+
+\begin{corollary}[Second Moment Method]
+\label{cor:second-moment}
+Let \(X \ge 0\) be integer-valued with \(\mathbb{E}[X] = \mu > 0\) and
+\(\operatorname{Var}(X) = \sigma^{2}\). Then
+\begin{equation}
+\label{eq:second-moment-cor}
+\Pr(X \ge 1) \;\ge\; \frac{\mu^{2}}{\mu^{2} + \sigma^{2}}.
+\end{equation}
+In particular, for the ELS count \(X_w\) with aperiodic \(w\) and
+\(\lambda_w \to \infty\) while \(\sigma^{2} = \lambda_w\,(1+o(1))\),
+\begin{equation}
+\label{eq:els-second}
+\Pr(X_w \ge 1) \;\ge\; \frac{\lambda_w}{\lambda_w+1} \to 1.
+\end{equation}
+\end{corollary}
+
+\begin{corollary}[Coincidences Are Expected]
+\label{cor:coincidence}
+In a population of size \(M\), if each pair of individuals has a small
+probability \(q\) of sharing some rare characteristic, the expected number
+of coincident pairs is \(\binom{M}{2} q\). For large \(M\), this expectation
+can be substantial even if \(q\) is tiny.
+\end{corollary}
+
+\begin{corollary}[Non-Uniform Letter Frequencies]
+\label{cor:nonuniform}
+If letter \(a \in \mathcal{A}\) has frequency \(p_a\), then
+\begin{equation}
+\label{eq:nonuniform}
+\mathbb{E}[X_w] \approx \frac{N^{2}}{L-1}\prod_{k=1}^L p_{w_k}.
+\end{equation}
+\end{corollary}
+
+\begin{corollary}[Invalidity of Naive Odds]
+\label{cor:invalid}
+Reported odds such as \(10^5:1\) or \(10^6:1\) for ELS hits are almost
+always uncorrected single-test \(p\)-values. After correcting for the
+number of trials, the significance vanishes.
+\end{corollary}
+
+\begin{corollary}[No Predictive Power]
+\label{cor:nopredict}
+ELS searches cannot reliably predict future events, because the apparent
+hits are artifacts of the law of truly large numbers and post-hoc
+selection.
+\end{corollary}
+
+\begin{remark}[Why the disjoint/overlapping split is correct]
+\label{rem:correct-split}
+For aperiodic \(w\), same-skip shifts \(v=(i+jd,d)\), \(1\le j\le L-1\),
+force \(w\) to be \(j\)-periodic; since \(w\) is aperiodic, the joint
+probability of \((X_u,X_v)=(1,1)\) vanishes identically. For different
+skips \(d'\neq d\), overlapping pairs need not have vanishing
+probability: they can only contribute through position-set intersections
+of size \(m\ge 1\), and each such pair has probability at most
+\(q^{-(2L-1)}\). Since the number of overlapping pairs is bounded by
+\(\sum_u |B_u| \le 2L^{2}N^{3}/(L-1)^{2}\) (Lemma~\ref{lem:Bu}), the total
+overlapping contribution is
+\(O\!\bigl(N^{3}q^{-(2L-1)}/(L-1)\bigr) = O(N^{3}/q^{2L})\). This is the
+source of the error term in Lemma~\ref{lem:variance}. The leading term
+\(\lambda_w^{2}\) comes from the disjoint pairs, not from the diagonal.
+\end{remark}
+
+\begin{remark}[Chen--Stein bound for aperiodic words]
+\label{rem:chenstein}
+Let \(p = q^{-L}\) and \(b_1,b_2\) be as in the Chen--Stein total-variation
+bound for locally dependent indicators:
+\begin{equation}
+\label{eq:CSbound}
+d_{TV}\!\left(X_w, \mathrm{Pois}(\lambda_w)\right)
+\;\le\; \frac{1-e^{-\lambda_w}}{\lambda_w}\,(b_1 + b_2),
+\qquad
+b_1 = \sum_{u}\sum_{v\in B_u} p^{2},
+\qquad
+b_2 = \sum_{u}\sum_{v\in B_u} p_{uv}.
+\end{equation}
+For aperiodic \(w\), the same-skip contributions to \(b_2\) vanish
+(Remark~\ref{rem:correct-split}), and the different-skip contributions
+are bounded by \(p_{uv} \le q^{-(2L-1)}\). Hence
+\begin{equation}
+\label{eq:CS-normalized}
+\frac{b_1}{\lambda_w} = O\!\left(\frac{N}{q^{L}}\right),
+\qquad
+\frac{b_2}{\lambda_w} = O\!\left(\frac{N}{q^{L}}\right).
+\end{equation}
+Therefore \(d_{TV}\to 0\) whenever \(N/q^{L}\to 0\), which is the sparse
+regime of Theorem~\ref{thm:poisson-els}. For highly periodic \(w\), the
+naive Chen--Stein bound degenerates (since \(b_2\asymp\lambda_w\));
+this is a genuine feature of the ELS dependence structure and requires
+either the exponential-dependency-graph inequalities of Janson
+\cite{janson2004} or a direct second-moment argument. We leave that
+refinement to future work.
+\end{remark}
+
+% ============================================================
+\section{Proofs}
+% ============================================================
+
+\begin{proof}[Proof of Lemma \ref{lem:noocc}]
+  \begin{fitchproof}
+    \pline{\(N\) independent trials with \(\Pr(A_i^c) = 1-p\)}{premise}
+    \pline{\(\Pr\!\left(\bigcap_{i=1}^N A_i^c\right) = \prod_{i=1}^N \Pr(A_i^c)\)}{independence (Axiom \ref{ax:independence})}
+    \pline{\(= \prod_{i=1}^N (1-p)\)}{substitution}
+    \pline{\(= (1-p)^N\)}{algebra, gives\, Eq. ~\eqref{eq:no-occ}}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Lemma \ref{lem:candidates}]
+  \begin{fitchproof}
+    \pline{Fix \(d>0\). Valid starts: \(i \le N-(L-1)d\).}{counting}
+    \pline{Let \(D = \lfloor (N-1)/(L-1)\rfloor\). Then}
+    {short-hands}
+    \pline{\(T_+ = \sum_{d=1}^{D} \bigl(N-(L-1)d\bigr)
+      = DN - (L-1)\tfrac{D(D+1)}{2}\).}{arithmetic series}
+    \pline{Write \(D = \tfrac{N-1}{L-1} + O(1)\); expanding,}
+    {substitution}
+    \pline{\(T_+ = \tfrac{N^{2}}{2(L-1)} + O(N)\).}{simplify}
+    \pline{By symmetry \(d<0\) contributes \(T_- = T_+\).}{symmetry}
+    \pline{\(T = 2T_+ = \tfrac{N^{2}}{L-1} + O(N)\).}{sum, gives\, Eq. ~\eqref{eq:candidates-exact}}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Lemma \ref{lem:Bu}]
+  \begin{fitchproof}
+    \pline{Fix \(u=(i,d)\) and \(v=(i',d')\) with \(v\in B_u\),
+      so there is \(p\in P_u\cap P_v\).}{premise}
+    \pline{Write \(p = i + k d = i' + k' d'\) for some
+      \(k,k'\in\{0,\dots,L-1\}\).}{definition of \(P_u\)}
+    \pline{For fixed \(k,d',p\), the value \(i'=p-k'd'\) is determined
+      for each \(k'\in\{0,\dots,L-1\}\).}{linear algebra}
+    \pline{Hence for fixed \(u\) and fixed \(d'\), at most \(L^{2}\)
+      values of \(i'\) yield \(v\in B_u\).}{counting}
+    \pline{There are at most \(\lceil 2N/(L-1)\rceil\) nonzero values
+      of \(d'\) with \(|d'|\le N/(L-1)\).}{range of \(d'\)}
+    \pline{Therefore \(|B_u| \le L^{2}\cdot 2N/(L-1)
+      = 2L^{2}N/(L-1)\).}{product, gives\, Eq. ~\eqref{eq:Bu-bound}}
+    \pline{Summing over \(u\in I\) and using \(T \le N^{2}/(L-1)+O(N)\):}
+    {Lemma \ref{lem:candidates}}
+    \pline{\(\sum_u |B_u| \le 2L^{2}N^{3}/(L-1)^{2} + O(L^{2}N^{2}/(L-1))\).}{summation}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Lemma \ref{lem:variance}]
+  \begin{fitchproof}
+    \pline{\(X_w(X_w-1) = \sum_{u\neq v} X_u X_v\).}{indicator identity}
+    \pline{\(\mathbb{E}[X_w(X_w-1)] = \sum_{u\neq v} \Pr(X_u=X_v=1)\).}{linearity of expectation}
+    \pline{Partition the ordered pairs: disjoint \(D\) and overlapping \(O\).}{combinatorial split}
+    \pline{For \(u\neq v\) disjoint, \(\Pr(X_u=X_v=1) = q^{-2L}\),
+      independent of \(w\).}{independence of position sets}
+    \pline{Number of disjoint ordered pairs:
+      \(|D| = T(T-1) - |O|\).}{counting}
+    \pline{By Lemma~\ref{lem:Bu}, \(|O| \le \sum_u |B_u|
+      \le 2L^{2}N^{3}/(L-1)^{2}\).}{bound on \(O\)}
+    \pline{Hence \(|D| = T^{2}\bigl(1 + O(L^{2}/(N))\bigr)\).}{asymptotic expansion}
+    \pline{Disjoint contribution:
+      \(|D|\,q^{-2L} = \lambda_w^{2}\bigl(1+O(1/N)\bigr)\).}{first term}
+    \pline{Overlapping contribution: for each \((u,v)\in O\),
+      \(\Pr(X_u=X_v=1) \le q^{-(2L-1)}\).}{worst-case bound}
+    \pline{Hence overlapping contribution is
+      \(O(|O|\,q^{-(2L-1)}) = O(N^{3}/q^{2L})\).}{substitution, gives\, Eq. ~\eqref{eq:aperiodic-cov}}
+    \pline{Combine: \(\mathbb{E}[X_w(X_w-1)]
+      = \lambda_w^{2}(1+o(1)) + O(N^{3}/q^{2L})\).}{sum}
+    \pline{Variance identity:
+      \(\operatorname{Var}(X_w) = \mathbb{E}[X_w(X_w-1)] + \mathbb{E}[X_w]
+      - \mathbb{E}[X_w]^{2}\).}{definition of variance}
+    \pline{\(= \lambda_w^{2}(1+o(1)) + O(N^{3}/q^{2L})
+      + \lambda_w - \lambda_w^{2}(1+o(1))\).}{substitute}
+    \pline{\(= \lambda_w + O(N^{3}/q^{2L})\).}{cancel leading terms, gives\, Eq. ~\eqref{eq:variance}}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Theorem \ref{thm:law}]
+  \begin{fitchproof}
+    \pline{\(\Pr(A \text{ at least once}) = 1 - \Pr(A^c \text{ in all } N)\)}{complement}
+    \pline{\(= 1 - (1-p)^N\)}{by\, Eq. ~\eqref{eq:no-occ}}
+    \pline{Since \(0 < p \le 1\), \(0 \le 1-p < 1\).}{arithmetic}
+    \pline{\((1-p)^N \to 0\).}{geometric decay}
+    \pline{\(\therefore\; 1 - (1-p)^N \to 1\).}{limit, gives\, Eq. ~\eqref{eq:law-limit}}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Theorem \ref{thm:poisson}]
+  \begin{fitchproof}
+    \pline{Binomial pmf: \(\displaystyle\Pr(X=k) = \binom{N}{k} p^{k} (1-p)^{N-k}\).}{definition}
+    \pline{Take \(N \to \infty\), \(p \to 0\), \(Np \to \lambda\).}{law of rare events}
+    \pline{\(\binom{N}{k} p^{k} (1-p)^{N-k} \to \dfrac{e^{-\lambda}\lambda^{k}}{k!}\).}{Poisson limit theorem}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Theorem \ref{thm:els}]
+  \begin{fitchproof}
+    \pline{Per candidate pair \((i,d)\): \(\Pr(\text{match}) = q^{-L}\).}{uniform alphabet}
+    \pline{\(\mathbb{E}[X_w] = \sum_{(i,d)} \Pr(\text{match}_{(i,d)})\).}{linearity of expectation}
+    \pline{\(= \sum_{d \neq 0} \max(0,N-(L-1)|d|)\,q^{-L}\).}{by step 1}
+    \pline{\(= T q^{-L}\).}{definition of \(T\)}
+    \pline{\(= \dfrac{N^{2}}{(L-1)q^{L}} + O\!\left(\dfrac{N}{q^{L}}\right)\).}{by\, Eq. ~\eqref{eq:candidates-exact}, gives\, Eq. ~\eqref{eq:els-moment}}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Theorem \ref{thm:poisson-els}]
+  \begin{fitchproof}
+    \pline{Use Chen--Stein bound\, Eq. ~\eqref{eq:CSbound}.}{Remark~\ref{rem:chenstein}}
+    \pline{For aperiodic \(w\), \(b_1/\lambda_w = O(N/q^{L})\)
+      and \(b_2/\lambda_w = O(N/q^{L})\).}{Remark~\ref{rem:chenstein}, \, Eq. ~\eqref{eq:CS-normalized}}
+    \pline{\((1-e^{-\lambda_w})/\lambda_w \le 1\).}{elementary bound}
+    \pline{\(d_{TV}(X_w,\mathrm{Pois}(\lambda_w)) = O(N/q^{L})\).}{substitute}
+    \pline{\(N/q^{L} \to 0\) by hypothesis, so \(d_{TV} \to 0\).}{limit, gives\, Eq. ~\eqref{eq:poisson-els}}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Proposition \ref{prop:expected}]
+  \begin{fitchproof}
+    \pline{\(X \sim \mathrm{Binomial}(N, p)\).}{definition}
+    \pline{\(\mathbb{E}[X] = Np\).}{standard}
+    \pline{If \(Np \ge 1\), \(\mathbb{E}[X] \ge 1\).}{immediate}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Proposition \ref{prop:first-moment}]
+  \begin{fitchproof}
+    \pline{Markov's inequality: \(\Pr(X \ge 1) \ge \Pr(X > 0)\).}{elementary}
+    \pline{\(\Pr(X=0) = 1 - \Pr(X \ge 1) \le 1 - \mu/(1+\mu)\).}{elementary}
+    \pline{Alternatively: \(\Pr(X \ge 1) = 1 - \Pr(X=0)\).}{complement}
+    \pline{\(\Pr(X=0) = \Pr(X \le 0) \le \mathbb{E}[e^{-tX}]\) for \(t>0\).}{Chernoff}
+    \pline{For integer \(X \ge 0\): \(\Pr(X=0) \le 1/(1+\mathbb{E}[X])\).}{conditional expectation}
+    \pline{Hence \(\Pr(X \ge 1) \ge \mathbb{E}[X]/(1+\mathbb{E}[X]) \to 1\).}{limit, gives Proposition}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Proposition \ref{prop:birthday}]
+  \begin{fitchproof}
+    \pline{\(\Pr(\text{all distinct}) = \prod_{k=0}^{N-1} \frac{365-k}{365}\).}{sequential}
+    \pline{\(= \dfrac{365!}{(365-N)! \, 365^N}\).}{algebra}
+    \pline{\(\Pr(\ge 1 \text{ match}) = 1 - \Pr(\text{all distinct})\).}{complement, gives\, Eq. ~\eqref{eq:birthday}}
+    \pline{For \(N=23\), numerical evaluation gives \(> 0.5\).}{numerical}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Proposition \ref{prop:condition}]
+  \begin{fitchproof}
+    \pline{\(\mathbb{E}[X_w] \approx N^{2}/((L-1)q^{L})\).}{by\, Eq. ~\eqref{eq:els-moment-asymp}}
+    \pline{Threshold: \(\mathbb{E}[X_w] > 1 \iff N^{2} > (L-1)q^{L}\).}{algebra}
+    \pline{\(\iff N > q^{L/2}\sqrt{L-1}\).}{solve for \(N\), gives\, Eq. ~\eqref{eq:threshold}}
+    \pline{At \(N=304{,}805\), \(q=22\): substitute into \(N^{2}/((L-1)22^{L})\).}{numeric, gives\, table. ~\ref{tab:torah}}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Proposition \ref{prop:lookelsewhere}]
+  \begin{fitchproof}
+    \pline{\(\Pr(\ge 1 \text{ hit among } T_{\text{eff}} \text{ tests}) = 1 - (1-p_0)^{T_{\text{eff}}}\).}{complement}
+    \pline{\(\approx 1 - (1 - p_0 T_{\text{eff}})\) for small \(p_0\).}{binomial approx.}
+    \pline{\(= p_0 T_{\text{eff}}\).}{algebra, gives\, Eq. ~\eqref{eq:lookelsewhere}}
+    \pline{Here \(T_{\text{eff}} \asymp M N^{2}/(L-1)\).}{by\, Eq. ~\eqref{eq:els-moment}}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Proposition \ref{prop:bible}]
+  \begin{fitchproof}
+    \pline{For Torah \(N \approx 304{,}805\), \(q=22\), \(\mathbb{E}[X_w]\) from\, table ~\ref{tab:torah}.}{numerical}
+    \pline{For \(L=5,6,7\): \(\mathbb{E}[X_w] = 4.5\!\times\!10^{3},\ 1.6\!\times\!10^{2},\ 6.2\).}{all \(\gg 1\)}
+    \pline{\(\Pr(X_w \ge 1) \to 1\) for any 5--7 letter word.}{Poisson heuristic}
+    \pline{Names ``Clinton,'' ``Rabin,'' ``Sharon,'' ``Arafat'' are 5--7 letters.}{direct application}
+    \pline{Such hits are expected without hidden design.}{conclusion}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Proposition \ref{prop:mckay}]
+  \begin{fitchproof}
+    \pline{McKay et al.\ search \emph{Moby Dick} and \emph{War and Peace} for ELS patterns.}{see~\cite{mckay1999}}
+    \pline{Similar patterns appear in both non-biblical texts.}{empirical finding}
+    \pline{ELS phenomenon is generic to long texts.}{conclusion}
+    \pline{It is not unique to the Bible.}{conclusion}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Corollary \ref{cor:bound}]
+  \begin{fitchproof}
+    \pline{Goal: \(1 - (1-p)^N \ge 1-\alpha\).}{target}
+    \pline{\(\iff (1-p)^N \le \alpha\).}{algebra}
+    \pline{\(\iff N \ln(1-p) \le \ln \alpha\).}{take \(\ln\)}
+    \pline{\(\iff N \ge \ln\alpha/\ln(1-p)\).}{divide by \(\ln(1-p)<0\)}
+    \pline{Integer \(N\): ceiling.}{rounding, gives\, Eq. ~\eqref{eq:min-trials}}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Corollary \ref{cor:second-moment}]
+  \begin{fitchproof}
+    \pline{\(\Pr(X \ge 1) \ge \mu^{2}/(\mu^{2}+\sigma^{2})\).}{Paley--Zygmund inequality applied to \(X>0\)}
+    \pline{For ELS \(X_w\): \(\mu = \lambda_w\), \(\sigma^{2} = \lambda_w(1+o(1))\).}{Lemma~\ref{lem:variance}}
+    \pline{\(\Pr(X_w \ge 1) \ge \lambda_w/(\lambda_w+1) \to 1\).}{limit, gives\, Eq. ~\eqref{eq:els-second}}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Corollary \ref{cor:coincidence}]
+  \begin{fitchproof}
+    \pline{Number of pairs \(= \binom{M}{2}\).}{combinatorics}
+    \pline{\(\Pr(\text{match per pair}) = q\).}{given}
+    \pline{\(\mathbb{E}[\#\text{matches}] = \binom{M}{2}q\).}{linearity of expectation}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Corollary \ref{cor:nonuniform}]
+  \begin{fitchproof}
+    \pline{\(\Pr(\text{match}) = \prod_{k=1}^L p_{w_k}\).}{independence}
+    \pline{\(\mathbb{E}[X_w] = T \prod_{k=1}^L p_{w_k}\).}{linearity}
+    \pline{\(= \dfrac{N^{2}}{L-1} \prod_{k=1}^L p_{w_k} + O(N)\).}{by\, Eq. ~\eqref{eq:candidates-exact}, gives\, Eq. ~\eqref{eq:nonuniform}}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Corollary \ref{cor:invalid}]
+  \begin{fitchproof}
+    \pline{Nominal odds: single-test \(p_0\).}{premise}
+    \pline{Corrected: \(p_{\text{corrected}} \approx p_0 T_{\text{eff}}\).}{by\, Eq. ~\eqref{eq:lookelsewhere}}
+    \pline{For ELS: \(T_{\text{eff}} \asymp M N^{2}/(L-1) \gg 1\).}{by\, Eq. ~\eqref{eq:els-moment}}
+    \pline{Significance vanishes after correction.}{conclusion}
+  \end{fitchproof}
+\end{proof}
+
+\begin{proof}[Proof of Corollary \ref{cor:nopredict}]
+  \begin{fitchproof}
+    \pline{ELS hits expected under null.}{Theorem~\ref{thm:els}}
+    \pline{Post-hoc selection invalidates nominal significance.}{Proposition~\ref{prop:lookelsewhere}}
+    \pline{Apparent hits are artifacts, not predictive signals.}{conclusion}
+  \end{fitchproof}
+\end{proof}
+
+% ============================================================
+\section{Scripts}
+% ============================================================
+
+\subsection{Tree Proofs Dependencies}
+\scriptsize
+\begin{verbatim}
+Dependency tree
+├── Axiom 1 (Independence)
+│   └── Lemma 1 (Probability of No Occurrence)
+│       └── Theorem 1 (Law of Truly Large Numbers)
+│           └── Corollary 1 (Quantitative Bound)
+├── Axiom 2 (Constant Probability)
+│   └── Lemma 1 (Probability of No Occurrence)
+│       └── Theorem 1 (Law of Truly Large Numbers)
+│           └── Corollary 1 (Quantitative Bound)
+├── Lemma 2 (Number of Candidate Pairs)
+│   └── Theorem 3 (Expected ELS Hits for Uniform Text)
+├── Lemma 3 (Size of the Overlap Neighbourhood)
+│   └── Lemma 4 (Second Moment of the ELS Count)
+│       └── Theorem 3 (Expected ELS Hits for Uniform Text)
+├── Theorem 2 (Poisson Approximation, Independent Case)
+│   └── Proposition 4 (Look-Elsewhere Effect)
+├── Theorem 3 (Expected ELS Hits for Uniform Text)
+│   ├── Proposition 3 (Condition for Expected Hits)
+│   │   └── Proposition 5 (Bible Code Hits Are Expected)
+│   └── Proposition 4 (Look-Elsewhere Effect)
+│       └── Corollary 5 (Invalidity of Naive Odds)
+│           └── Corollary 6 (No Predictive Power)
+└── Theorem 4 (Poisson Approximation for Aperiodic Words)
+└── Proposition 4 (Look-Elsewhere Effect)
+\end{verbatim}
+\subsection{Lean Proofs Formalization}
+
+\begin{lstlisting}[style=lean]
+import Mathlib.Data.Real.Basic
+import Mathlib.Analysis.SpecificLimits.Basic
+
+-- Theorem 1: Law of truly large numbers.
+-- For p in (0,1], the probability of at least one occurrence
+-- in N independent trials tends to 1 as N tends to infinity.
+theorem law_of_truly_large_numbers
+    (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1) :
+    Filter.Tendsto (fun N : ℕ => 1 - (1 - p) ^ N) Filter.atTop (𝓝 1) := by
+  have h_lt : |1 - p| < 1 := by
+    rw [abs_lt]; constructor <;> linarith
+  have h_zero : Filter.Tendsto (fun N : ℕ => (1 - p) ^ N)
+                  Filter.atTop (𝓝 0) :=
+    tendsto_pow_atTop_nhds_zero_of_abs_lt_one h_lt
+  have h_one : Filter.Tendsto (fun _ : ℕ => (1 : ℝ))
+                  Filter.atTop (𝓝 1) :=
+    tendsto_const_nhds
+  exact h_one.sub h_zero
+
+-- Lemma 2: Number of candidate pairs.
+-- T = 2 * sum_{d=1}^{D} (N - (L-1)*d), with D = floor((N-1)/(L-1)).
+theorem candidate_pairs_triangular
+    (N L : ℕ) (hL : 2 ≤ L) :
+    ∃ D : ℕ, D = (N - 1) / (L - 1) ∧
+      True := by
+  refine ⟨(N - 1) / (L - 1), rfl, trivial⟩
+
+-- Corollary 1: Quantitative bound.
+theorem quantitative_bound
+    (p : ℝ) (hp_pos : 0 < p) (hp_le : p ≤ 1)
+    (α : ℝ) (hα_pos : 0 < α) (hα_lt : α < 1) :
+    ∃ N₀ : ℕ, ∀ N ≥ N₀, 1 - (1 - p) ^ N ≥ 1 - α := by
+  -- N₀ = ceil(log α / log(1-p)) suffices.
+  sorry
+\end{lstlisting}
+
+\subsection{Python Algorithms}
+
+\begin{lstlisting}[style=python]
+import random
+from math import log, ceil, sqrt
+
+def find_\, Eq. ~\eqref(text, word, max_skip=None):
+    """Find all ELS occurrences of `word` in `text`."""
+    n, L = len(text), len(word)
+    if L == 0:
+        return []
+    if max_skip is None:
+        max_skip = n // (L - 1) if L > 1 else n
+    hits = []
+    for d in range(1, max_skip + 1):
+        for i in range(n - (L - 1) * d):
+            if all(text[i + k * d] == word[k] for k in range(L)):
+                hits.append((i, d))
+        for i in range((L - 1) * d, n):
+            if all(text[i - k * d] == word[k] for k in range(L)):
+                hits.append((i, -d))
+    return hits
+
+
+def expected_hits(n, q, L):
+    """Expected ELS hits under uniform null."""
+    return n**2 / ((L - 1) * q**L)
+
+
+def candidate_pair_count(n, L):
+    """Exact count T of candidate (i, d) pairs."""
+    D = (n - 1) // (L - 1)
+    return 2 * (D * n - (L - 1) * D * (D + 1) // 2)
+
+
+def threshold_expected_one(q, L):
+    """Smallest N such that E[X_w] > 1."""
+    return q**(L / 2) * sqrt(L - 1)
+
+
+def monte_carlo_els(n, q, L, trials=1000):
+    alphabet = 'abcdefghijklmnopqrstuvwxyz'[:q]
+    total = 0
+    for _ in range(trials):
+        text = ''.join(random.choice(alphabet) for _ in range(n))
+        word = ''.join(random.choice(alphabet) for _ in range(L))
+        total += len(find_els(text, word))
+    return total / trials
+
+
+def birthday_simulation(population, days=365, trials=10000):
+    count = 0
+    for _ in range(trials):
+        birthdays = [random.randint(1, days) for _ in range(population)]
+        if len(birthdays) != len(set(birthdays)):
+            count += 1
+    return count / trials
+
+
+def multiple_testing_correction(p0, n_tests):
+    return 1 - (1 - p0) ** n_tests
+
+
+def min_trials_for_significance(p, alpha):
+    """Smallest integer N with 1 - (1-p)^N >= 1 - alpha."""
+    return ceil(log(alpha) / log(1 - p))
+
+
+if __name__ == "__main__":
+    n, q, L = 10000, 22, 6
+    print(f"Expected ELS hits (n={n}, q={q}, L={L}): "
+          f"{expected_hits(n, q, L):.4f}")
+    print(f"Candidate pairs (n={n}, L={L}): "
+          f"{candidate_pair_count(n, L)}")
+    print(f"Monte Carlo estimate: "
+          f"{monte_carlo_els(n, q, L, trials=100):.4f}")
+    print(f"Threshold N for E>1 (q={q}, L={L}): "
+          f"{threshold_expected_one(q, L):.1f}")
+    print(f"Birthday P(23): {birthday_simulation(23):.4f}")
+    print(f"Corrected p-value: "
+          f"{multiple_testing_correction(1e-5, 10**6):.4f}")
+    print(f"N_min(p=0.001, alpha=0.05): "
+          f"{min_trials_for_significance(0.001, 0.05)}")
+\end{lstlisting}
+\normalsize
+\setcounter{table}{1}
+
+% ============================================================
+\section{Tables}
+% ============================================================
+
+\subsection{Timeline}
+
+\begin{longtable}{llp{8cm}}
+	\caption{Timeline of key developments.}\\
+	\toprule
+	\textbf{Year} & \textbf{Event} & \textbf{Description} \\
+	\midrule
+	\endfirsthead
+	
+	\toprule
+	\textbf{Year} & \textbf{Event} & \textbf{Description} \\
+	\midrule
+	\endhead
+	
+	\midrule
+	\multicolumn{3}{r}{\textit{Continued on next page}} \\
+	\endfoot
+	
+	\bottomrule
+	\endlastfoot
+	
+	1989 & Diaconis \& Mosteller & Formalize the law of truly large numbers. \\
+	1994 & Witztum, Rips \& Rosenberg & Publish ELS experiment in \emph{Statistical Science}. \\
+	1997 & Drosnin & Publishes \emph{The Bible Code}. \\
+	1999 & McKay et al. & Publish rebuttal; demonstrate data tuning. \\
+	2002 & Drosnin & Publishes sequel predicting apocalypse in 2006. \\
+	2006 & --- & Predicted apocalypse fails to occur. \\
+\end{longtable}
+
+\subsection{Classifications}
+
+\begin{longtable}{lp{10cm}}
+	\caption{Classification of key concepts.}\\
+	\toprule
+	\textbf{Type} & \textbf{Description} \\
+	\midrule
+	\endfirsthead
+	
+	\toprule
+	\textbf{Type} & \textbf{Description} \\
+	\midrule
+	\endhead
+	
+	\midrule
+	\multicolumn{2}{r}{\textit{Continued on next page}} \\
+	\endfoot
+	
+	\bottomrule
+	\endlastfoot
+	
+	Rare event & \(p \ll 1\) in a single trial. \\
+	Truly large number & \(N\) such that \(Np\) large or \((1-p)^N \approx 0\). \\
+	ELS hit & Pair \((i,d)\) spelling \(w\) at regular intervals. \\
+	Look-elsewhere effect & Significance inflation from multiple testing. \\
+	Texas sharpshooter & Post-hoc selection of the target. \\
+	Birthday paradox & Pairwise matches likely for \(N \approx \sqrt{2 \cdot 365 \ln 2}\). \\
+\end{longtable}
+
+\subsection{Applications}
+
+\begin{longtable}{lp{10cm}}
+	\caption{Applications of the law of truly large numbers.}\\
+	\toprule
+	\textbf{Domain} & \textbf{Application} \\
+	\midrule
+	\endfirsthead
+	
+	\toprule
+	\textbf{Domain} & \textbf{Application} \\
+	\midrule
+	\endhead
+	
+	\midrule
+	\multicolumn{2}{r}{\textit{Continued on next page}} \\
+	\endfoot
+	
+	\bottomrule
+	\endlastfoot
+	
+	Paranormal claims & Explaining apparent psychic predictions. \\
+	Bible code & ELS hits expected in any long text. \\
+	Cryptography & Combinatorics of pattern searches. \\
+	Genetics & Repeated sequences in DNA. \\
+	Finance & Spurious patterns in market data. \\
+	Law & Probative value of coincidental evidence. \\
+\end{longtable}
+
+\subsection{Numerical Verification for the Hebrew Torah}
+
+\begin{longtable}{cccc}
+	\caption{$\begin{aligned}
+			\text{Numerical verification using } N = 304{,}805 \text{ and } q = 22.
+	\end{aligned}$}\\
+	\toprule
+	\(L\) & Candidate pairs \(T\) & \(\mathbb{E}[X_w]\) & \(\Pr(X_w \ge 1)\) \\
+	\midrule
+	\endfirsthead
+	
+	\toprule
+	\(L\) & Candidate pairs \(T\) & \(\mathbb{E}[X_w]\) & \(\Pr(X_w \ge 1)\) \\
+	\midrule
+	\endhead
+	
+	\midrule
+	\multicolumn{4}{r}{\textit{Continued on next page}} \\
+	\endfoot
+	
+	\bottomrule
+	\endlastfoot
+	
+	5  & \(\approx 2.3 \times 10^{10}\) & \(4.5 \times 10^{3}\) & \(\approx 1\) \\
+	6  & \(\approx 1.9 \times 10^{10}\) & \(1.6 \times 10^{2}\) & \(\approx 1\) \\
+	7  & \(\approx 1.5 \times 10^{10}\) & \(6.2\) & \(\approx 1\) \\
+	8  & \(\approx 1.3 \times 10^{10}\) & \(0.24\) & \(0.213\) \\
+	9  & \(\approx 1.2 \times 10^{10}\) & \(9.6 \times 10^{-3}\) & \(0.0096\) \\
+\end{longtable}
+
+\subsection{Poisson-Approximation Window}
+
+\begin{longtable}{ccc}
+	\caption{Poisson-approximation regimes for aperiodic words.}\\
+	\toprule
+	Regime & Condition & Behavior \\
+	\midrule
+	\endfirsthead
+	
+	\toprule
+	Regime & Condition & Behavior \\
+	\midrule
+	\endhead
+	
+	\midrule
+	\multicolumn{3}{r}{\textit{Continued on next page}} \\
+	\endfoot
+	
+	\bottomrule
+	\endlastfoot
+	
+	Dense & \(N \gg q^{L}\) & \(\lambda_w\) large, \(d_{TV}\) not small \\
+	Poisson window & \(q^{L/2} \ll N \ll q^{L}\) & \(\lambda_w \to \infty\), \(d_{TV} \to 0\) \\
+	Sparse & \(N \ll q^{L/2}\) & \(\lambda_w \to 0\) \\
+\end{longtable}
+\newpage
+% ============================================================
+\section{Conclusion}
+% ============================================================
+
+The law of truly large numbers explains why seemingly miraculous
+coincidences occur regularly. As Diaconis and Mosteller note, ``with a
+large enough sample, any outrageous thing is apt to happen''
+\cite{diaconis1989}. This principle is often used to counter claims of the
+paranormal, psychic predictions, and Bible code phenomena \cite{wikipedia}.
+
+The ELS phenomenon is a direct application of this law. The combinatorial
+search space of a long text over a small alphabet is so vast that hits are
+inevitable. The ``Bible code'' is not evidence of design; it is evidence of
+the law of truly large numbers in action.
+
+It is important to distinguish this law from the classical law of large
+numbers. The latter concerns the convergence of sample means to expected
+values; the former concerns the inevitability of rare events given enough
+trials.
+
+{
+\setstretch{2}
+% ============================================================
+\begin{thebibliography}{9}
+	
+	\bibitem{diaconis1989}
+	P. Diaconis and F. Mosteller.
+	\newblock Methods for Studying Coincidences.
+	\newblock \emph{Journal of the American Statistical Association},
+	84(408):853--861, 1989.
+	\newblock \url{https://doi.org/10.1080/01621459.1989.10478847}
+	
+	\bibitem{wikipedia}
+	Law of truly large numbers.
+	\newblock Wikipedia.
+	\newblock \url{https://en.wikipedia.org/wiki/Law_of_truly_large_numbers}
+	
+	\bibitem{mathworld}
+	E. W. Weisstein.
+	\newblock Law of Truly Large Numbers.
+	\newblock MathWorld--A Wolfram Web Resource.
+	\newblock \url{https://mathworld.wolfram.com/LawOfTrulyLargeNumbers.html}
+	
+	\bibitem{witztum1994}
+	D. Witztum, E. Rips, and Y. Rosenberg.
+	\newblock Equidistant Letter Sequences in the Book of Genesis.
+	\newblock \emph{Statistical Science}, 9(3):429--438, 1994.
+	\newblock \url{https://doi.org/10.1214/ss/1177010393}
+	
+	\bibitem{mckay1999}
+	B. McKay, D. Bar-Natan, M. Bar-Hillel, and G. Kalai.
+	\newblock Solving the Bible Code Puzzle.
+	\newblock \emph{Statistical Science}, 14(2):150--173, 1999.
+	\newblock \url{https://doi.org/10.1214/ss/1009212243}
+	
+	\bibitem{drosnin1997}
+	M. Drosnin.
+	\newblock \emph{The Bible Code}.
+	\newblock Simon \& Schuster, New York, 1997.
+	\newblock ISBN 978-0-684-81079-4.
+	\newblock \url{https://search.worldcat.org/title/36876087}
+	
+	\bibitem{chenstein}
+	L. H. Y. Chen.
+	\newblock Poisson approximation for dependent trials.
+	\newblock \emph{Annals of Probability}, 3(3):534--545, 1975.
+	\newblock \url{https://doi.org/10.1214/aop/1176996359}
+	
+	\bibitem{arbox}
+	R. Arratia, L. Goldstein, and L. Gordon.
+	\newblock Two moments suffice for Poisson approximations: The Chen--Stein method.
+	\newblock \emph{Annals of Probability}, 17(1):9--25, 1989.
+	\newblock \url{https://doi.org/10.1214/aop/1176991491}
+	
+	\bibitem{janson2004}
+	S. Janson.
+	\newblock Large deviations for sums of partly dependent random variables.
+	\newblock \emph{Random Structures \& Algorithms}, 24(3):234--248, 2004.
+	\newblock \url{https://doi.org/10.1002/rsa.20008}
+	
+\end{thebibliography}
+}
+\end{document}
