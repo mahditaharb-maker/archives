@@ -1,0 +1,1167 @@
+\documentclass{amsart}
+\usepackage{amsmath, amsthm, amssymb, amsfonts, mathtools}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{anyfontsize}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{bm}
+\usepackage{etoolbox}
+\usepackage{textcase}
+\usepackage{titlesec}
+\usepackage{calc}
+\usepackage{ragged2e}
+\usepackage{seqsplit}
+\usepackage[colorlinks=true, citecolor=red, urlcolor=blue]{hyperref}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[hypcap=false]{caption}
+\usepackage{parskip}
+\usepackage{tikz}
+\usepackage{newtxtext, newtxmath}
+\usepackage[margin=0.8in]{geometry}
+\usetikzlibrary{cd, shapes.geometric, calc}
+\usepackage{arydshln}
+\makeindex
+
+% ============================================
+% PAGE STYLE
+% ============================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\Large\thepage}
+\setlength{\footskip}{14pt}
+
+% ============================================
+% TABLES SETTINGS
+% ============================================
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+
+\newcolumntype{P}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\Centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\RaggedLeft\arraybackslash}p{#1}}
+\newcolumntype{S}{>{\Centering\arraybackslash}p{0.8cm}}
+\newcolumntype{L}{>{\RaggedRight\arraybackslash}p{13cm}}
+\newcolumntype{J}{>{\Centering\arraybackslash}p{2.2cm}}
+
+% ============================================
+% PROOF TABLE ENVIRONMENT
+% ============================================
+\newenvironment{prooftable}{%
+	\renewcommand{\arraystretch}{1.2}%
+	\setlength{\tabcolsep}{4pt}%
+	\begin{longtable}{|S|L|J|}%
+		\hline
+		\textbf{Step} & \textbf{Symbolic Formulas} & \textbf{Ref} \\
+		\hline
+		\endfirsthead
+		\hline
+		\textbf{Step} & \textbf{Symbolic Formulas} & \textbf{Ref} \\
+		\hline
+		\endhead
+		\hline
+		\multicolumn{3}{r}{\textit{Continued on next page}} \\
+		\endfoot
+		\hline
+		\endlastfoot
+	}{%
+	\end{longtable}%
+}
+
+% ============================================
+% AXIOM TABLE ENVIRONMENT
+% ============================================
+\newenvironment{axiomsection}[1]{%
+	\subsection*{#1}%
+	\renewcommand{\arraystretch}{1.2}%
+	\setlength{\tabcolsep}{4pt}%
+	\begin{longtable}{|l|p{15.5cm}|}%
+		\hline
+		\multicolumn{2}{|c|}{\textbf{Axioms}} \\
+		\hline
+		\endfirsthead
+		\hline
+		\multicolumn{2}{|c|}{\textbf{Axioms (continued)}} \\
+		\hline
+		\endhead
+		\hline
+		\multicolumn{2}{r}{\textit{Continued on next page}} \\
+		\endfoot
+		\hline
+		\endlastfoot
+	}{%
+	\end{longtable}%
+}
+
+% ============================================
+% NOTION TABLE ENVIRONMENT
+% ============================================
+\newenvironment{notiontable}{%
+	\renewcommand{\arraystretch}{1.2}%
+	\setlength{\tabcolsep}{4pt}%
+	\begin{longtable}{|l|p{10cm}|c|}
+		\hline
+		\textbf{Notion} & \textbf{Description} & \textbf{Page} \\
+		\hline
+		\endfirsthead
+		\hline
+		\textbf{Notion} & \textbf{Description} & \textbf{Page} \\
+		\hline
+		\endhead
+		\hline
+		\multicolumn{3}{r}{\textit{Continued on next page}} \\
+		\endfoot
+		\hline
+		\endlastfoot
+}{%
+	\end{longtable}%
+}
+
+% ============================================
+% GLOSSARY TABLE ENVIRONMENT
+% ============================================
+\newenvironment{glossarytable}{%
+	\renewcommand{\arraystretch}{1.3}%
+	\setlength{\tabcolsep}{4pt}%
+	\begin{longtable}{|c|p{11cm}|c|}
+		\hline
+		\textbf{Symbol} & \textbf{Description} & \textbf{Page} \\
+		\hline
+		\endfirsthead
+		\hline
+		\textbf{Symbol} & \textbf{Description} & \textbf{Page} \\
+		\hline
+		\endhead
+		\hline
+		\multicolumn{3}{r}{\textit{Continued on next page}} \\
+		\endfoot
+		\hline
+		\endlastfoot
+}{%
+	\end{longtable}%
+}
+
+% ============================================
+% PREDICATE TABLE ENVIRONMENT
+% ============================================
+\newenvironment{predicatetable}{%
+	\renewcommand{\arraystretch}{1.3}%
+	\setlength{\tabcolsep}{6pt}%
+	\begin{longtable}{|>{\raggedright\arraybackslash}m{0.3\textwidth}|
+			>{\raggedright\arraybackslash}m{0.75\textwidth}|}%
+		\hdashline
+		\multicolumn{2}{|c|}{\textbf{Predicate}} \\
+		\hdashline
+		\textbf{Predicate} & \textbf{Symbolic Formula} \\
+		\hdashline
+		\endfirsthead
+		\hdashline
+		\multicolumn{2}{|c|}{\textbf{Predicate (continued)}} \\
+		\hdashline
+		\textbf{Predicate} & \textbf{Symbolic Formula} \\
+		\hdashline
+		\endhead
+		\hdashline
+		\multicolumn{2}{r}{\textit{Continued on next page}} \\
+		\hdashline
+		\endfoot
+		\hdashline
+		\endlastfoot
+	}{%
+	\end{longtable}%
+}
+
+% ============================================
+% DOCUMENT FORMATTING
+% ============================================
+\renewcommand{\normalsize}{\fontsize{14}{20}\selectfont}
+\onehalfspacing
+\raggedbottom
+\setlength{\parindent}{0pt}
+\sloppy
+\setlength{\emergencystretch}{3em}
+
+\titleformat{\section}
+{\normalfont\fontsize{16.8}{20}\selectfont\bfseries\color{blue}}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\normalfont\fontsize{15.4}{18}\selectfont\bfseries\color{teal}}
+{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+{\normalfont\fontsize{14}{16.8}\selectfont\bfseries\color{violet}}
+{\thesubsubsection}{1em}{}
+
+\makeatletter
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}.}
+\renewcommand{\thesubsubsection}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}.}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{1}
+\renewcommand{\l@section}{\@tocline{1}{0em}{1em}{2em}{}}
+\renewcommand{\l@subsection}{\@tocline{2}{0em}{1.5em}{2.5em}{}}
+\renewcommand{\l@subsubsection}{\@tocline{3}{0em}{2em}{3em}{}}
+\makeatother
+
+% ============================================
+% THEOREM STYLES
+% ============================================
+\newtheoremstyle{break}
+{} {} {\normalfont} {} {\bfseries} {.} {\newline} {\thmname{#1}\thmnumber{ #2}\thmnote{ (\textbf{#3})}}
+
+\theoremstyle{break}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{axiom}{Axiom}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{remark}{Remark}[section]
+
+\renewcommand{\thetheorem}{\thesection\arabic{theorem}}
+\renewcommand{\theproposition}{\thesection\arabic{proposition}}
+\renewcommand{\thelemma}{\thesection\arabic{lemma}}
+\renewcommand{\thedefinition}{\thesection\arabic{definition}}
+\renewcommand{\thecorollary}{\thesection\arabic{corollary}}
+\renewcommand{\theaxiom}{\thesection\arabic{axiom}}
+\renewcommand{\theexample}{\thesection\arabic{example}}
+\renewcommand{\theremark}{\thesection\arabic{remark}}
+
+\renewenvironment{proof}[1][Proof]{%
+	\par\noindent\textbf{#1.}\par
+	\vspace{20pt}
+}{\hfill$\square$\par}
+
+% ============================================
+% LOGICAL SYMBOLS
+% ============================================
+\newcommand{\Forall}{\forall}
+\newcommand{\Exists}{\exists}
+\newcommand{\ExistsUnique}{\exists!}
+\newcommand{\ExistsInf}{\exists^\infty}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\idx}[1]{\index{#1}}
+\newcommand{\idxsub}[2]{\index{#1!#2}}
+\newcommand{\del}{\delta}
+
+% ============================================
+% MACHINE LEARNING COMMANDS
+% ============================================
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+
+% ML Predicates
+\newcommand{\IsTransformer}[1]{\mathsf{Transformer}(#1)}
+\newcommand{\IsAttentionHead}[2]{\mathsf{AttHead}_{#2}(#1)}
+\newcommand{\IsSelfAttention}[1]{\mathsf{SelfAtt}(#1)}
+\newcommand{\IsFeedForward}[1]{\mathsf{FF}(#1)}
+\newcommand{\IsLayerNorm}[1]{\mathsf{LayerNorm}(#1)}
+\newcommand{\IsEmbedding}[2]{\mathsf{Embed}_{#2}(#1)}
+\newcommand{\IsToken}[1]{\mathsf{Token}(#1)}
+\newcommand{\IsSequence}[2]{\mathsf{Seq}_{#2}(#1)}
+\newcommand{\IsWord}[1]{\mathsf{Word}(#1)}
+\newcommand{\IsCharacter}[1]{\mathsf{Char}(#1)}
+\newcommand{\IsEncoding}[2]{\mathsf{Enc}_{#2}(#1)}
+\newcommand{\IsDecoding}[2]{\mathsf{Dec}_{#2}(#1)}
+\newcommand{\IsTraining}[1]{\mathsf{Train}(#1)}
+\newcommand{\IsLoss}[2]{\mathsf{Loss}_{#2}(#1)}
+\newcommand{\IsCrossEntropy}[2]{\mathsf{CrossEnt}_{#2}(#1)}
+\newcommand{\IsOptimizer}[1]{\mathsf{Optim}(#1)}
+\newcommand{\IsGradient}[2]{\mathsf{Grad}_{#2}(#1)}
+\newcommand{\IsBackprop}[1]{\mathsf{Backprop}(#1)}
+\newcommand{\IsBatch}[2]{\mathsf{Batch}_{#2}(#1)}
+\newcommand{\IsEpoch}[1]{\mathsf{Epoch}(#1)}
+\newcommand{\IsLearningRate}[1]{\mathsf{LR}(#1)}
+\newcommand{\IsAccuracy}[1]{\mathsf{Acc}(#1)}
+\newcommand{\IsPrecision}[1]{\mathsf{Prec}(#1)}
+\newcommand{\IsRecall}[1]{\mathsf{Recall}(#1)}
+\newcommand{\IsAUC}[1]{\mathsf{AUC}(#1)}
+\newcommand{\IsROC}[1]{\mathsf{ROC}(#1)}
+\newcommand{\IsClassifier}[1]{\mathsf{Classifier}(#1)}
+\newcommand{\IsFeature}[2]{\mathsf{Feature}_{#2}(#1)}
+\newcommand{\IsLabel}[1]{\mathsf{Label}(#1)}
+\newcommand{\IsSplit}[3]{\mathsf{Split}_{#2}^{#3}(#1)}
+\newcommand{\IsMinimizer}[2]{\mathsf{Minimizer}(#1,#2)}
+\newcommand{\IsBayesOptimal}[2]{\mathsf{BayesOptimal}(#1,#2)}
+\newcommand{\IsCEMinimizer}[2]{\mathsf{CEMinimizer}(#1,#2)}
+\newcommand{\IsZeroOneLoss}[1]{\ell_{01}(#1)}
+\newcommand{\IsExpLoss}[2]{\mathsf{ExpLoss}(#1,#2)}
+\newcommand{\IsArgMin}[2]{\mathsf{ArgMin}_{#1} #2}
+
+% Planetary System Predicates
+\newcommand{\IsPlanet}[1]{\mathsf{Planet}(#1)}
+\newcommand{\IsMass}[2]{\mathsf{Mass}_{#2}(#1)}
+\newcommand{\IsSemiMajorAxis}[2]{\mathsf{A}_{#2}(#1)}
+\newcommand{\IsSystem}[2]{\mathsf{Sys}_{#2}(#1)}
+\newcommand{\IsHillRadius}[4]{\mathsf{R}_{\mathrm{Hill}}(#1,#2,#3,#4)}
+\newcommand{\IsStable}[2]{\mathsf{Stable}_{#2}(#1)}
+\newcommand{\IsEncodingGrid}[3]{\mathsf{Grid}_{#2}^{#3}(#1)}
+\newcommand{\IsCharacterMap}[2]{\mathsf{CharMap}_{#2}(#1)}
+\newcommand{\IsCriticalStability}[1]{\mathsf{CriticalStability}(#1)}
+\newcommand{\IsGridCell}[3]{\mathsf{GridCell}_{#2}^{#3}(#1)}
+\newcommand{\IsOrbitCross}[2]{\mathsf{OrbitCross}(#1,#2)}
+\newcommand{\IsChaotic}[2]{\mathsf{Chaotic}(#1,#2)}
+
+% Counters
+\newcounter{defcounter}
+\newcounter{thmcounter}
+\newcounter{axcounter}
+\newcommand{\defnum}{\refstepcounter{defcounter}\arabic{defcounter}.}
+\newcommand{\thmnum}{\refstepcounter{thmcounter}\arabic{thmcounter}.}
+\newcommand{\axnum}{\refstepcounter{axcounter}\arabic{axcounter}.}
+
+% ============================================
+% TITLE AND AUTHOR
+% ============================================
+\title{\NoCaseChange{$\mathsf{PredicateMLPlanet}$}}
+\author{%
+	\NoCaseChange{Brahimi, Mahdi. Tahar. \\
+		Department of Mathematics\\
+		University of Mohamed Boudiaf, Msila, Algeria \\ 
+		{ \texttt{\href{mailto:mahdi.brahimi@univ-msila.dz}{%
+					mahditahar.brahimi@univ-msila.dz}} } }}
+
+\subjclass[2020]{68T07, 85-08, 68T05}
+\keywords{machine learning, transformer architecture, planetary systems, generative models, formal proofs}
+
+% ============================================
+% BIBLIOGRAPHY FILE
+% ============================================
+\begin{filecontents}{references.bib}
+	@article{vaswani2017attention,
+		author    = {Vaswani, Ashish and others},
+		title     = {Attention Is All You Need},
+		journal   = {Advances in Neural Information Processing Systems},
+		volume    = {30},
+		year      = {2017}
+	}
+	@article{ngpps2020,
+		author    = {Mordasini, C. and others},
+		title     = {Next Generation Planetary Population Synthesis},
+		journal   = {Astronomy \& Astrophysics},
+		volume    = {638},
+		year      = {2020}
+	}
+\end{filecontents}
+\renewcommand{\seriesdefault}{\bfdefault}
+\boldmath
+
+\begin{document}
+	\pagestyle{empty}
+	\pagenumbering{roman}
+	\setstretch{1.2}
+
+	\maketitle
+	
+	\thispagestyle{empty}
+	
+	\thispagestyle{empty}
+	\clearpage
+	\pagestyle{plain}
+	\pagenumbering{arabic}
+	\fontsize{9}{15}\selectfont
+	
+	% ============================================
+	% AXIOMATIC SYSTEMS
+	% ============================================
+	\section{Axiomatic Systems}
+	\label{sec:axioms}
+	\idx{Axioms}
+	
+	\subsection{Language}
+	\idx{Language}
+	
+	\[
+	\begin{array}{l}
+	\mathsf{Language}(\mathcal{L}_{\text{ML}}) \;\equiv\; \{ \\
+	\qquad =,\; +,\; \cdot,\; \leq,\; \mathbb{R},\; \mathbb{N},\; \mathsf{Transformer},\; \mathsf{Attention},\; \mathsf{Embedding},\; \mathsf{Loss},\; \mathsf{Gradient},\; \mathsf{Classifier},\; \mathsf{Planet},\; \mathsf{Stability},\; \ldots \\
+	\}
+	\end{array}
+	\]
+	
+	\begin{align}
+	\Forall x \Forall y \; & (x = y \;\leftrightarrow\; \forall P (P(x) \leftrightarrow P(y))) \label{eq:leibniz} \\
+	\bot &\;\equiv\; \exists x (x \neq x) \label{eq:bot} \\
+	\top &\;\equiv\; \forall x (x = x) \label{eq:top} \\
+	\vdash \varphi &\;\equiv\; \varphi \text{ is provable from axioms} \label{eq:entailment}
+	\end{align}
+	
+
+	\begin{axiomsection}{Equality Axioms}
+		\label{axioms:equality}
+		\phantomsection\axnum\label{ax:E1}
+		(E1) & $\Forall x,\; x = x$ \\
+		\hdashline
+		\phantomsection\axnum\label{ax:E2}
+		(E2) & $\Forall x \Forall y,\; (x = y \;\rightarrow\; y = x)$ \\
+		\hdashline
+		\phantomsection\axnum\label{ax:E3}
+		(E3) & $\Forall x \Forall y \Forall z,\; (x = y \;\land\; y = z \;\rightarrow\; x = z)$ \\
+		\hdashline
+		\phantomsection\axnum\label{ax:E4}
+		(E4) & $\Forall x \Forall y,\; (x = y \;\rightarrow\; (\varphi(x) \leftrightarrow \varphi(y)))$ \\
+		\hdashline
+	\end{axiomsection}
+	
+	
+	\begin{axiomsection}{Real Number Axioms}
+		\label{axioms:real}
+		\phantomsection\axnum\label{ax:R1}
+		(R1) & $\Forall a,b,c \in \R,\; (a+b)+c = a+(b+c)$ \\
+		\hdashline
+		\phantomsection\axnum\label{ax:R2}
+		(R2) & $\Forall a,b \in \R,\; a+b = b+a$ \\
+		\hdashline
+		\phantomsection\axnum\label{ax:R3}
+		(R3) & $\Forall a \in \R,\; a+0 = a$ \\
+		\hdashline
+		\phantomsection\axnum\label{ax:R4}
+		(R4) & $\Forall a \in \R,\; \Exists -a \in \R,\; a+(-a)=0$ \\
+		\hdashline
+		\phantomsection\axnum\label{ax:R5}
+		(R5) & $\Forall a,b,c \in \R,\; (ab)c = a(bc)$ \\
+		\hdashline
+		\phantomsection\axnum\label{ax:R6}
+		(R6) & $\Forall a,b \in \R,\; ab = ba$ \\
+		\hdashline
+		\phantomsection\axnum\label{ax:R7}
+		(R7) & $\Forall a,b,c \in \R,\; a(b+c) = ab + ac$ \\
+		\hdashline
+		\phantomsection\axnum\label{ax:R8}
+		(R8) & $\Forall a \in \R,\; a \cdot 1 = a$ \\
+		\hdashline
+		\phantomsection\axnum\label{ax:R9}
+		(R9) & $\Forall a \in \R,\; a \neq 0 \rightarrow \Exists a^{-1} \in \R,\; a a^{-1} = 1$ \\
+		\hdashline
+		\phantomsection\axnum\label{ax:R10}
+		(R10) & $\Forall S \subseteq \R,\; S \neq \emptyset,\; \mathsf{BddAbove}(S) \;\rightarrow\; \Exists \sup S$ \\
+		\hdashline
+	\end{axiomsection}
+	
+	% ============================================
+	% PREDICATE DEFINITIONS
+	% ============================================
+	\section{Predicate Definitions}
+	\label{sec:predicate-definitions}
+	\idx{Predicate Definitions}
+	
+	\setcounter{defcounter}{0}
+	\begin{predicatetable}
+		
+		% ============================================
+		% TRANSFORMER ARCHITECTURE
+		% ============================================
+		\phantomsection\defnum\label{def:transformer} $\IsTransformer{T}$ & 
+		$\IsTransformer{T} \equiv T = (E, D, H, L,\; \mathsf{Block})$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:embedding} $\IsEmbedding{E}{d}$ & 
+		$\IsEmbedding{E}{d} \equiv E: \mathsf{Vocab} \to \R^d$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:positional-encoding} $\mathsf{PE}(pos, i)$ & 
+		$\begin{array}{r@{}l}
+		\mathsf{PE}(pos, 2i) &\equiv \sin\left(\frac{pos}{10000^{2i/d}}\right) \\
+		\mathsf{PE}(pos, 2i+1) &\equiv \cos\left(\frac{pos}{10000^{2i/d}}\right)
+		\end{array}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:self-attention} $\mathsf{SelfAttention}(Q,K,V)$ & 
+		$\mathsf{SelfAttention}(Q,K,V) \equiv \mathsf{softmax}\left(\frac{QK^{\mathsf{T}}}{\sqrt{d_k}}\right) V$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:attention-head} $\mathsf{AttHead}_h(Q,K,V)$ & 
+		$\mathsf{AttHead}_h(Q,K,V) \equiv \mathsf{SelfAttention}(QW_h^Q, KW_h^K, VW_h^V)$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:multi-head-attention} $\mathsf{MHA}(Q,K,V)$ & 
+		$\mathsf{MHA}(Q,K,V) \equiv \mathsf{Concat}(\mathsf{AttHead}_1,\ldots,\mathsf{AttHead}_H) W^O$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:feed-forward} $\mathsf{FFN}(x)$ & 
+		$\mathsf{FFN}(x) \equiv \max(0, xW_1 + b_1) W_2 + b_2$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:gelu} $\mathsf{GELU}(x)$ & 
+		$\mathsf{GELU}(x) \equiv x \cdot \Phi(x) = \frac{x}{2}\left(1 + \operatorname{erf}\left(\frac{x}{\sqrt{2}}\right)\right)$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:layer-norm} $\mathsf{LayerNorm}(x)$ & 
+		$\mathsf{LayerNorm}(x) \equiv \frac{x - \mu}{\sigma} \odot \gamma + \beta$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:transformer-block} $\mathsf{Block}(x)$ & 
+		$\begin{array}{r@{}l}
+		\mathsf{Block}(x) \equiv & x' = \mathsf{LayerNorm}(x + \mathsf{MHA}(x,x,x)) \\
+		& \mathsf{LayerNorm}(x' + \mathsf{FFN}(x'))
+		\end{array}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:decoder-only} $\mathsf{DecoderOnly}(T)$ & 
+		$\mathsf{DecoderOnly}(T) \equiv \Forall i,\; \mathsf{Block}_i \text{ uses masked self-attention}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:softmax} $\mathsf{softmax}(z)$ & 
+		$\mathsf{softmax}(z) \equiv \frac{e^{z_i}}{\sum_{j=1}^C e^{z_j}}$ \\ \hdashline
+		
+		% ============================================
+		% TRAINING CONCEPTS
+		% ============================================
+		\phantomsection\defnum\label{def:cross-entropy} $\mathsf{CrossEntropy}(y, \hat{y})$ & 
+		$\mathsf{CrossEntropy}(y, \hat{y}) \equiv -\sum_{i=1}^C y_i \log(\hat{y}_i)$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:entropy} $\mathsf{Entropy}(y)$ & 
+		$\mathsf{Entropy}(y) \equiv -\sum_{i=1}^C y_i \log(y_i)$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:kl-divergence} $\mathsf{KL}(y \| \hat{y})$ & 
+		$\mathsf{KL}(y \| \hat{y}) \equiv \sum_{i=1}^C y_i \log\left(\frac{y_i}{\hat{y}_i}\right)$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:cross-entropy-relation} $\mathsf{CrossEntropyRel}$ & 
+		$\mathsf{CrossEntropy}(y, \hat{y}) = \mathsf{Entropy}(y) + \mathsf{KL}(y \| \hat{y})$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:gradient} $\mathsf{Gradient}_{\theta}(\mathcal{L})$ & 
+		$\mathsf{Gradient}_{\theta}(\mathcal{L}) \equiv \frac{\partial \mathcal{L}}{\partial \theta}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:backpropagation} $\mathsf{Backprop}(\mathcal{L}, \theta)$ & 
+		$\mathsf{Backprop}(\mathcal{L}, \theta) \equiv \theta \leftarrow \theta - \eta \nabla_{\theta} \mathcal{L}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:adam-optimizer} $\mathsf{Adam}(\theta, \nabla \mathcal{L})$ & 
+		$\begin{array}{r@{}l}
+		\mathsf{Adam}(\theta, \nabla \mathcal{L}) \equiv & m_t = \beta_1 m_{t-1} + (1-\beta_1) \nabla \mathcal{L} \\
+		& v_t = \beta_2 v_{t-1} + (1-\beta_2) (\nabla \mathcal{L})^2 \\
+		& \hat{m}_t = \frac{m_t}{1-\beta_1^t},\; \hat{v}_t = \frac{v_t}{1-\beta_2^t} \\
+		& \theta \leftarrow \theta - \eta \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
+		\end{array}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:batch} $\mathsf{Batch}_b(D)$ & 
+		$\mathsf{Batch}_b(D) \equiv \{ (x_i, y_i) \}_{i=1}^b \subseteq D$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:epoch} $\mathsf{Epoch}(D, b)$ & 
+		$\mathsf{Epoch}(D, b) \equiv \bigcup_{j=1}^{\lceil |D|/b \rceil} \mathsf{Batch}_b(D_j)$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:learning-rate-schedule} $\eta(t)$ & 
+		$\eta(t) \equiv \eta_0 \cdot \min\left(1, \frac{t}{t_{\text{warmup}}}\right) \cdot \frac{1}{\sqrt{\max(t, t_{\text{warmup}})}}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:loss-function} $\mathcal{L}(\theta)$ & 
+		$\mathcal{L}(\theta) \equiv \frac{1}{N} \sum_{i=1}^N \mathsf{CrossEntropy}(y_i, f_{\theta}(x_i))$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:convergence} $\mathsf{Converges}(\mathcal{L}_t)$ & 
+		$\mathsf{Converges}(\mathcal{L}_t) \equiv \Exists \mathcal{L}^*,\; \lim_{t \to \infty} \mathcal{L}_t = \mathcal{L}^*$ \\ \hdashline
+		
+		% ============================================
+		% OPTIMIZATION PREDICATES
+		% ============================================
+		\phantomsection\defnum\label{def:minimizer} $\mathsf{Minimizer}(\hat{y}, \mathcal{L})$ & 
+		$\mathsf{Minimizer}(\hat{y}, \mathcal{L}) \equiv \Forall \hat{y}',\; \mathcal{L}(\hat{y}') \ge \mathcal{L}(\hat{y})$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:exp-loss} $\mathsf{ExpLoss}(\hat{y}, x)$ & 
+		$\mathsf{ExpLoss}(\hat{y}, x) \equiv \sum_{y \in \{0,1\}} P(y|x) \cdot \ell_{01}(y, \hat{y})$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:bayes-optimal} $\mathsf{BayesOptimal}(\hat{y}, x)$ & 
+		$\mathsf{BayesOptimal}(\hat{y}, x) \equiv \mathsf{Minimizer}(\hat{y}, \mathsf{ExpLoss}(\cdot, x))$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:zero-one-loss} $\ell_{01}(y, \hat{y})$ & 
+		$\ell_{01}(y, \hat{y}) \equiv \begin{cases} 0 & y = \hat{y} \\ 1 & y \neq \hat{y} \end{cases}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:ce-minimizer} $\mathsf{CEMinimizer}(\hat{y}, y)$ & 
+		$\mathsf{CEMinimizer}(\hat{y}, y) \equiv \Forall \hat{y}',\; \mathsf{CrossEntropy}(y, \hat{y}') \ge \mathsf{CrossEntropy}(y, \hat{y})$ \\ \hdashline
+		
+		% ============================================
+		% CLASSIFICATION METRICS
+		% ============================================
+		\phantomsection\defnum\label{def:tp} $\mathsf{TP}$ & 
+		$\mathsf{TP} \equiv |\{ (x,y) : \hat{y} = 1 \;\land\; y = 1 \}|$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:tn} $\mathsf{TN}$ & 
+		$\mathsf{TN} \equiv |\{ (x,y) : \hat{y} = 0 \;\land\; y = 0 \}|$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:fp} $\mathsf{FP}$ & 
+		$\mathsf{FP} \equiv |\{ (x,y) : \hat{y} = 1 \;\land\; y = 0 \}|$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:fn} $\mathsf{FN}$ & 
+		$\mathsf{FN} \equiv |\{ (x,y) : \hat{y} = 0 \;\land\; y = 1 \}|$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:accuracy} $\mathsf{Accuracy}$ & 
+		$\mathsf{Accuracy} \equiv \frac{\mathsf{TP} + \mathsf{TN}}{\mathsf{TP} + \mathsf{TN} + \mathsf{FP} + \mathsf{FN}}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:precision} $\mathsf{Precision}$ & 
+		$\mathsf{Precision} \equiv \frac{\mathsf{TP}}{\mathsf{TP} + \mathsf{FP}}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:recall} $\mathsf{Recall}$ & 
+		$\mathsf{Recall} \equiv \frac{\mathsf{TP}}{\mathsf{TP} + \mathsf{FN}}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:f1-score} $\mathsf{F1}$ & 
+		$\mathsf{F1} \equiv 2 \cdot \frac{\mathsf{Precision} \cdot \mathsf{Recall}}{\mathsf{Precision} + \mathsf{Recall}}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:tpr} $\mathsf{TPR}(\tau)$ & 
+		$\mathsf{TPR}(\tau) \equiv \frac{\mathsf{TP}(\tau)}{\mathsf{TP}(\tau) + \mathsf{FN}(\tau)}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:fpr} $\mathsf{FPR}(\tau)$ & 
+		$\mathsf{FPR}(\tau) \equiv \frac{\mathsf{FP}(\tau)}{\mathsf{FP}(\tau) + \mathsf{TN}(\tau)}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:roc} $\mathsf{ROC}$ & 
+		$\mathsf{ROC} \equiv \{ (\mathsf{FPR}(\tau), \mathsf{TPR}(\tau)) : \tau \in \R \}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:auc} $\mathsf{AUC}$ & 
+		$\mathsf{AUC} \equiv \int_0^1 \mathsf{TPR}(\tau) \, d\mathsf{FPR}(\tau)$ \\ \hdashline
+		
+		% ============================================
+		% PLANETARY SYSTEM CONCEPTS
+		% ============================================
+		\phantomsection\defnum\label{def:planet} $\mathsf{Planet}(p)$ & 
+		$\mathsf{Planet}(p) \equiv (m_p, a_p) \in \R^2$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:mass} $\mathsf{Mass}_{M}(p)$ & 
+		$\mathsf{Mass}_{M}(p) \equiv m_p \in [10^{-4}, 10^4] M_\oplus$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:semi-major-axis} $\mathsf{A}_{a}(p)$ & 
+		$\mathsf{A}_{a}(p) \equiv a_p \in [10^{-3}, 10^3] \text{ AU}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:system} $\mathsf{Sys}_n(S)$ & 
+		$\mathsf{Sys}_n(S) \equiv \{ p_1, p_2, \ldots, p_n \},\; a_{p_i} < a_{p_{i+1}}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:hill-radius} $\mathsf{R}_{\mathrm{Hill}}(p_1, p_2, M_*)$ & 
+		$\mathsf{R}_{\mathrm{Hill}}(p_1, p_2, M_*) \equiv \left(\frac{m_{p_1}+m_{p_2}}{3M_*}\right)^{1/3} \left(\frac{a_{p_1}+a_{p_2}}{2}\right)$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:stability} $\mathsf{Stable}_{\Delta}(p_1, p_2, M_*)$ & 
+		$\mathsf{Stable}_{\Delta}(p_1, p_2, M_*) \equiv \frac{a_{p_2} - a_{p_1}}{\mathsf{R}_{\mathrm{Hill}}(p_1, p_2, M_*)} > \Delta$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:critical-stability} $\Delta_c$ & 
+		$\Delta_c \equiv 2\sqrt{3}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:orbit-cross} $\mathsf{OrbitCross}(p_1, p_2)$ & 
+		$\mathsf{OrbitCross}(p_1, p_2) \equiv a_{p_2} - a_{p_1} \le \mathsf{R}_{\mathrm{Hill}}(p_1, p_2, M_*)$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:chaotic} $\mathsf{Chaotic}(p_1, p_2)$ & 
+		$\mathsf{Chaotic}(p_1, p_2) \equiv \mathsf{OrbitCross}(p_1, p_2) \;\land\; \neg \mathsf{Stable}_{\Delta_c}(p_1, p_2, M_*)$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:encoding-grid} $\mathsf{Grid}_{N}^{r}(G)$ & 
+		$\mathsf{Grid}_{N}^{r}(G) \equiv \bigcup_{i=1}^N \bigcup_{j=1}^N [x_i, x_{i+1}] \times [y_j, y_{j+1}]$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:encoding-bounds} $\mathsf{GridBounds}$ & 
+		$\begin{array}{r@{}l}
+		\log a_{\min} &= -3,\; \log a_{\max} = 3 \\
+		\log m_{\min} &= -4,\; \log m_{\max} = 4
+		\end{array}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:character-map} $\mathsf{CharMap}_{N}(p)$ & 
+		$\mathsf{CharMap}_{N}(p) \equiv c_{ij} \text{ where } (\log a_p, \log m_p) \in \mathsf{Grid}_{N}^{r}$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:grid-cell} $\mathsf{GridCell}_{ij}$ & 
+		$\mathsf{GridCell}_{ij} \equiv [x_i, x_{i+1}] \times [y_j, y_{j+1}]$ \\ \hdashline
+		
+		\phantomsection\defnum\label{def:word} $\mathsf{Word}(S)$ & 
+		$\mathsf{Word}(S) \equiv \mathsf{CharMap}_{N}(p_1) \mathsf{CharMap}_{N}(p_2) \cdots \mathsf{CharMap}_{N}(p_n)$ \\ \hdashline
+		
+	\end{predicatetable}
+	
+	% ============================================
+	% PREDICATE THEOREMS
+	% ============================================
+	\section{Predicate Theorems}
+	\label{sec:predicate-theorems}
+	\idx{Predicate Theorems}
+	
+	\setcounter{thmcounter}{0}
+	\begin{predicatetable}
+		
+		% ============================================
+		% TRANSFORMER THEOREMS
+		% ============================================
+		\phantomsection\thmnum\label{thm:attention-properties} $\mathsf{AttentionProperties}$ & 
+		$\mathsf{SelfAttention}(Q,K,V_{\pi}) = (\mathsf{SelfAttention}(Q,K,V))_{\pi}$ \\ \hdashline
+		
+		\phantomsection\thmnum\label{thm:positional-encoding} $\mathsf{PositionalEncoding}$ & 
+		$\mathsf{PE}(pos + k, 2i) = \mathsf{PE}(pos, 2i) \cos\left(\frac{k}{10000^{2i/d}}\right) + \mathsf{PE}(pos, 2i+1) \sin\left(\frac{k}{10000^{2i/d}}\right)$ \\ \hdashline
+		
+		\phantomsection\thmnum\label{thm:gradient-descent} $\mathsf{GradientDescent}$ & 
+		$\eta \le \frac{2}{L} \;\rightarrow\; \mathcal{L}(\theta_{t+1}) \le \mathcal{L}(\theta_t)$ \\ \hdashline
+		
+		\phantomsection\thmnum\label{thm:cross-entropy-minimization} $\mathsf{CrossEntropyMin}$ & 
+		$\hat{y} = y \;\rightarrow\; \mathsf{CEMinimizer}(\hat{y}, y)$ \\ \hdashline
+		
+		% ============================================
+		% CLASSIFICATION THEOREMS
+		% ============================================
+		\phantomsection\thmnum\label{thm:auc-properties} $\mathsf{AUCProperties}$ & 
+		$0 \le \mathsf{AUC} \le 1,\; \mathsf{AUC}_{\text{rand}} = \frac{1}{2},\; \mathsf{AUC}_{\text{perfect}} = 1$ \\ \hdashline
+		
+		\phantomsection\thmnum\label{thm:bayes-optimal} $\mathsf{BayesOptimal}$ & 
+		$\eta(x) > \frac{1}{2} \;\rightarrow\; \mathsf{BayesOptimal}(1, x)$ \\ \hdashline
+		
+		% ============================================
+		% PLANETARY SYSTEM THEOREMS
+		% ============================================
+		\phantomsection\thmnum\label{thm:hill-stability} $\mathsf{HillStability}$ & 
+		$\Delta > 2\sqrt{3} \;\leftrightarrow\; \neg \mathsf{OrbitCross}(p_1, p_2)$ \\ \hdashline
+		
+		\phantomsection\thmnum\label{thm:encoding-bijection} $\mathsf{EncodingBijection}$ & 
+		$\mathsf{CharMap}_{N}(p) = \mathsf{CharMap}_{N}(q) \;\leftrightarrow\; p,q \in \mathsf{GridCell}_{ij}$ \\ \hdashline
+		
+	\end{predicatetable}
+	
+	% ============================================
+	% APPENDICES
+	% ============================================
+	\clearpage
+	\makeatletter
+	\let\orig@addcontentsline\addcontentsline
+	\renewcommand{\addcontentsline}[3]{}   
+	\makeatother
+	\vspace{0.3in}
+	\setstretch{1}
+	\appendix
+	\renewcommand{\thesection}{\Alph{section}.}
+	\renewcommand{\thesubsection}{\thesection\arabic{subsection}}
+	\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+	\begin{center}{\Huge{Appendices}}\end{center}
+	\vspace{0.3in}
+		\section{Algorithmic Implementation}
+	\label{sec:algorithmic-implementation}
+	\idx{Algorithmic Implementation}
+
+	% ============================================
+	% ALGORITHMIC IMPLEMENTATION
+	% ============================================
+
+	\fontsize{9}{15}\selectfont
+	\subsection{Planetary System Encoding}
+	\label{subsec:encoding-algorithm}
+	\idx{encoding algorithm}
+	
+	The following procedures transform planetary systems into sequences of tokens suitable for transformer processing, as described in Definitions \ref{def:encoding-grid}, \ref{def:character-map}, and \ref{def:word}.
+	
+	\begin{algorithmic}[1]
+		
+		\Procedure{EncodeSystem}{$S, N$} \Comment{Def. \ref{def:encoding-grid}, \ref{def:character-map}}
+		\State $\log a_{\min} \gets -3,\; \log a_{\max} \gets 3$ \Comment{Def. \ref{def:encoding-bounds}}
+		\State $\log m_{\min} \gets -4,\; \log m_{\max} \gets 4$
+		\State $\Delta a \gets (\log a_{\max} - \log a_{\min}) / N$
+		\State $\Delta m \gets (\log m_{\max} - \log m_{\min}) / N$
+		\State $\mathsf{word} \gets []$
+		\For{each $p \in S$}
+		\State $\ell_a \gets \log_{10}(\mathsf{A}_{a}(p))$ \Comment{Def. \ref{def:semi-major-axis}}
+		\State $\ell_m \gets \log_{10}(\mathsf{Mass}_{M}(p))$ \Comment{Def. \ref{def:mass}}
+		\State $i \gets \min\left(\left\lfloor \frac{\ell_a - \log a_{\min}}{\Delta a} \right\rfloor + 1,\; N\right)$
+		\State $j \gets \min\left(\left\lfloor \frac{\ell_m - \log m_{\min}}{\Delta m} \right\rfloor + 1,\; N\right)$
+		\State $c_{ij} \gets \mathsf{CharMap}_{N}(p)$ \Comment{Def. \ref{def:character-map}}
+		\State $\mathsf{word}.\mathsf{append}(c_{ij})$
+		\EndFor
+		\State \Return $\mathsf{word}$ \Comment{Def. \ref{def:word}}
+		\EndProcedure
+		
+		\Statex
+		
+		\Procedure{DecodeSystem}{$\mathsf{word}, N$} \Comment{Inverse of Def. \ref{def:character-map}}
+		\State $\log a_{\min} \gets -3,\; \log a_{\max} \gets 3$
+		\State $\log m_{\min} \gets -4,\; \log m_{\max} \gets 4$
+		\State $\Delta a \gets (\log a_{\max} - \log a_{\min}) / N$
+		\State $\Delta m \gets (\log m_{\max} - \log m_{\min}) / N$
+		\State $S \gets []$
+		\For{each $c_{ij} \in \mathsf{word}$}
+		\State $\ell_a \gets \log a_{\min} + (i-1)\Delta a + \frac{\Delta a}{2}$
+		\State $\ell_m \gets \log m_{\min} + (j-1)\Delta m + \frac{\Delta m}{2}$
+		\State $a_p \gets 10^{\ell_a},\; m_p \gets 10^{\ell_m}$
+		\State $p \gets \mathsf{Planet}(m_p, a_p)$ \Comment{Def. \ref{def:planet}}
+		\State $S.\mathsf{append}(p)$
+		\EndFor
+		\State \Return $\mathsf{Sys}_{|S|}(S)$ \Comment{Def. \ref{def:system}}
+		\EndProcedure
+		
+	\end{algorithmic}
+	
+	\subsection{Transformer Training Procedure}
+	\label{subsec:training-algorithm}
+	\idx{training algorithm}
+	
+	The training procedure for the transformer model on planetary system data, implementing the loss function (Def. \ref{def:loss-function}) and optimization (Def. \ref{def:adam-optimizer}).
+	
+	\begin{algorithmic}[1]
+		
+		\Procedure{ComputeLoss}{$\theta, X, Y$} \Comment{Def. \ref{def:loss-function}, \ref{def:cross-entropy}}
+		\State $X_{\text{enc}} \gets \mathsf{Embedding}(X) + \mathsf{PE}(X)$ \Comment{Def. \ref{def:embedding}, \ref{def:positional-encoding}}
+		\For{$l = 1$ to $L$}
+		\State $X_{\text{enc}} \gets \mathsf{LayerNorm}(X_{\text{enc}} + \mathsf{MHA}(X_{\text{enc}}, X_{\text{enc}}, X_{\text{enc}}))$ \Comment{Def. \ref{def:layer-norm}, \ref{def:multi-head-attention}}
+		\State $X_{\text{enc}} \gets \mathsf{LayerNorm}(X_{\text{enc}} + \mathsf{FFN}(X_{\text{enc}}))$ \Comment{Def. \ref{def:feed-forward}}
+		\EndFor
+		\State $\hat{Y} \gets \mathsf{softmax}(X_{\text{enc}} W_{\text{out}})$ \Comment{Def. \ref{def:softmax}}
+		\State $\mathcal{L} \gets \frac{1}{|X|} \sum_{i=1}^{|X|} \mathsf{CrossEntropy}(Y_i, \hat{Y}_i)$
+		\State \Return $\mathcal{L}$
+		\EndProcedure
+		
+		\Statex
+		
+		\Procedure{TrainTransformer}{$D, \theta, \eta(t), b, E$} \Comment{Def. \ref{def:adam-optimizer}, \ref{def:convergence}}
+		\For{$epoch = 1$ to $E$} \Comment{Def. \ref{def:epoch}}
+		\State $\mathsf{shuffle}(D)$
+		\For{each batch $(X, Y) \in \mathsf{Batch}_b(D)$} \Comment{Def. \ref{def:batch}}
+		\State $\mathcal{L}_{\text{batch}} \gets \mathsf{ComputeLoss}(\theta, X, Y)$
+		\State $\nabla \mathcal{L} \gets \mathsf{Gradient}_{\theta}(\mathcal{L}_{\text{batch}})$ \Comment{Def. \ref{def:gradient}}
+		\State $\theta \gets \mathsf{Adam}(\theta, \nabla \mathcal{L})$ \Comment{Def. \ref{def:adam-optimizer}}
+		\EndFor
+		\If{$\mathsf{Converges}(\mathcal{L}_t)$} \Comment{Def. \ref{def:convergence}}
+		\State \textbf{break}
+		\EndIf
+		\EndFor
+		\State \Return $\theta$
+		\EndProcedure
+		
+	\end{algorithmic}
+	
+	\subsection{Planetary System Generation}
+	\label{subsec:generation-algorithm}
+	\idx{generation algorithm}
+	
+	The autoregressive generation of planetary systems using the trained transformer, where each new planet is predicted conditioned on previously generated planets (Theorem \ref{thm:cross-entropy-minimization}).
+	
+	\begin{algorithmic}[1]
+		
+		\Procedure{GenerateNextToken}{$T, \theta, \mathsf{context}, \tau$} \Comment{Autoregressive prediction}
+		\State $X_{\text{enc}} \gets \mathsf{Embedding}(\mathsf{context}) + \mathsf{PE}(\mathsf{context})$
+		\For{$l = 1$ to $L$}
+		\State $X_{\text{enc}} \gets \mathsf{LayerNorm}(X_{\text{enc}} + \mathsf{MaskedMHA}(X_{\text{enc}}, X_{\text{enc}}, X_{\text{enc}}))$
+		\State $X_{\text{enc}} \gets \mathsf{LayerNorm}(X_{\text{enc}} + \mathsf{FFN}(X_{\text{enc}}))$
+		\EndFor
+		\State $\mathbf{z} \gets X_{\text{enc}}[-1] W_{\text{out}}$ \Comment{Last position logits}
+		\State $p_i \gets \dfrac{\exp(z_i / \tau)}{\sum_j \exp(z_j / \tau)}$ \Comment{Temperature sampling}
+		\State $c \sim \mathsf{Categorical}(p)$
+		\State \Return $c$
+		\EndProcedure
+		
+		\Statex
+		
+		\Procedure{GenerateSystem}{$T, \theta, n_{\max}, \tau$} \Comment{Def. \ref{def:word}, \ref{def:system}}
+		\State $\mathsf{word} \gets []$
+		\State $t \gets 1$
+		\While{$t \le n_{\max}$}
+		\State $c \gets \mathsf{GenerateNextToken}(T, \theta, \mathsf{word}, \tau)$
+		\If{$c = \mathsf{EOS}$} \Comment{End-of-sequence token}
+		\State \textbf{break}
+		\EndIf
+		\State $\mathsf{word}.\mathsf{append}(c)$
+		\State $t \gets t + 1$
+		\EndWhile
+		\State $S \gets \mathsf{DecodeSystem}(\mathsf{word}, N)$
+		\State \Return $S$
+		\EndProcedure
+		
+		\Statex
+		
+		\Procedure{ComputeStability}{$S, M_*$} \Comment{Def. \ref{def:stability}, \ref{def:chaotic}}
+		\State $\mathsf{stable} \gets \mathsf{True}$
+		\For{$i = 1$ to $|S|-1$}
+		\State $R_{\mathrm{Hill}} \gets \left(\dfrac{m_i + m_{i+1}}{3M_*}\right)^{1/3} \left(\dfrac{a_i + a_{i+1}}{2}\right)$ \Comment{Def. \ref{def:hill-radius}}
+		\State $\Delta \gets \dfrac{a_{i+1} - a_i}{R_{\mathrm{Hill}}}$
+		\If{$\Delta \le 2\sqrt{3}$} \Comment{Def. \ref{def:critical-stability}}
+		\State $\mathsf{stable} \gets \mathsf{False}$ \Comment{Theorem \ref{thm:hill-stability}}
+		\EndIf
+		\EndFor
+		\State \Return $\mathsf{stable}$
+		\EndProcedure
+		
+	\end{algorithmic}
+	% ============================================
+	% AI PROOF ASSISTANT TABLES
+	% ============================================
+	\vspace{20pt}
+	\section{AI Proof Assistant Tables}
+	\label{sec:proof-tables}
+	\vspace{20pt}
+	\fontsize{9}{15}\selectfont
+	
+	\subsection*{Proof of \ref{thm:attention-properties}. (AttentionProperties, \cite{vaswani2017attention})}
+	\idx{proof of attention properties}
+	\begin{prooftable}
+		1 & $\begin{array}{r@{}l}\vdash & \mathsf{SelfAttention}(Q,K,V) = \mathsf{softmax}\left(\frac{QK^{\mathsf{T}}}{\sqrt{d_k}}\right) V\end{array}$ & Def. \ref{def:self-attention} \\
+		2 & $\begin{array}{r@{}l}\vdash & A = \mathsf{softmax}\left(\frac{QK^{\mathsf{T}}}{\sqrt{d_k}}\right)\end{array}$ & $\top$ \\
+		3 & $\begin{array}{r@{}l}\vdash & A_{ij} = \frac{\exp(Q_i \cdot K_j / \sqrt{d_k})}{\sum_{l} \exp(Q_i \cdot K_l / \sqrt{d_k})}\end{array}$ & Def. \ref{def:softmax} \\
+		4 & $\begin{array}{r@{}l}\vdash & \sum_{j=1}^n A_{ij} = 1\end{array}$ & $\top$ \\
+		5 & $\begin{array}{r@{}l}\vdash & \Forall i,j,\; A_{ij} \ge 0\end{array}$ & $\top$ \\
+		6 & $\begin{array}{r@{}l}\vdash & \Forall \pi \in S_n,\; A_{\pi(i),\pi(j)} = A_{ij}\end{array}$ & $\top$ \\
+		7 & $\begin{array}{r@{}l}\vdash & \mathsf{SelfAttention}(Q,K,V_{\pi}) = A V_{\pi} = (AV)_{\pi}\end{array}$ & $\top$ \\
+		8 & $\begin{array}{r@{}l}\vdash & \mathsf{SelfAttention}(Q,K,V_{\pi}) = (\mathsf{SelfAttention}(Q,K,V))_{\pi}\end{array}$ & $\top$ \\
+	\end{prooftable}
+	
+	\subsection*{Proof of \ref{thm:positional-encoding}. (PositionalEncoding, \cite{vaswani2017attention})}
+	\idx{proof of positional encoding}
+	\begin{prooftable}
+		1 & $\begin{array}{r@{}l}\vdash & \mathsf{PE}(pos, 2i) = \sin\left(\frac{pos}{10000^{2i/d}}\right),\; \mathsf{PE}(pos, 2i+1) = \cos\left(\frac{pos}{10000^{2i/d}}\right)\end{array}$ & Def. \ref{def:positional-encoding} \\
+		2 & $\begin{array}{r@{}l}\vdash & \mathsf{PE}(pos + k, 2i) = \sin\left(\frac{pos+k}{10000^{2i/d}}\right)\end{array}$ & $\top$ \\
+		3 & $\begin{array}{r@{}l}\vdash & = \sin\left(\frac{pos}{10000^{2i/d}}\right) \cos\left(\frac{k}{10000^{2i/d}}\right) + \cos\left(\frac{pos}{10000^{2i/d}}\right) \sin\left(\frac{k}{10000^{2i/d}}\right)\end{array}$ & $\top$ \\
+		4 & $\begin{array}{r@{}l}\vdash & = \mathsf{PE}(pos, 2i) \cos\left(\frac{k}{10000^{2i/d}}\right) + \mathsf{PE}(pos, 2i+1) \sin\left(\frac{k}{10000^{2i/d}}\right)\end{array}$ & $\top$ \\
+		5 & $\begin{array}{r@{}l}\vdash & \mathsf{PE}(pos + k, 2i+1) = \cos\left(\frac{pos+k}{10000^{2i/d}}\right)\end{array}$ & $\top$ \\
+		6 & $\begin{array}{r@{}l}\vdash & = \cos\left(\frac{pos}{10000^{2i/d}}\right) \cos\left(\frac{k}{10000^{2i/d}}\right) - \sin\left(\frac{pos}{10000^{2i/d}}\right) \sin\left(\frac{k}{10000^{2i/d}}\right)\end{array}$ & $\top$ \\
+		7 & $\begin{array}{r@{}l}\vdash & = \mathsf{PE}(pos, 2i+1) \cos\left(\frac{k}{10000^{2i/d}}\right) - \mathsf{PE}(pos, 2i) \sin\left(\frac{k}{10000^{2i/d}}\right)\end{array}$ & $\top$ \\
+	\end{prooftable}
+	
+	\subsection*{Proof of \ref{thm:gradient-descent}. (GradientDescent, \cite{vaswani2017attention})}
+	\idx{proof of gradient descent}
+	\begin{prooftable}
+		1 & $\begin{array}{r@{}l}\vdash & \theta_{t+1} = \theta_t - \eta \nabla \mathcal{L}(\theta_t)\end{array}$ & Def. \ref{def:backpropagation} \\
+		2 & 
+	$	\begin{array}{r@{}l}
+		\Exists \xi \in [\theta_t, \theta_{t+1}],\; & \mathcal{L}(\theta_{t+1}) = \mathcal{L}(\theta_t) + \nabla \mathcal{L}(\theta_t)^{\mathsf{T}} (\theta_{t+1} - \theta_t) \\
+		& + \frac{1}{2} (\theta_{t+1} - \theta_t)^{\mathsf{T}} H(\xi) (\theta_{t+1} - \theta_t)
+		\end{array}$
+		 & $\top$ \\
+		3 & $\begin{array}{r@{}l}\vdash & \mathcal{L}(\theta_{t+1}) = \mathcal{L}(\theta_t) - \eta \|\nabla \mathcal{L}(\theta_t)\|^2 + \frac{\eta^2}{2} \nabla \mathcal{L}(\theta_t)^{\mathsf{T}} H(\xi) \nabla \mathcal{L}(\theta_t)\end{array}$ & $\top$ \\
+		4 & $\begin{array}{r@{}l}\vdash & \Exists L,\; \Forall \theta,\; \|H(\theta)\| \le L\end{array}$ & $\top$ \\
+		5 & $\begin{array}{r@{}l}\vdash & \mathcal{L}(\theta_{t+1}) \le \mathcal{L}(\theta_t) - \eta \|\nabla \mathcal{L}(\theta_t)\|^2 + \frac{L \eta^2}{2} \|\nabla \mathcal{L}(\theta_t)\|^2\end{array}$ & $\top$ \\
+		6 & $\begin{array}{r@{}l}\vdash & \mathcal{L}(\theta_{t+1}) \le \mathcal{L}(\theta_t) - \eta \left(1 - \frac{L \eta}{2}\right) \|\nabla \mathcal{L}(\theta_t)\|^2\end{array}$ & $\top$ \\
+		7 & $\begin{array}{r@{}l}\vdash & \eta \le \frac{2}{L} \;\rightarrow\; \mathcal{L}(\theta_{t+1}) \le \mathcal{L}(\theta_t)\end{array}$ & $\top$ \\
+	\end{prooftable}
+	
+	\subsection*{Proof of \ref{thm:cross-entropy-minimization}. (CrossEntropyMin, \cite{vaswani2017attention})}
+	\idx{proof of cross-entropy minimization}
+	\begin{prooftable}
+		1 & $\begin{array}{r@{}l}\vdash & \mathsf{CrossEntropy}(y, \hat{y}) = -\sum_{i=1}^C y_i \log(\hat{y}_i)\end{array}$ & Def. \ref{def:cross-entropy} \\
+		2 & $\begin{array}{r@{}l}\vdash & \Exists k,\; y_k = 1 \;\land\; \Forall i \neq k,\; y_i = 0\end{array}$ & $\top$ \\
+		3 & $\begin{array}{r@{}l}\vdash & \mathsf{CrossEntropy}(y, \hat{y}) = -\log(\hat{y}_k)\end{array}$ & $\top$ \\
+		4 & $\begin{array}{r@{}l}\vdash & \sum_{i=1}^C \hat{y}_i = 1 \;\land\; \Forall i,\; \hat{y}_i \ge 0\end{array}$ & Def. \ref{def:softmax} \\
+		5 & $\begin{array}{r@{}l}\vdash & \mathsf{KL}(y \| \hat{y}) = \sum_{i=1}^C y_i \log\left(\frac{y_i}{\hat{y}_i}\right) \ge 0\end{array}$ & $\top$ \\
+		6 & $\begin{array}{r@{}l}\vdash & \mathsf{CrossEntropy}(y, \hat{y}) = \mathsf{KL}(y \| \hat{y}) - \sum_{i=1}^C y_i \log(y_i)\end{array}$ & $\top$ \\
+		7 & $\begin{array}{r@{}l}\vdash & -\sum_{i=1}^C y_i \log(y_i) = 0\end{array}$ & $\top$ \\
+		8 & $\begin{array}{r@{}l}\vdash & \mathsf{CrossEntropy}(y, \hat{y}) \ge 0\end{array}$ & $\top$ \\
+		9 & $\begin{array}{r@{}l}\vdash & \mathsf{CrossEntropy}(y, \hat{y}) = 0 \;\leftrightarrow\; \mathsf{KL}(y \| \hat{y}) = 0\end{array}$ & $\top$ \\
+		10 & $\begin{array}{r@{}l}\vdash & \mathsf{KL}(y \| \hat{y}) = 0 \;\leftrightarrow\; \Forall i,\; y_i = \hat{y}_i\end{array}$ & $\top$ \\
+		11 & $\begin{array}{r@{}l}\vdash & \hat{y} = y \;\rightarrow\; \mathsf{CEMinimizer}(\hat{y}, y)\end{array}$ & Def. \ref{def:ce-minimizer} \\
+	\end{prooftable}
+	
+	\subsection*{Proof of \ref{thm:auc-properties}. (AUCProperties, \cite{vaswani2017attention})}
+	\idx{proof of AUC properties}
+	\begin{prooftable}
+		1 & $\begin{array}{r@{}l}\vdash & \mathsf{AUC} = \int_0^1 \mathsf{TPR}(\tau) \, d\mathsf{FPR}(\tau)\end{array}$ & Def. \ref{def:auc} \\
+		2 & $\begin{array}{r@{}l}\vdash & 0 \le \mathsf{TPR}(\tau) \le 1 \;\land\; 0 \le \mathsf{FPR}(\tau) \le 1\end{array}$ & $\top$ \\
+		3 & $\begin{array}{r@{}l}\vdash & 0 \le \mathsf{AUC} \le \int_0^1 1 \, d\mathsf{FPR} = 1\end{array}$ & $\top$ \\
+		4 & $\begin{array}{r@{}l}\vdash & \mathsf{TPR}_{\text{rand}}(\tau) = \mathsf{FPR}_{\text{rand}}(\tau)\end{array}$ & $\top$ \\
+		5 & $\begin{array}{r@{}l}\vdash & \mathsf{AUC}_{\text{rand}} = \int_0^1 t \, dt = \frac{1}{2}\end{array}$ & $\top$ \\
+		6 & $\begin{array}{r@{}l}\vdash & \mathsf{TPR}_{\text{perfect}}(\tau) = 1 \text{ for } \tau \le 1,\; \mathsf{FPR}_{\text{perfect}}(\tau) = 0 \text{ for } \tau > 0\end{array}$ & $\top$ \\
+		7 & $\begin{array}{r@{}l}\vdash & \mathsf{AUC}_{\text{perfect}} = \int_0^1 1 \, d\mathsf{FPR} = 1\end{array}$ & $\top$ \\
+	\end{prooftable}
+	
+	\subsection*{Proof of \ref{thm:bayes-optimal}. (BayesOptimal, \cite{vaswani2017attention})}
+	\idx{proof of Bayes optimal classifier}
+	\begin{prooftable}
+		1 & $\begin{array}{r@{}l}\vdash & \eta(x) = P(y=1|x)\end{array}$ & $\top$ \\
+		2 & $\begin{array}{r@{}l}\vdash & \mathsf{ExpLoss}(\hat{y}, x) = \eta(x) \ell_{01}(1, \hat{y}) + (1-\eta(x)) \ell_{01}(0, \hat{y})\end{array}$ & Def. \ref{def:exp-loss} \\
+		3 & $\begin{array}{r@{}l}\vdash & \hat{y}=1 \;\rightarrow\; \mathsf{ExpLoss}(1, x) = 1 - \eta(x)\end{array}$ & $\top$ \\
+		4 & $\begin{array}{r@{}l}\vdash & \hat{y}=0 \;\rightarrow\; \mathsf{ExpLoss}(0, x) = \eta(x)\end{array}$ & $\top$ \\
+		5 & $\begin{array}{r@{}l}\vdash & 1 - \eta(x) < \eta(x) \;\leftrightarrow\; \eta(x) > \frac{1}{2}\end{array}$ & $\top$ \\
+		6 & $\begin{array}{r@{}l}\vdash & \eta(x) > \frac{1}{2} \;\rightarrow\; \mathsf{Minimizer}(1, \mathsf{ExpLoss}(\cdot, x))\end{array}$ & Def. \ref{def:minimizer} \\
+		7 & $\begin{array}{r@{}l}\vdash & \eta(x) > \frac{1}{2} \;\rightarrow\; \mathsf{BayesOptimal}(1, x)\end{array}$ & Def. \ref{def:bayes-optimal} \\
+	\end{prooftable}
+	
+	\subsection*{Proof of \ref{thm:hill-stability}. (HillStability, \cite{ngpps2020})}
+	\idx{proof of Hill stability criterion}
+	\begin{prooftable}
+		1 & $\begin{array}{r@{}l}\vdash & \mathsf{R}_{\mathrm{Hill}}(p_1, p_2, M_*) = \left(\frac{m_1+m_2}{3M_*}\right)^{1/3} \left(\frac{a_1+a_2}{2}\right)\end{array}$ & Def. \ref{def:hill-radius} \\
+		2 & $\begin{array}{r@{}l}\vdash & \Delta = \frac{a_2 - a_1}{\mathsf{R}_{\mathrm{Hill}}(p_1, p_2, M_*)}\end{array}$ & $\top$ \\
+		3 & $\begin{array}{r@{}l}\vdash & \Delta_c = 2\sqrt{3}\end{array}$ & Def. \ref{def:critical-stability} \\
+		4 & $\begin{array}{r@{}l}\vdash & \Delta > \Delta_c \;\rightarrow\; \neg \mathsf{OrbitCross}(p_1, p_2)\end{array}$ & $\top$ \\
+		5 & $\begin{array}{r@{}l}\vdash & \Delta \le \Delta_c \;\rightarrow\; \mathsf{OrbitCross}(p_1, p_2)\end{array}$ & $\top$ \\
+		6 & $\begin{array}{r@{}l}\vdash & \Delta > 2\sqrt{3} \;\leftrightarrow\; \neg \mathsf{OrbitCross}(p_1, p_2)\end{array}$ & $\top$ \\
+	\end{prooftable}
+	
+	\subsection*{Proof of \ref{thm:encoding-bijection}. (EncodingBijection, \cite{ngpps2020})}
+	\idx{proof of encoding bijection}
+	\begin{prooftable}
+		1 & $\begin{array}{r@{}l}\vdash & \mathsf{Grid}_{N}^{r}(G) = \bigcup_{i=1}^N \bigcup_{j=1}^N [x_i, x_{i+1}] \times [y_j, y_{j+1}]\end{array}$ & Def. \ref{def:encoding-grid} \\
+		2 & $\begin{array}{r@{}l}\vdash & x_i = \log a_{\min} + (i-1) \frac{\log a_{\max} - \log a_{\min}}{N}\end{array}$ & Def. \ref{def:encoding-bounds} \\
+		3 & $\begin{array}{r@{}l}\vdash & y_j = \log m_{\min} + (j-1) \frac{\log m_{\max} - \log m_{\min}}{N}\end{array}$ & Def. \ref{def:encoding-bounds} \\
+		4 & $\begin{array}{r@{}l}\vdash & \Forall i \neq i',\; [x_i, x_{i+1}] \cap [x_{i'}, x_{i'+1}] = \emptyset\end{array}$ & $\top$ \\
+		5 & $\begin{array}{r@{}l}\vdash & \Forall j \neq j',\; [y_j, y_{j+1}] \cap [y_{j'}, y_{j'+1}] = \emptyset\end{array}$ & $\top$ \\
+		6 & $\begin{array}{r@{}l}\vdash & \Forall p,\; \Exists! (i,j),\; (\log a_p, \log m_p) \in [x_i, x_{i+1}] \times [y_j, y_{j+1}]\end{array}$ & $\top$ \\
+		7 & $\begin{array}{r@{}l}\vdash & \mathsf{CharMap}_{N}(p) = c_{ij} \text{ where } (\log a_p, \log m_p) \in \mathsf{Grid}_{N}^{r}\end{array}$ & Def. \ref{def:character-map} \\
+		8 & $\begin{array}{r@{}l}\vdash & \mathsf{CharMap}_{N}(p) = \mathsf{CharMap}_{N}(q) \;\leftrightarrow\; p,q \in \mathsf{GridCell}_{ij}\end{array}$ & $\top$ \\
+	\end{prooftable}
+	
+	% ============================================
+	% INDEX OF NOTIONS
+	% ============================================
+	\vspace{20pt}
+	\section{Index of Notions}
+	\label{sec:index}
+	\idx{Index}
+	\vspace{20pt}
+	
+	
+	
+	\begin{notiontable}
+		% Transformer Architecture
+		Transformer & Neural network architecture with self-attention mechanism & \pageref{def:transformer} \\
+		Self-Attention & Mechanism computing weighted sums of values based on similarity & \pageref{def:self-attention} \\
+		Multi-Head Attention & Multiple attention heads concatenated and projected & \pageref{def:multi-head-attention} \\
+		Attention Head & Single attention mechanism with its own weight matrices & \pageref{def:attention-head} \\
+		Feed-Forward Network & Two-layer neural network with ReLU/GELU activation & \pageref{def:feed-forward} \\
+		Layer Normalization & Normalization $\frac{x - \mu}{\sigma} \odot \gamma + \beta$ & \pageref{def:layer-norm} \\
+		Positional Encoding & $\sin$ and $\cos$ encoding of token positions & \pageref{def:positional-encoding} \\
+		Softmax & $\frac{e^{z_i}}{\sum_j e^{z_j}}$ & \pageref{def:softmax} \\
+		GELU & Gaussian Error Linear Unit activation function & \pageref{def:gelu} \\
+		Transformer Block & LayerNorm + MHA + LayerNorm + FFN & \pageref{def:transformer-block} \\
+		Decoder-Only & Transformer architecture with masked self-attention only & \pageref{def:decoder-only} \\
+		
+		% Loss Functions
+		Cross-Entropy Loss & $-\sum_{i=1}^C y_i \log(\hat{y}_i)$ & \pageref{def:cross-entropy} \\
+		Entropy & $-\sum_{i=1}^C y_i \log(y_i)$ & \pageref{def:entropy} \\
+		KL Divergence & $\sum_{i=1}^C y_i \log\left(\frac{y_i}{\hat{y}_i}\right)$ & \pageref{def:kl-divergence} \\
+		Zero-One Loss & $\ell_{01}(y, \hat{y}) = \mathbf{1}[y \neq \hat{y}]$ & \pageref{def:zero-one-loss} \\
+		
+		% Optimization
+		Gradient Descent & $\theta_{t+1} = \theta_t - \eta \nabla \mathcal{L}(\theta_t)$ & \pageref{def:backpropagation} \\
+		Adam Optimizer & Adaptive moment estimation optimizer & \pageref{def:adam-optimizer} \\
+		Learning Rate Schedule & $\eta(t) = \eta_0 \cdot \min(1, t/t_{\text{warmup}}) \cdot 1/\sqrt{\max(t, t_{\text{warmup}})}$ & \pageref{def:learning-rate-schedule} \\
+		Batch & Subset of dataset processed together & \pageref{def:batch} \\
+		Epoch & One complete pass through the entire dataset & \pageref{def:epoch} \\
+		Backpropagation & Algorithm for computing gradients using chain rule & \pageref{def:backpropagation} \\
+		Convergence & $\lim_{t \to \infty} \mathcal{L}_t = \mathcal{L}^*$ & \pageref{def:convergence} \\
+		Minimizer & $\hat{y}$ such that $\Forall \hat{y}',\; \mathcal{L}(\hat{y}') \ge \mathcal{L}(\hat{y})$ & \pageref{def:minimizer} \\
+		Bayes Optimal Classifier & $\hat{y}=1$ when $P(y=1|x) > 1/2$ & \pageref{def:bayes-optimal} \\
+		Cross-Entropy Minimizer & $\hat{y} = y$ minimizes cross-entropy & \pageref{def:ce-minimizer} \\
+		Expected Loss & $\mathbb{E}[\ell(y, \hat{y}) | x] = \sum_y P(y|x) \ell(y, \hat{y})$ & \pageref{def:exp-loss} \\
+		
+		% Classification Metrics
+		True Positives (TP) & Correctly predicted positive samples & \pageref{def:tp} \\
+		True Negatives (TN) & Correctly predicted negative samples & \pageref{def:tn} \\
+		False Positives (FP) & Incorrectly predicted positive samples & \pageref{def:fp} \\
+		False Negatives (FN) & Incorrectly predicted negative samples & \pageref{def:fn} \\
+		Accuracy & $(\mathsf{TP} + \mathsf{TN}) / (\mathsf{TP} + \mathsf{TN} + \mathsf{FP} + \mathsf{FN})$ & \pageref{def:accuracy} \\
+		Precision & $\mathsf{TP} / (\mathsf{TP} + \mathsf{FP})$ & \pageref{def:precision} \\
+		Recall & $\mathsf{TP} / (\mathsf{TP} + \mathsf{FN})$ & \pageref{def:recall} \\
+		F1 Score & $2 \cdot (\mathsf{Precision} \cdot \mathsf{Recall}) / (\mathsf{Precision} + \mathsf{Recall})$ & \pageref{def:f1-score} \\
+		True Positive Rate (TPR) & $\mathsf{TP}(\tau) / (\mathsf{TP}(\tau) + \mathsf{FN}(\tau))$ & \pageref{def:tpr} \\
+		False Positive Rate (FPR) & $\mathsf{FP}(\tau) / (\mathsf{FP}(\tau) + \mathsf{TN}(\tau))$ & \pageref{def:fpr} \\
+		ROC Curve & Plot of TPR vs FPR at various thresholds & \pageref{def:roc} \\
+		AUC & Area Under the ROC Curve & \pageref{def:auc} \\
+		
+		% Planetary Systems
+		Planet & $(m_p, a_p)$ with mass and semi-major axis & \pageref{def:planet} \\
+		Planetary System & Ordered set of planets $\{p_1, \ldots, p_n\}$ with $a_{p_i} < a_{p_{i+1}}$ & \pageref{def:system} \\
+		Hill Radius & $R_{\mathrm{Hill}} = \left(\frac{m_1+m_2}{3M_*}\right)^{1/3} \frac{a_1+a_2}{2}$ & \pageref{def:hill-radius} \\
+		Stability Criterion & $\Delta = \frac{a_2 - a_1}{R_{\mathrm{Hill}}} > 2\sqrt{3}$ & \pageref{def:critical-stability} \\
+		Orbit Crossing & Condition where planetary orbits may intersect & \pageref{def:orbit-cross} \\
+		Chaotic Configuration & Orbits that are unstable and potentially chaotic & \pageref{def:chaotic} \\
+		Encoding Grid & $N \times N$ uniform discretization of mass-semi-major axis space & \pageref{def:encoding-grid} \\
+		Grid Bounds & $\log a \in [-3, 3],\; \log m \in [-4, 4]$ & \pageref{def:encoding-bounds} \\
+		Character Map & Function mapping each planet to a unique character based on grid cell & \pageref{def:character-map} \\
+		Grid Cell & Individual rectangle $[x_i, x_{i+1}] \times [y_j, y_{j+1}]$ & \pageref{def:grid-cell} \\
+		Word & Sequence of characters encoding a planetary system & \pageref{def:word} \\
+		
+		% Theoretical Results
+		Attention Properties & Self-attention is permutation equivariant in $V$ & \pageref{thm:attention-properties} \\
+		Positional Encoding & $\mathsf{PE}(pos+k) = \mathsf{PE}(pos) \cdot T(k)$ & \pageref{thm:positional-encoding} \\
+		Gradient Descent & $\eta \le 2/L \Rightarrow \mathcal{L}(\theta_{t+1}) \le \mathcal{L}(\theta_t)$ & \pageref{thm:gradient-descent} \\
+		Cross-Entropy Minimization & $\hat{y} = y$ minimizes cross-entropy & \pageref{thm:cross-entropy-minimization} \\
+		AUC Properties & $0 \le \mathsf{AUC} \le 1$, $\mathsf{AUC}_{\text{rand}} = 0.5$, $\mathsf{AUC}_{\text{perfect}} = 1$ & \pageref{thm:auc-properties} \\
+		Bayes Optimal & $\eta(x) > 1/2 \Rightarrow \hat{y}=1$ minimizes expected loss & \pageref{thm:bayes-optimal} \\
+		Hill Stability & $\Delta > 2\sqrt{3} \leftrightarrow \neg \mathsf{OrbitCross}(p_1,p_2)$ & \pageref{thm:hill-stability} \\
+		Encoding Bijection & $\mathsf{CharMap}_N(p) = \mathsf{CharMap}_N(q) \leftrightarrow p,q \in \mathsf{GridCell}_{ij}$ & \pageref{thm:encoding-bijection} \\
+		
+		% Applications
+		Planetary System Generation & Generative model trained to produce synthetic systems & \pageref{sec:predicate-definitions} \\
+		Conditional Probability & $P(\text{planet } n+1 \mid \text{planets } 1,\ldots,n)$ & \pageref{def:word} \\
+		
+	\end{notiontable}
+	% ============================================
+	% GLOSSARY OF SYMBOLS
+	% ============================================
+	\vspace{20pt}
+	\section{Glossary of Symbols}
+	\label{sec:glossary}
+	\idx{Glossary}
+	\vspace{20pt}
+	\begin{glossarytable}
+		% Logical Symbols
+		$\bot$ & $\bot \equiv \exists x (x \neq x)$ & \pageref{eq:bot} \\
+		$\top$ & $\top \equiv \forall x (x = x)$ & \pageref{eq:top} \\
+		$\vdash$ & $\vdash \varphi \equiv \mathsf{Provable}(\varphi)$ & \pageref{eq:entailment} \\
+		$\Forall$ & Universal quantifier & \pageref{eq:leibniz} \\
+		$\Exists$ & Existential quantifier & \pageref{eq:leibniz} \\
+		
+		% Transformer Architecture Symbols
+		$\IsTransformer{T}$ & Transformer model with parameters $(E, D, H, L, \mathsf{Block})$ & \pageref{def:transformer} \\
+		$\IsEmbedding{E}{d}$ & Embedding layer mapping vocabulary to $\R^d$ & \pageref{def:embedding} \\
+		$\mathsf{PE}(pos, i)$ & Positional encoding at position $pos$ and dimension $i$ & \pageref{def:positional-encoding} \\
+		$\mathsf{SelfAttention}(Q,K,V)$ & Self-attention mechanism & \pageref{def:self-attention} \\
+		$\mathsf{AttHead}_h(Q,K,V)$ & Single attention head $h$ & \pageref{def:attention-head} \\
+		$\mathsf{MHA}(Q,K,V)$ & Multi-head attention with $H$ heads & \pageref{def:multi-head-attention} \\
+		$\mathsf{FFN}(x)$ & Feed-forward neural network & \pageref{def:feed-forward} \\
+		$\mathsf{GELU}(x)$ & Gaussian Error Linear Unit activation function & \pageref{def:gelu} \\
+		$\mathsf{LayerNorm}(x)$ & Layer normalization & \pageref{def:layer-norm} \\
+		$\mathsf{Block}(x)$ & Transformer block with attention and FFN & \pageref{def:transformer-block} \\
+		$\mathsf{softmax}(z)$ & Softmax function & \pageref{def:softmax} \\
+		
+		% Training and Loss Symbols
+		$\mathsf{CrossEntropy}(y, \hat{y})$ & Cross-entropy loss $-\sum y_i \log \hat{y}_i$ & \pageref{def:cross-entropy} \\
+		$\mathsf{Entropy}(y)$ & Shannon entropy $-\sum y_i \log y_i$ & \pageref{def:entropy} \\
+		$\mathsf{KL}(y \| \hat{y})$ & Kullback-Leibler divergence $\sum y_i \log(y_i/\hat{y}_i)$ & \pageref{def:kl-divergence} \\
+		$\mathsf{Gradient}_{\theta}(\mathcal{L})$ & Gradient of loss $\mathcal{L}$ with respect to $\theta$ & \pageref{def:gradient} \\
+		$\mathsf{Backprop}(\mathcal{L}, \theta)$ & Backpropagation update $\theta \leftarrow \theta - \eta \nabla_{\theta} \mathcal{L}$ & \pageref{def:backpropagation} \\
+		$\mathsf{Adam}(\theta, \nabla \mathcal{L})$ & Adam optimizer update rule & \pageref{def:adam-optimizer} \\
+		$\mathsf{Batch}_b(D)$ & Batch of size $b$ from dataset $D$ & \pageref{def:batch} \\
+		$\mathsf{Epoch}(D, b)$ & One complete pass through dataset $D$ in batches of size $b$ & \pageref{def:epoch} \\
+		$\eta(t)$ & Learning rate schedule & \pageref{def:learning-rate-schedule} \\
+		$\mathcal{L}(\theta)$ & Loss function parameterized by $\theta$ & \pageref{def:loss-function} \\
+		$\mathsf{Converges}(\mathcal{L}_t)$ & Loss sequence converges to a limit & \pageref{def:convergence} \\
+		
+		% Optimization Symbols
+		$\mathsf{Minimizer}(\hat{y}, \mathcal{L})$ & $\hat{y}$ minimizes loss $\mathcal{L}$ & \pageref{def:minimizer} \\
+		$\mathsf{ExpLoss}(\hat{y}, x)$ & Expected loss given input $x$ & \pageref{def:exp-loss} \\
+		$\mathsf{BayesOptimal}(\hat{y}, x)$ & $\hat{y}$ is Bayes optimal for input $x$ & \pageref{def:bayes-optimal} \\
+		$\ell_{01}(y, \hat{y})$ & Zero-one loss & \pageref{def:zero-one-loss} \\
+		$\mathsf{CEMinimizer}(\hat{y}, y)$ & $\hat{y}$ minimizes cross-entropy for true label $y$ & \pageref{def:ce-minimizer} \\
+		
+		% Classification Metrics
+		$\mathsf{TP}$ & True positives & \pageref{def:tp} \\
+		$\mathsf{TN}$ & True negatives & \pageref{def:tn} \\
+		$\mathsf{FP}$ & False positives & \pageref{def:fp} \\
+		$\mathsf{FN}$ & False negatives & \pageref{def:fn} \\
+		$\mathsf{Accuracy}$ & Classification accuracy & \pageref{def:accuracy} \\
+		$\mathsf{Precision}$ & Precision $\mathsf{TP}/(\mathsf{TP}+\mathsf{FP})$ & \pageref{def:precision} \\
+		$\mathsf{Recall}$ & Recall $\mathsf{TP}/(\mathsf{TP}+\mathsf{FN})$ & \pageref{def:recall} \\
+		$\mathsf{F1}$ & F1 score $2 \cdot (\mathsf{Precision} \cdot \mathsf{Recall})/(\mathsf{Precision} + \mathsf{Recall})$ & \pageref{def:f1-score} \\
+		$\mathsf{TPR}(\tau)$ & True positive rate at threshold $\tau$ & \pageref{def:tpr} \\
+		$\mathsf{FPR}(\tau)$ & False positive rate at threshold $\tau$ & \pageref{def:fpr} \\
+		$\mathsf{ROC}$ & Receiver Operating Characteristic curve & \pageref{def:roc} \\
+		$\mathsf{AUC}$ & Area Under the ROC Curve & \pageref{def:auc} \\
+		
+		% Planetary System Symbols
+		$\mathsf{Planet}(p)$ & Planet with mass $m_p$ and semi-major axis $a_p$ & \pageref{def:planet} \\
+		$\mathsf{Mass}_{M}(p)$ & Mass of planet $p$ in Earth masses & \pageref{def:mass} \\
+		$\mathsf{A}_{a}(p)$ & Semi-major axis of planet $p$ in AU & \pageref{def:semi-major-axis} \\
+		$\mathsf{Sys}_n(S)$ & Planetary system with $n$ planets ordered by semi-major axis & \pageref{def:system} \\
+		$\mathsf{R}_{\mathrm{Hill}}(p_1, p_2, M_*)$ & Hill radius between two planets & \pageref{def:hill-radius} \\
+		$\mathsf{Stable}_{\Delta}(p_1, p_2, M_*)$ & Stability condition with parameter $\Delta$ & \pageref{def:stability} \\
+		$\Delta_c$ & Critical stability threshold $2\sqrt{3}$ & \pageref{def:critical-stability} \\
+		$\mathsf{OrbitCross}(p_1, p_2)$ & Orbits of planets $p_1$ and $p_2$ may cross & \pageref{def:orbit-cross} \\
+		$\mathsf{Chaotic}(p_1, p_2)$ & Planets $p_1$ and $p_2$ are in chaotic configuration & \pageref{def:chaotic} \\
+		$\mathsf{Grid}_{N}^{r}(G)$ & $N \times N$ uniform grid for encoding & \pageref{def:encoding-grid} \\
+		$\mathsf{CharMap}_{N}(p)$ & Character mapping of planet $p$ to grid cell & \pageref{def:character-map} \\
+		$\mathsf{GridCell}_{ij}$ & Individual grid cell at coordinates $(i,j)$ & \pageref{def:grid-cell} \\
+		$\mathsf{Word}(S)$ & Word encoding of planetary system $S$ & \pageref{def:word} \\
+		
+		% Mathematical Constants
+		$M_\oplus$ & Earth mass & \pageref{def:mass} \\
+		$\text{AU}$ & Astronomical Unit & \pageref{def:semi-major-axis} \\
+		
+	\end{glossarytable}
+	
+	% ============================================
+	% BIBLIOGRAPHY
+	% ============================================
+	\clearpage
+	\nocite{*}
+	\bibliographystyle{acm}
+	\bibliography{references}
+	
+	% ============================================
+	% PRINT INDEX
+	% ============================================
+	\clearpage
+	\printindex
+	
+	\makeatletter
+	\let\addcontentsline\orig@addcontentsline
+\end{document}
