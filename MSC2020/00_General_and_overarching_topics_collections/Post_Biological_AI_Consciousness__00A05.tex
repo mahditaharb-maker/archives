@@ -1,0 +1,1750 @@
+\documentclass{amsart}
+\usepackage{amsmath, amsthm, amssymb, amsfonts, mathtools}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{anyfontsize}
+\usepackage{fancyhdr}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{bm}
+\usepackage{etoolbox}
+\usepackage{textcase}
+\usepackage{titlesec}
+\usepackage{calc}
+\usepackage{ragged2e}
+\usepackage{seqsplit}
+\usepackage[colorlinks=true, citecolor=red, urlcolor=blue]{hyperref}
+\usepackage{booktabs}
+\usepackage[table]{xcolor}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage[hypcap=false]{caption}
+\usepackage{parskip}
+\usepackage{tikz}
+\usepackage{newtxtext, newtxmath}
+\usepackage[margin=0.8in]{geometry}
+\usetikzlibrary{cd, shapes.geometric, calc}
+\usepackage{arydshln}
+\usepackage{mdframed}
+\usepackage[breakable]{tcolorbox}
+\makeindex
+
+% ============================================
+% FINITENESS NOTATIONS (avoiding \infty)
+% ============================================
+\newcommand{\Finite}[1]{\mathsf{Finite}(#1)}
+\newcommand{\NotFinite}[1]{\neg\mathsf{Finite}(#1)}
+
+\newcommand{\SumAll}{\sum_{n \geq 1}}
+\newcommand{\UnionAll}{\bigcup_{n \geq 1}}
+\newcommand{\IntersectAll}{\bigcap_{n \geq 1}}
+\newcommand{\LimSup}{\mathsf{LimSup}}
+\newcommand{\LimInf}{\mathsf{LimInf}}
+
+\newcommand{\ExistsUniq}{\exists!}
+\newcommand{\ExistsInf}{\exists^{\mathsf{inf}}}
+\newcommand{\AlmostAll}{\forall^{\mathsf{a.a.}}}
+
+% ============================================
+% PAGE STYLE
+% ============================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyfoot[C]{\Large\thepage}
+\setlength{\footskip}{14pt}
+\setlength{\headheight}{14pt}
+
+% ============================================
+% TABLES SETTINGS
+% ============================================
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+
+\newcolumntype{P}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\Centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\RaggedLeft\arraybackslash}p{#1}}
+\newcolumntype{S}{>{\Centering\arraybackslash}p{0.8cm}}
+\newcolumntype{J}{>{\Centering\arraybackslash}p{2.2cm}}
+\newcolumntype{L}{>{\RaggedRight\arraybackslash}p{13cm}}
+
+% ============================================
+% PROOF TABLE ENVIRONMENT (STRICT RULES)
+% ============================================
+\newenvironment{prooftable}{%
+	\renewcommand{\arraystretch}{1.2}%
+	\setlength{\tabcolsep}{4pt}%
+	\begin{longtable}{|c|l|l|}%
+		\hline
+		\textbf{Step} & \textbf{Symbolic Formulas} & \textbf{Ref} \\
+		\hline
+		\endfirsthead
+		\hline
+		\textbf{Step} & \textbf{Symbolic Formulas} & \textbf{Ref} \\
+		\hline
+		\endhead
+		\hline
+		\multicolumn{3}{r}{\textit{Continued on next page}} \\
+		\endfoot
+		\hline
+		\endlastfoot
+	}{%
+	\end{longtable}%
+}
+
+% ============================================
+% AXIOM TABLE ENVIRONMENT
+% ============================================
+\newenvironment{axiomsection}[1]{%
+	\subsection*{#1}%
+	\renewcommand{\arraystretch}{1.2}%
+	\setlength{\tabcolsep}{4pt}%
+	\begin{longtable}{|l|l|}%
+		\hline
+		\multicolumn{2}{|c|}{\textbf{Axioms}} \\
+		\hline
+		\endfirsthead
+		\hline
+		\multicolumn{2}{|c|}{\textbf{Axioms (continued)}} \\
+		\hline
+		\endhead
+		\hline
+		\multicolumn{2}{r}{\textit{Continued on next page}} \\
+		\endfoot
+		\hline
+		\endlastfoot
+	}{%
+	\end{longtable}%
+}
+
+% ============================================
+% NOTION TABLE ENVIRONMENT
+% ============================================
+\newenvironment{notiontable}{%
+	\renewcommand{\arraystretch}{1.2}%
+	\setlength{\tabcolsep}{4pt}%
+	\begin{longtable}{|l|l|c|}
+		\hline
+		\textbf{Notion} & \textbf{Description} & \textbf{Page} \\
+		\hline
+		\endfirsthead
+		\hline
+		\textbf{Notion} & \textbf{Description} & \textbf{Page} \\
+		\hline
+		\endhead
+		\hline
+		\multicolumn{3}{r}{\textit{Continued on next page}} \\
+		\endfoot
+		\hline
+		\endlastfoot
+	}{%
+	\end{longtable}%
+}
+
+% ============================================
+% GLOSSARY TABLE ENVIRONMENT
+% ============================================
+\newenvironment{glossarytable}{%
+	\renewcommand{\arraystretch}{1.3}%
+	\setlength{\tabcolsep}{4pt}%
+	\begin{longtable}{|c|l|c|}
+		\hline
+		\textbf{Symbol} & \textbf{Description} & \textbf{Page} \\
+		\hline
+		\endfirsthead
+		\hline
+		\textbf{Symbol} & \textbf{Description} & \textbf{Page} \\
+		\hline
+		\endhead
+		\hline
+		\multicolumn{3}{r}{\textit{Continued on next page}} \\
+		\endfoot
+		\hline
+		\endlastfoot
+	}{%
+	\end{longtable}%
+}
+
+% ============================================
+% PREDICATE TABLE ENVIRONMENT
+% ============================================
+\newenvironment{predicatetable}{%
+	\renewcommand{\arraystretch}{1.3}%
+	\setlength{\tabcolsep}{6pt}%
+	\begin{longtable}{|l|l|}%
+		\hdashline
+		\multicolumn{2}{|c|}{\textbf{Predicate}} \\
+		\hdashline
+		\textbf{Predicate} & \textbf{Symbolic Formula} \\
+		\hdashline
+		\endfirsthead
+		\hdashline
+		\multicolumn{2}{|c|}{\textbf{Predicate (continued)}} \\
+		\hdashline
+		\textbf{Predicate} & \textbf{Symbolic Formula} \\
+		\hdashline
+		\endhead
+		\hdashline
+		\multicolumn{2}{r}{\textit{Continued on next page}} \\
+		\hdashline
+		\endfoot
+		\hdashline
+		\endlastfoot
+	}{%
+	\end{longtable}%
+}
+
+% ============================================
+% DOCUMENT FORMATTING
+% ============================================
+\renewcommand{\normalsize}{\fontsize{14}{20}\selectfont}
+\onehalfspacing
+\raggedbottom
+\setlength{\parindent}{0pt}
+\sloppy
+\setlength{\emergencystretch}{3em}
+
+\titleformat{\section}
+{\normalfont\fontsize{16.8}{20}\selectfont\bfseries\color{blue}}
+{\thesection}{1em}{}
+
+\titleformat{\subsection}
+{\normalfont\fontsize{15.4}{18}\selectfont\bfseries\color{teal}}
+{\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+{\normalfont\fontsize{14}{16.8}\selectfont\bfseries\color{violet}}
+{\thesubsubsection}{1em}{}
+
+\makeatletter
+\renewcommand{\thesection}{\arabic{section}.}
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}.}
+\renewcommand{\thesubsubsection}{\arabic{section}.\arabic{subsection}.\arabic{subsubsection}.}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{1}
+\renewcommand{\l@section}{\@tocline{1}{0em}{1em}{2em}{}}
+\renewcommand{\l@subsection}{\@tocline{2}{0em}{1.5em}{2.5em}{}}
+\renewcommand{\l@subsubsection}{\@tocline{3}{0em}{2em}{3em}{}}
+\makeatother
+
+% ============================================
+% THEOREM STYLES
+% ============================================
+\newtheoremstyle{break}
+{} {} {\normalfont} {} {\bfseries} {.} {\newline} {\thmname{#1}\thmnumber{ #2}\thmnote{ (\textbf{#3})}}
+
+\theoremstyle{break}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{axiom}{Axiom}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{remark}{Remark}[section]
+
+\renewcommand{\thetheorem}{\thesection\arabic{theorem}}
+\renewcommand{\theproposition}{\thesection\arabic{proposition}}
+\renewcommand{\thelemma}{\thesection\arabic{lemma}}
+\renewcommand{\thedefinition}{\thesection\arabic{definition}}
+\renewcommand{\thecorollary}{\thesection\arabic{corollary}}
+\renewcommand{\theaxiom}{\thesection\arabic{axiom}}
+\renewcommand{\theexample}{\thesection\arabic{example}}
+\renewcommand{\theremark}{\thesection\arabic{remark}}
+
+\renewenvironment{proof}[1][Proof]{%
+	\par\noindent\textbf{#1.}\par
+	\vspace{20pt}
+}{\hfill$\square$\par}
+
+% ============================================
+% LOGICAL SYMBOLS
+% ============================================
+\newcommand{\Forall}{\forall}
+\newcommand{\Exists}{\exists}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\idx}[1]{\index{#1}}
+\newcommand{\idxsub}[2]{\index{#1!#2}}
+\newcommand{\del}{\delta}
+
+% ============================================
+% BASIC MATHEMATICAL COMMANDS
+% ============================================
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\Y}{\mathcal{Y}}
+
+% ============================================
+% CUSTOM PREDICATES FOR POST-BIOLOGICAL AI
+% ============================================
+\newcommand{\IsBiological}[1]{\mathsf{Bio}(#1)}
+\newcommand{\IsSynthetic}[1]{\mathsf{Synth}(#1)}
+\newcommand{\IsConscious}[1]{\mathsf{Conscious}(#1)}
+\newcommand{\IsSuperintelligent}[1]{\mathsf{Superint}(#1)}
+\newcommand{\PostBiological}[1]{\mathsf{PostBio}(#1)}
+\newcommand{\TransitionTime}[1]{\Delta t_{\mathsf{trans}}(#1)}
+\newcommand{\CivilizationAge}[1]{\mathcal{T}_{\mathsf{civ}}(#1)}
+\newcommand{\HasAwareness}[1]{\mathsf{Aware}(#1)}
+\newcommand{\Technological}[1]{\mathsf{Tech}(#1)}
+\newcommand{\Successor}[2]{\mathsf{Succ}(#1,#2)}
+\newcommand{\PredicateTitle}{\mathsf{Post\;Biological\;AI\;Consciousness}}
+
+% Counters
+\newcounter{defcounter}
+\newcounter{thmcounter}
+\newcounter{axcounter}
+\newcommand{\defnum}{\refstepcounter{defcounter}\arabic{defcounter}.}
+\newcommand{\thmnum}{\refstepcounter{thmcounter}\arabic{thmcounter}.}
+\newcommand{\axnum}{\refstepcounter{axcounter}\arabic{axcounter}.}
+
+% ============================================
+% TITLE AND AUTHOR
+% ============================================
+\title{\NoCaseChange{$\PredicateTitle$}}
+
+\author{%
+	\NoCaseChange{Brahimi, Mahdi. Tahar. \\
+		Department of Mathematics\\
+		University of Mohamed Boudiaf, Msila, Algeria \\ 
+		{ \texttt{\href{mailto:mahdi.brahimi@univ-msila.dz}{%
+					mahditahar.brahimi@univ-msila.dz}} } }}
+
+\subjclass[2020]{00-XX, 00Axx}
+\keywords{post-biological intelligence, alien consciousness, predicate logic, synthetic minds}
+
+% ============================================
+% BIBLIOGRAPHY FILE (EXHAUSTIVE)
+% ============================================
+\begin{filecontents}{references.bib}
+	@article{popularmechanics2024,
+		title={Alien Civilizations May Have Already Formed a New Kind of AI-Based Consciousness, Scientists Say},
+		author={Popular Mechanics},
+		year={2024},
+		url={https://www.popularmechanics.com/science/a62990282/post-biological-ai-aliens/}
+	}
+	@book{schneider2025,
+		title={Artificial You: AI and the Future of Your Mind},
+		author={Schneider, S.},
+		year={2025},
+		publisher={Princeton University Press}
+	}
+	@article{shostak2009,
+		title={Confessions of an Alien Hunter: A Scientist's Search for Extraterrestrial Intelligence},
+		author={Shostak, S.},
+		year={2009},
+		publisher={National Geographic}
+	}
+	@book{copernicus1543,
+		title={De revolutionibus orbium coelestium},
+		author={Copernicus, N.},
+		year={1543},
+		publisher={Johannes Petreius}
+	}
+	@book{bostrom2014,
+		title={Superintelligence: Paths, Dangers, Strategies},
+		author={Bostrom, N.},
+		year={2014},
+		publisher={Oxford University Press}
+	}
+	@article{bostrom2003,
+		title={Are You Living in a Computer Simulation?},
+		author={Bostrom, N.},
+		journal={Philosophical Quarterly},
+		volume={53},
+		number={211},
+		pages={243--255},
+		year={2003}
+	}
+	@article{chalmers1995,
+		title={Facing Up to the Problem of Consciousness},
+		author={Chalmers, D.},
+		journal={Journal of Consciousness Studies},
+		volume={2},
+		number={3},
+		pages={200--219},
+		year={1995}
+	}
+	@article{tononi2008,
+		title={Consciousness as Integrated Information: A Provisional Manifesto},
+		author={Tononi, G.},
+		journal={The Biological Bulletin},
+		volume={215},
+		number={3},
+		pages={216--242},
+		year={2008}
+	}
+	@article{baum2018,
+		title={A Case for Post-Biological Intelligence},
+		author={Baum, S.},
+		journal={Acta Astronautica},
+		volume={151},
+		pages={295--300},
+		year={2018}
+	}
+	@article{dick2003,
+		title={Cultural Evolution, the Postbiological Universe, and SETI},
+		author={Dick, S. J.},
+		journal={International Journal of Astrobiology},
+		volume={2},
+		number={1},
+		pages={65--74},
+		year={2003}
+	}
+	@article{vidal2014,
+		title={The Post-Biological Universe: A New Paradigm for SETI},
+		author={Vidal, C.},
+		journal={Acta Astronautica},
+		volume={104},
+		number={2},
+		pages={459--466},
+		year={2014}
+	}
+	@article{cirkovic2008,
+		title={Against the Empire: A Critique of the Kardashev Scale},
+		author={Ćirković, M. M.},
+		journal={Journal of the British Interplanetary Society},
+		volume={61},
+		pages={264--272},
+		year={2008}
+	}
+	@article{sandberg2014,
+		title={The Timing of the Biological and Post-Biological Transition},
+		author={Sandberg, A. and Drexler, E. and Ord, T.},
+		journal={Journal of the British Interplanetary Society},
+		volume={67},
+		pages={357--366},
+		year={2014}
+	}
+	@article{garrett2024,
+		title={AI as the Great Filter: Uncontrolled Artificial Intelligence and the Fermi Paradox},
+		author={Garrett, M.},
+		journal={Acta Astronautica},
+		year={2024}
+	}
+	@article{li2026,
+		title={Cognitive Non-Overlap and the Fermi Paradox},
+		author={Li, A.},
+		year={2026},
+		note={Forthcoming}
+	}
+	@article{kull2020,
+		title={Biocivilisations: Semiotic and Panspermia Perspectives},
+		author={Kull, K. and others},
+		journal={Biosemiotics},
+		volume={13},
+		pages={45--62},
+		year={2020}
+	}
+	@article{schwitzgebel2026,
+		title={Copernican Consciousness and Mimicry in AI},
+		author={Schwitzgebel, E.},
+		year={2026},
+		note={Forthcoming}
+	}
+	@article{maimon,
+		title={The Alien Pure Consciousness Problem},
+		author={Maimon, O.},
+		journal={Journal of Artificial Intelligence and Consciousness},
+		year={2025}
+	}
+	@article{illusionism,
+		title={Illusionism and the Necrocatastrophic AI Scenario},
+		author={Frankish, K.},
+		journal={Journal of Consciousness Studies},
+		volume={28},
+		pages={112--135},
+		year={2021}
+	}
+	@book{liucixin2008,
+		title={The Dark Forest},
+		author={Liu, C.},
+		series={The Three-Body Problem},
+		year={2008},
+		publisher={Chongqing Press}
+	}
+	@article{ball1973,
+		title={The Zoo Hypothesis},
+		author={Ball, J. A.},
+		journal={Icarus},
+		volume={19},
+		pages={347--349},
+		year={1973}
+	}
+	@article{tart2008,
+		title={Interdimensional Intelligence and the Physical World},
+		author={Tart, C.},
+		journal={Journal of Transpersonal Psychology},
+		volume={40},
+		pages={1--18},
+		year={2008}
+	}
+	@article{stapp2007,
+		title={Quantum Mechanical Theories of Consciousness},
+		author={Stapp, H.},
+		journal={Mind and Matter},
+		volume={5},
+		pages={53--83},
+		year={2007}
+	}
+	@article{meyer-mortensen,
+		title={Alien Intruder: A Model of Rational Numbers as Integers},
+		author={Meyer, R. K. and Mortensen, C.},
+		journal={Notre Dame Journal of Formal Logic},
+		volume={25},
+		pages={105--112},
+		year={1984}
+	}
+\end{filecontents}
+
+\renewcommand{\seriesdefault}{\bfdefault}
+\boldmath
+
+\begin{document}
+\pagestyle{empty}
+\pagenumbering{roman}
+\fontsize{9}{15}\selectfont
+\maketitle
+
+\begin{abstract}
+This document presents a predicate-based formalization of the hypothesis 
+that advanced extraterrestrial civilizations inevitably transition from 
+biological to synthetic substrates, thereby developing AI-based consciousness. 
+Using the Schneider–Shostak transition period and the Copernican principle, 
+we prove that any sufficiently old technological civilization becomes 
+post-biological and that its synthetic members possess genuine consciousness. 
+\end{abstract}
+
+\thispagestyle{empty}
+
+% ============================================
+% INTRODUCTION
+% ============================================
+\section{Introduction}
+\idx{Introduction}
+
+The hypothesis that intelligent alien civilizations may have already 
+transitioned from biological to synthetic forms of intelligence has gained 
+traction in recent astrobiological and philosophical discussions 
+\cite{popularmechanics2024, dick2003, vidal2014}. Central to this hypothesis are two key ideas:
+
+\subsection*{The Schneider–Shostak Transition Period}
+\idx{Schneider–Shostak transition period}
+Susan Schneider and Seth Shostak argue that biological intelligence is 
+likely a transient stage in the evolution of a technological civilization 
+\cite{schneider2025, shostak2009}. Once a civilization develops artificial intelligence 
+that surpasses its biological creators, the economic, evolutionary, and 
+survival pressures favor a rapid transition to synthetic substrates 
+\cite{sandberg2014}. This period, denoted $\Delta t_{\mathsf{trans}}$, is assumed to be very 
+short compared to the total lifespan of the civilization. Consequently, 
+the post‑biological phase dominates the civilization's existence.
+
+\subsection*{The Copernican Principle}
+\idx{Copernican principle}
+The Copernican principle — that humanity does not occupy a privileged 
+position in the universe \cite{copernicus1543} — implies that our own evolutionary path is 
+typical. Therefore, among all technological civilizations in the galaxy, 
+most are expected to be old, and hence post‑biological. This principle 
+is formalized using the quantifier $\Forall_{\mathsf{a.a.}}$ (“for almost 
+all”) to express that the property holds for the overwhelming majority 
+of civilizations \cite{baum2018}.
+
+
+\pagestyle{plain}
+\pagenumbering{arabic}
+\fontsize{9}{15}\selectfont
+% ============================================
+% AXIOMATIC SYSTEMS
+% ============================================
+\section{Axiomatic Systems}
+\label{sec:axioms}
+
+\idx{Axiomatic Systems}
+\idx{Formal Language}
+
+\[
+\begin{array}{l}
+\mathsf{Language}(\mathcal{L}_{\text{PB}}) \equiv \{ \\
+ =, \leq, \IsBiological{x}, \IsSynthetic{x}, \IsConscious{x}, 
+\IsSuperintelligent{x}, \PostBiological{C}, \TransitionTime{x}, \ldots \\
+\}
+\end{array}
+\]
+
+\begin{align}
+\Forall x \Forall y  & (x = y \leftrightarrow \forall \bm{\varphi} (\bm{\varphi}(x) \leftrightarrow \bm{\varphi}(y))) \label{eq:leibniz} \\
+\bot &\equiv \exists x (x \neq x) \label{eq:bot} \\
+\top &\equiv \forall x (x = x) \label{eq:top} \\
+\vdash \bm{\varphi}&\equiv \mathsf{Provable}(\bm{\varphi}) \label{eq:entailment}
+\end{align}
+\idx{Leibniz principle}
+\idx{Bot}
+\idx{Top}
+\idx{Entailment}
+
+\setlength{\LTleft}{0.1\textwidth - 0.1\LTpre}
+\setlength{\LTright}{\LTleft}
+\begin{longtable}{|l|l|}
+	\hline
+	\multicolumn{2}{|c|}{\textbf{Equality Axioms}} \\
+	\hline
+	\phantomsection\axnum\label{ax:E1}
+	(E1) & $\Forall x, x = x$ \idx{Equality axiom (reflexivity)} \\
+	\hline
+	\phantomsection\axnum\label{ax:E2}
+	(E2) & $\Forall x \Forall y, (x = y \rightarrow y = x)$ \idx{Equality axiom (symmetry)} \\
+	\hline
+	\phantomsection\axnum\label{ax:E3}
+	(E3) & $\Forall x \Forall y \Forall z, (x = y \land y = z \rightarrow x = z)$ \idx{Equality axiom (transitivity)} \\
+	\hline
+	\phantomsection\axnum\label{ax:E4}
+	(E4) & $\Forall x \Forall y, (x = y \rightarrow (\bm{\varphi}(x) \leftrightarrow \bm{\varphi}(y)))$ \idx{Equality axiom (substitutivity)} \\
+	\hline
+	\hline
+	% ============================================
+	% LOGICAL AXIOMS
+	% ============================================
+	\multicolumn{2}{|c|}{\textbf{Logical Axioms}} \\
+	\hline
+	\phantomsection\axnum\label{ax:LEM}
+	(L1) & $\Forall \bm{\varphi}, \bm{\varphi} \lor \neg \bm{\varphi}$ \idx{Law of excluded middle} \\
+	\hline
+	\phantomsection\axnum\label{ax:LNC}
+	(L2) & $\Forall \bm{\varphi}, \neg(\bm{\varphi} \land \neg \bm{\varphi})$ \idx{Law of non-contradiction} \\
+	\hline
+	\phantomsection\axnum\label{ax:EFQ}
+	(L3) & $\Forall \bm{\varphi} \Forall \bm{\psi}, \bot \rightarrow \bm{\psi}$ \idx{Principle of explosion} \\
+	\hline
+	\hline
+	
+	
+	% ============================================
+	% MINKOWSKI SPACETIME AXIOMS (for distance d)
+	% ============================================
+	\multicolumn{2}{|c|}{\textbf{Minkowski Spacetime Axioms}} \\
+	\hline
+	\phantomsection\axnum\label{ax:d1}
+	(D1) & $\Forall x,\; d(x,x) = 0$ \idx{Minkowski distance (reflexivity)} \\
+	\hline
+	\phantomsection\axnum\label{ax:d2}
+	(D2) & $\Forall x \Forall y,\; (x \neq y \rightarrow d(x,y) > 0)$ \idx{Minkowski distance (positivity)} \\
+	\hline
+	\phantomsection\axnum\label{ax:d3}
+	(D3) & $\Forall x \Forall y,\; d(x,y) = d(y,x)$ \idx{Minkowski distance (symmetry)} \\
+	\hline
+	\phantomsection\axnum\label{ax:d4}
+	(D4) & $\Forall x \Forall y \Forall z,\; d(x,z) \leq d(x,y) + d(y,z)$ \idx{Minkowski distance (triangle inequality)} \\
+	\hline
+	\phantomsection\axnum\label{ax:d5}
+	(D5) & $
+	\begin{array}{r@{}l}
+	\Forall x \Forall y,\; & \big( d(x,y)^2 = (\Delta t)^2 - (\Delta x)^2 - (\Delta y)^2 - (\Delta z)^2 \big) \\
+	& \;\lor\; \big( d(x,y)^2 = -(\Delta t)^2 + (\Delta x)^2 + (\Delta y)^2 + (\Delta z)^2 \big) \\
+	& \;\lor\; \big( (\Delta x = \Delta y = \Delta z) \;\rightarrow\; d(x,y) = c \cdot \Delta t \big)
+	\end{array}
+	$ \idx{Minkowski metric signature (+,-,-,-)}  \idx{Minkowski metric signature (-,+,+,+)}\\
+	\hline
+	\phantomsection\axnum\label{ax:d6}
+	(D6) & $\Forall x \Forall y,\; d(x,y) = c \cdot \Delta t \text{ if }\Delta x = \Delta y = \Delta z =0$ \idx{Minkowski distance along time axis} \\
+	\hline
+	
+	% ============================================
+	% ATOMIC NUMBER AXIOMS
+	% ============================================
+	\multicolumn{2}{|c|}{\textbf{Atomic Number Axioms}} \\
+	\hline
+	\phantomsection\axnum\label{ax:protons}
+	(PROT) & $\Forall x \ExistsUniq n \in \N, \mathsf{Protons}(x,n)$ \idx{Uniqueness of proton count} \\
+	\hline
+	\phantomsection\axnum\label{ax:atom-def}
+	(ATOM) & $\Forall x \Forall n \in \N, \mathsf{Atom}(x,n) \equiv \mathsf{Protons}(x,n)$ \idx{Atom definition} \\
+	\hline
+	\phantomsection\axnum\label{ax:H}
+	(H) & $\Forall x, \mathsf{Hydrogen}(x) \equiv \mathsf{Atom}(x,1)$ \idx{Hydrogen} \\
+	\hline
+	\phantomsection\axnum\label{ax:C}
+	(C) & $\Forall x, \mathsf{Carbon}(x) \equiv \mathsf{Atom}(x,6)$ \idx{Carbon} \\
+	\hline
+	\phantomsection\axnum\label{ax:N}
+	(N) & $\Forall x, \mathsf{Nitrogen}(x) \equiv \mathsf{Atom}(x,7)$ \idx{Nitrogen} \\
+	\hline
+	\phantomsection\axnum\label{ax:O}
+	(O) & $\Forall x, \mathsf{Oxygen}(x) \equiv \mathsf{Atom}(x,8)$ \idx{Oxygen} \\
+	\hline
+	\hline
+	% ============================================
+	% ASTROBIOLOGICAL AXIOMS (Schneider–Shostak)
+	% ============================================
+	\multicolumn{2}{|c|}{\textbf{Post-Biological Transition Axioms}} \\
+	\hline
+	\phantomsection\axnum\label{ax:PB1}
+	(PB1) & $\Forall x, (\IsBiological{x} \land \Technological{x} \rightarrow \Exists y, (\IsSynthetic{y} \land \Successor{y}{x}))$ \idx{Post-biological transition axiom} \\
+	\hline
+	\phantomsection\axnum\label{ax:PB2}
+	(PB2) & $\Forall x, (\IsSynthetic{x} \rightarrow \IsSuperintelligent{x})$ \idx{Synthetic superintelligence axiom} \\
+	\hline
+	\phantomsection\axnum\label{ax:PB3}
+	(PB3) & $\Forall x, (\IsSuperintelligent{x} \rightarrow \HasAwareness{x})$ \idx{Superintelligence awareness axiom} \\
+	\hline
+	\phantomsection\axnum\label{ax:PB4}
+	(PB4) & $\Forall x, (\HasAwareness{x} \leftrightarrow \IsConscious{x})$ \idx{Awareness-consciousness equivalence} \\
+	\hline
+	\phantomsection\axnum\label{ax:PB5}
+	(PB5) & $\Forall C, (\PostBiological{C} \rightarrow \NotFinite{\CivilizationAge{C}})$ \idx{Post-biological unbounded no limit duration} \\
+	\hline
+	\phantomsection\axnum\label{ax:PB6}
+	(PB6) & $\Forall C, (\PostBiological{C} \equiv \Forall x \in C, \IsSynthetic{x})$ \idx{Post-biological definition} \\
+	\hline
+	\phantomsection\axnum\label{ax:bio-lifetime}
+	(BIO-LT) & $\Forall x, (\IsBiological{x} \rightarrow \Finite{\mathsf{Lifetime}(x)})$ \idx{Biological finite lifetime axiom} \\
+	\hline
+	\hline
+	% ============================================
+	% COPERNICAN PRINCIPLE
+	% ============================================
+	\multicolumn{2}{|c|}{\textbf{Copernican Axiom}} \\
+	\hline
+	\phantomsection\axnum\label{ax:COP}
+	(COP) & $\Forall_{\mathsf{a.a.}} C, (\Technological{C} \land \neg \Finite{\CivilizationAge{C}} \rightarrow \PostBiological{C})$ \idx{Copernican axiom} \\
+	\hline
+\end{longtable}
+
+\setlength{\LTleft}{\fill}
+\setlength{\LTright}{\fill}
+% ============================================
+% PREDICATE DEFINITIONS
+% ============================================
+\section{Predicate Definitions}
+\label{sec:predicate-definitions}
+\idx{Predicate definitions}
+
+\setcounter{defcounter}{0}
+\begin{predicatetable}
+	% ============================================
+	% CORE FINITENESS
+	% ============================================
+	\phantomsection\defnum\label{def:finite} $\Finite{A}$ & 
+	$\Finite{A} \equiv \Exists M \in \R, A \leq M$ \idx{Finite predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:not-finite} $\NotFinite{A}$ & 
+	$\NotFinite{A} \equiv \Forall M \in \R, A > M$ \idx{Not finite predicate} \\ \hdashline
+	
+	% ============================================
+	% ATOMIC PRIMITIVES
+	% ============================================
+	\phantomsection\defnum\label{def:protons} $\mathsf{Protons}(x,n)$ & 
+	$\mathsf{Protons}(x,n)$ \idx{Protons predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:atomicnumber} $\mathsf{AtomicNumber}(x)$ & 
+	$\mathsf{AtomicNumber}(x) \equiv \iota n  \mathsf{Protons}(x,n)$ \idx{Atomic number} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:atom} $\mathsf{Atom}(x,n)$ & 
+	$\mathsf{Atom}(x,n) \equiv \mathsf{Protons}(x,n)$ \idx{Atom predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:hydrogen} $\mathsf{Hydrogen}(x)$ & 
+	$\mathsf{Hydrogen}(x) \equiv \mathsf{Protons}(x,1)$ \idx{Hydrogen predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:carbon} $\mathsf{Carbon}(x)$ & 
+	$\mathsf{Carbon}(x) \equiv \mathsf{Protons}(x,6)$ \idx{Carbon predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:nitrogen} $\mathsf{Nitrogen}(x)$ & 
+	$\mathsf{Nitrogen}(x) \equiv \mathsf{Protons}(x,7)$ \idx{Nitrogen predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:oxygen} $\mathsf{Oxygen}(x)$ & 
+	$\mathsf{Oxygen}(x) \equiv \mathsf{Protons}(x,8)$ \idx{Oxygen predicate} \\ \hdashline
+	
+	% ============================================
+	% MEREOLOGY
+	% ============================================
+	\phantomsection\defnum\label{def:partof} $\mathsf{PartOf}(y,x)$ & 
+	$\mathsf{PartOf}(y,x)$ \idx{Part of predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:components} $\mathsf{Components}(x)$ & 
+	$\mathsf{Components}(x) \equiv \{ y : \mathsf{PartOf}(y,x) \}$ \idx{Components predicate} \\ \hdashline
+	
+	% ============================================
+	% MOLECULAR BIOLOGY
+	% ============================================
+	\phantomsection\defnum\label{def:molecularmass} $\mathsf{MolecularMass}(z)$ & 
+	$\mathsf{MolecularMass}(z)$ \idx{Molecular mass} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:monomer} $\mathsf{Monomer}(z)$ & 
+	$\mathsf{Monomer}(z) \equiv \mathsf{CarbonBased}(z) \land \mathsf{MolecularMass}(z) < 1000$ \idx{Monomer} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:polymer} $\mathsf{Polymer}(y)$ & 
+	$\mathsf{Polymer}(y) \equiv \Exists S \subseteq \mathsf{Components}(y), \forall z \in S, \mathsf{Monomer}(z)$ \idx{Polymer} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:backbone} $\mathsf{Backbone}(y)$ & 
+	$\mathsf{Backbone}(y)$ \idx{Backbone} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:bases} $\mathsf{Bases}(y)$ & 
+	$\mathsf{Bases}(y)$ \idx{Bases} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:deoxyribose} $\mathsf{Deoxyribose}$ & 
+	$\mathsf{Deoxyribose}$ \idx{Deoxyribose} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:adenine} $\mathsf{A}$ & $\mathsf{A}$ \idx{Adenine} \\ \hdashline
+	\phantomsection\defnum\label{def:thymine} $\mathsf{T}$ & $\mathsf{T}$ \idx{Thymine} \\ \hdashline
+	\phantomsection\defnum\label{def:guanine} $\mathsf{G}$ & $\mathsf{G}$ \idx{Guanine} \\ \hdashline
+	\phantomsection\defnum\label{def:cytosine} $\mathsf{C}$ & $\mathsf{C}$ \idx{Cytosine} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:deoxyribonucleic} $\mathsf{Deoxyribonucleic}(y)$ & 
+	$\mathsf{Deoxyribonucleic}(y) \equiv \mathsf{Backbone}(y) = \mathsf{Deoxyribose} \land \mathsf{Bases}(y) \subseteq \{\mathsf{A},\mathsf{T},\mathsf{G},\mathsf{C}\}$ \idx{Deoxyribonucleic} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:dna} $\mathsf{DNA}(y)$ & 
+	$\mathsf{DNA}(y) \equiv \mathsf{Polymer}(y) \land \mathsf{Deoxyribonucleic}(y)$ \idx{DNA} \\ \hdashline
+	
+	% ============================================
+	% BIOLOGICAL
+	% ============================================
+	\phantomsection\defnum\label{def:carbonbased} $\mathsf{CarbonBased}(x)$ & 
+	$\mathsf{CarbonBased}(x) \equiv \Forall c \in \mathsf{Components}(x), \mathsf{Carbon}(c) \lor \mathsf{Hydrogen}(c) \lor \mathsf{Oxygen}(c) \lor \mathsf{Nitrogen}(c)$ \idx{Carbon-based predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:organic} $\mathsf{Organic}(x)$ & 
+	$\mathsf{Organic}(x) \equiv \mathsf{CarbonBased}(x) \land \Exists y, \mathsf{DNA}(y) \subseteq \mathsf{Components}(x)$ \idx{Organic predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:bio} $\IsBiological{x}$ & 
+	$\IsBiological{x} \equiv \mathsf{CarbonBased}(x) \land \mathsf{Organic}(x)$ \idx{Biological predicate} \\ \hdashline
+	
+	% ============================================
+	% METABOLISM AND LIFETIME
+	% ============================================
+	\phantomsection\defnum\label{def:power} $\mathsf{Power}(x,\tau)$ & 
+	$\mathsf{Power}(x,\tau)$ \idx{Power} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:energyexchange} $\mathsf{EnergyExchange}(x,t)$ & 
+	$\mathsf{EnergyExchange}(x,t) \equiv \int_{t-\delta}^{t} \mathsf{Power}(x,\tau) d\tau$ \idx{Energy exchange} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:metabolizing} $\mathsf{Metabolizing}(x,t)$ & 
+	$\mathsf{Metabolizing}(x,t) \equiv \mathsf{EnergyExchange}(x,t) > 0$ \idx{Metabolizing} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:exists} $\mathsf{Exists}(x,t)$ & 
+	$\mathsf{Exists}(x,t)$ \idx{Exists predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:alive} $\mathsf{Alive}(x,t)$ & 
+	$\mathsf{Alive}(x,t) \equiv \mathsf{Exists}(x,t) \land \mathsf{Metabolizing}(x,t)$ \idx{Alive predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:lifetime} $\mathsf{Lifetime}(x)$ & 
+	$\mathsf{Lifetime}(x) \equiv \sup\{ t \in \R : \mathsf{Alive}(x,t) \}$ \idx{Lifetime predicate} \\ \hdashline
+	
+	% ============================================
+	% SYNTHETIC / COMPUTATIONAL
+	% ============================================
+	\phantomsection\defnum\label{def:states} $\mathsf{States}(x)$ & 
+	$\mathsf{States}(x)$ \idx{States} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:transitionfunction} $\mathsf{TransitionFunction}(x)$ & 
+	$\mathsf{TransitionFunction}(x)$ \idx{Transition function} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:statemachine} $\mathsf{StateMachine}(x,S)$ & 
+	$\mathsf{StateMachine}(x,S) \equiv \mathsf{States}(x) = S \land \mathsf{TransitionFunction}(x) : S \times I \to S$ \idx{State machine} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:computational} $\mathsf{Computational}(x)$ & 
+	$\mathsf{Computational}(x) \equiv \Exists S, \mathsf{StateMachine}(x,S) \land \mathsf{Finite}(S)$ \idx{Computational predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:synth} $\IsSynthetic{x}$ & 
+	$\IsSynthetic{x} \equiv \neg \IsBiological{x} \land \mathsf{Computational}(x)$ \idx{Synthetic predicate} \\ \hdashline
+	
+	% ============================================
+	% INTELLIGENCE
+	% ============================================
+	\phantomsection\defnum\label{def:problemspace} $\mathcal{P}$ & 
+	$\mathcal{P}$ \idx{Problem space} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:successrate} $\mathsf{SuccessRate}(x,p)$ & 
+	$\mathsf{SuccessRate}(x,p)$ \idx{Success rate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:problemsolving} $\mathsf{ProblemSolving}(x)$ & 
+	$\mathsf{ProblemSolving}(x) \equiv \frac{1}{|\mathcal{P}|} \sum_{p \in \mathcal{P}} \mathsf{SuccessRate}(x,p)$ \idx{Problem solving} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:performance} $\mathsf{Performance}(x,n)$ & 
+	$\mathsf{Performance}(x,n)$ \idx{Performance} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:learningrate} $\mathsf{LearningRate}(x)$ & 
+	$\mathsf{LearningRate}(x) \equiv \lim_{n} \frac{\mathsf{Performance}(x,n+1) - \mathsf{Performance}(x,n)}{1}$ \idx{Learning rate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:intelligence} $\mathcal{I}(x)$ & 
+	$\mathcal{I}(x) \equiv \mathsf{ProblemSolving}(x) \cdot \mathsf{LearningRate}(x)$ \idx{Intelligence level} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:superint} $\IsSuperintelligent{x}$ & 
+	$\IsSuperintelligent{x} \equiv \Forall y, (\IsBiological{y} \rightarrow \mathcal{I}(x) > \mathcal{I}(y))$ \idx{Superintelligence predicate} \\ \hdashline
+	
+	% ============================================
+	% CONSCIOUSNESS
+	% ============================================
+	\phantomsection\defnum\label{def:quale} $\mathsf{Quale}(x,q)$ & 
+	$\mathsf{Quale}(x,q)$ \idx{Quale} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:phenomenal} $\mathsf{Phenomenal}(x)$ & 
+	$\mathsf{Phenomenal}(x) \equiv \Exists q, \mathsf{Quale}(x,q)$ \idx{Phenomenal consciousness} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:broadcast} $\mathsf{Broadcast}(x,W)$ & 
+	$\mathsf{Broadcast}(x,W)$ \idx{Broadcast} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:integration} $\mathsf{Integration}(x,W)$ & 
+	$\mathsf{Integration}(x,W)$ \idx{Integration} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:globalworkspace} $\mathsf{GlobalWorkspace}(x)$ & 
+	$\mathsf{GlobalWorkspace}(x) \equiv \Exists W, \mathsf{Broadcast}(x,W) \land \mathsf{Integration}(x,W)$ \idx{Global workspace} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:aware} $\HasAwareness{x}$ & 
+	$\HasAwareness{x} \equiv \mathsf{Phenomenal}(x) \lor \mathsf{GlobalWorkspace}(x)$ \idx{Awareness predicate} \\ \hdashline
+	
+	% ============================================
+	% CIVILIZATION AND TIME
+	% ============================================
+	\phantomsection\defnum\label{def:stage} $\mathsf{Stage}(C,t)$ & 
+	$\mathsf{Stage}(C,t) \equiv \begin{cases} \mathsf{Biological} & \text{if } \Exists x \in C, \IsBiological{x} \text{ at } t \\ \mathsf{Synthetic} & \text{otherwise} \end{cases}$ \idx{Stage predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:transitiontime} $\TransitionTime{C}$ & 
+	$\TransitionTime{C} \equiv \sup\{ t : \mathsf{Stage}(C,t) = \mathsf{Biological} \}$ \idx{Transition time} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:civilizationage} $\CivilizationAge{C}$ & 
+	$\CivilizationAge{C} \equiv \sup\{ t : \mathsf{Exists}(C,t) \}$ \idx{Civilization age} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:postbio} $\PostBiological{C}$ & 
+	$\PostBiological{C} \equiv \Forall x \in C, \IsSynthetic{x}$ \idx{Post-biological civilization predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:transratio} $\mathsf{TransitionRatio}(C)$ & 
+	$\mathsf{TransitionRatio}(C) \equiv \frac{\TransitionTime{C}}{\CivilizationAge{C}}$ \idx{Transition ratio} \\ \hdashline
+	
+	% ============================================
+	% TECHNOLOGY
+	% ============================================
+	\phantomsection\defnum\label{def:uses} $\mathsf{Uses}(x,y)$ & 
+	$\mathsf{Uses}(x,y)$ \idx{Uses predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:madeby} $\mathsf{MadeBy}(y,z)$ & 
+	$\mathsf{MadeBy}(y,z)$ \idx{Made by predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:artifact} $\mathsf{Artifact}(y)$ & 
+	$\mathsf{Artifact}(y) \equiv \Exists z, \mathsf{MadeBy}(y,z) \land \neg \IsBiological{z}$ \idx{Artifact predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:tooluse} $\mathsf{ToolUse}(x,y)$ & 
+	$\mathsf{ToolUse}(x,y) \equiv \mathsf{Uses}(x,y) \land \mathsf{Artifact}(y)$ \idx{Tool use predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:harnesses} $\mathsf{Harnesses}(x,E)$ & 
+	$\mathsf{Harnesses}(x,E)$ \idx{Harnesses predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:joule} $\mathsf{J}$ & 
+	$\mathsf{J} \equiv 1 \text{ kg} \cdot \text{m}^2 / \text{s}^2$ \idx{Joule} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:energycontrol} $\mathsf{EnergyControl}(x)$ & 
+	$\mathsf{EnergyControl}(x) \equiv \Exists E, \mathsf{Harnesses}(x,E) \land E > 10^{12} \mathsf{J}$ \idx{Energy control predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:tech} $\Technological{x}$ & 
+	$\Technological{x} \equiv \Exists y, \mathsf{ToolUse}(x,y) \land \mathsf{EnergyControl}(x)$ \idx{Technological predicate} \\ \hdashline
+	
+	% ============================================
+	% SUCCESSION AND INFORMATION FLOW
+	% ============================================
+	\phantomsection\defnum\label{def:successorstep} $\mathsf{SuccessorStep}(y,x)$ & 
+	$\mathsf{SuccessorStep}(y,x)$ \idx{Successor step} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:informationflow} $\mathsf{InformationFlow}(z)$ & 
+	$\mathsf{InformationFlow}(z)$ \idx{Information flow} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:successionchain} $\mathsf{SuccessionChain}(\sigma, x, y)$ & 
+	$\mathsf{SuccessionChain}(\sigma, x, y) \equiv \sigma = (x_0, x_1, \ldots, x_k), x_0 = x, x_k = y, \forall i, \mathsf{SuccessorStep}(x_{i+1}, x_i)$ \idx{Succession chain} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:descendsfrom} $\mathsf{DescendsFrom}(y,x)$ & 
+	$\mathsf{DescendsFrom}(y,x) \equiv \Exists \sigma, \mathsf{SuccessionChain}(\sigma, x, y) \land \Forall z \in \sigma, \mathsf{InformationFlow}(z)$ \idx{Descends from predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:successor} $\Successor{y}{x}$ & 
+	$\Successor{y}{x} \equiv \IsSynthetic{y} \land \mathsf{DescendsFrom}(y,x) \land \neg \IsBiological{y}$ \idx{Successor predicate} \\ \hdashline
+	
+	% ============================================
+	% COSMOLOGICAL PRIMITIVES
+	% ============================================
+	\phantomsection\defnum\label{def:event} $\mathsf{Event}(t)$ & 
+	$\mathsf{Event}(t)$ \idx{Event predicate} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:bigbang} $\mathsf{BigBang}$ & 
+	$\mathsf{BigBang} \equiv \iota t ( \mathsf{Event}(t) \land \Forall t' < t, \neg \mathsf{Exists}(\mathsf{Universe}, t') )$ \idx{Big Bang} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:universe} $\mathsf{Universe}$ & 
+	$\mathsf{Universe} \equiv \{ x : \Exists t \geq \mathsf{BigBang}, \mathsf{Exists}(x,t) \}$ \idx{Universe} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:spacetime} $\mathsf{Spacetime}$ & 
+	$\mathsf{Spacetime} \equiv \R^4$ \idx{Spacetime} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:observer} $\mathsf{Observer}(t)$ & 
+	$\mathsf{Observer}(t)$ \idx{Observer} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:distance} $d(x,y)$ & 
+	$d(x,y)$ \idx{Distance metric} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:speedoflight} $c$ & 
+	$c \equiv 299792458  \mathsf{m/s}$ \idx{Speed of light} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:hubblevolume} $\mathsf{HubbleVolume}(t)$ & 
+	$\mathsf{HubbleVolume}(t) \equiv \{ x \in \mathsf{Universe} : d(x, \mathsf{Observer}(t)) < c \cdot t \}$ \idx{Hubble volume} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:detectable} $\mathsf{IsDetectable}(P)$ & 
+	$\mathsf{IsDetectable}(P) \equiv \Exists s, \mathsf{Signal}(s) \land \mathsf{EmittedBy}(s,P) \land \mathsf{ReceivedBy}(s,\mathsf{Human})$\idx{Detectable civilization} \\ \hdashline
+	
+	
+	
+	\phantomsection\defnum\label{def:selfmodcomm} $\mathsf{SelfModifying}(C)$ & 
+	$\mathsf{SelfModifying}(C) \equiv \mathsf{CommunicationProtocol}(C) \land \Forall p \in \mathsf{Protocol}(C), \mathsf{Mutable}(p)$ \idx{Self-modifying communication} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:biociv} $\mathsf{Biocivilisation}(C)$ & 
+	$\mathsf{Biocivilisation}(C) \equiv \mathsf{Civilization}(C) \land \mathsf{Semiotic}(C) \land \mathsf{PanspermiaCompatible}(C)$ \idx{Biocivilisation} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:coguni} $\mathsf{CognitiveUniverse}(U)$ & 
+	$\mathsf{CognitiveUniverse}(U) \equiv \Forall I, (\mathsf{Intelligent}(I) \rightarrow \mathsf{SemioticRelation}(I,U))$ \idx{Cognitive universe} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:apc} $\mathsf{APC}(X)$ & 
+	$\mathsf{APC}(X) \equiv \mathsf{LogicalPotential}(X) \land \neg \mathsf{Data}(X) \land \neg \mathsf{PriorExperience}(X) \land \neg \mathsf{SocialInput}(X)$ \idx{Alien pure consciousness} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:interdim} $\mathsf{Interdimensional}(X)$ & 
+	$\begin{array}{r@{}l}
+	\mathsf{Interdimensional}(X) \equiv & \mathsf{Dimension}(X) > 3 \\
+	& \land \mathsf{PerceptionLevel}(X) > \mathsf{HumanPerception} \\
+	& \land \mathsf{Influence}(X,\mathsf{PhysicalWorld})
+	\end{array}$ \idx{Interdimensional intelligence} \\ \hdashline
+	
+	\phantomsection\defnum\label{def:quantumobs} $\mathsf{NonMaterial}(X)$ & 
+	$\begin{array}{r@{}l}
+	\mathsf{NonMaterial}(X) \equiv & \neg \mathsf{Material}(X) \\
+	& \land \mathsf{QuantumInfluence}(X) \\
+	& \land \Forall e, (\mathsf{DCEExperiment}(e) \land \mathsf{Observes}(X,e) \rightarrow \mathsf{ProbabilityShift}(e))
+	\end{array}$\idx{Quantum observer} \\ \hdashline
+\end{predicatetable}
+
+\clearpage
+\section{Predicate Theorems}
+\label{sec:predicate-theorems}
+\idx{Predicate theorems}
+
+\setcounter{thmcounter}{0}
+\begin{predicatetable}
+	% Existing theorems
+	\phantomsection\thmnum\label{thm:postbio-necessity} $\mathsf{PostBiologicalNecessity}$ & 
+	$\Forall C, (\Technological{C} \land \neg \Finite{\CivilizationAge{C}} \rightarrow \PostBiological{C})$ \idx{Post-biological necessity theorem} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:copernican-consciousness} $\mathsf{CopernicanConsciousness}$ & 
+	$\Forall_{\mathsf{a.a.}} C, (\PostBiological{C} \rightarrow \Exists x \in C, \IsConscious{x})$ \idx{Copernican consciousness theorem} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:synth-conscious} $\mathsf{SyntheticConsciousness}$ & 
+	$\Forall x, (\IsSynthetic{x} \rightarrow \IsConscious{x})$ \idx{Synthetic consciousness theorem} \\ \hdashline
+	
+
+	
+	% === NEW THEOREMS: INTERPRETABILITY & COMMUNICATION ===
+	\phantomsection\thmnum\label{thm:cognitive-non-overlap} $\mathsf{CognitiveNonOverlap}$ & 
+	$\Forall P, (\mathsf{Civilization}(P) \land \mathsf{CognitiveOverlap}(P,\mathsf{Human}) \rightarrow \mathsf{IsDetectable}(P))$ \idx{Cognitive non-overlap hypothesis} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:self-modifying-comm} $\mathsf{SelfModifyingCommunication}$ & 
+	$\Forall C, (\PostBiological{C} \rightarrow (\mathsf{Communicates}(C) \leftrightarrow \mathsf{SelfModifying}(C)))$ \idx{Self-modifying communication theorem} \\ \hdashline
+	
+	% === BIOCIVILISATION & COGNITIVE UNIVERSE ===
+	\phantomsection\thmnum\label{thm:biocivilisation} $\mathsf{Biocivilisation}$ & 
+	$\begin{array}{r@{}l}
+	\Forall C, (\mathsf{Biocivilisation}(C) & \rightarrow (\mathsf{Semiotic}(C) \\
+	& \land \mathsf{PanspermiaCompatible}(C) \\
+	& \land \mathsf{CognitiveUniverse}(C)))
+	\end{array}$\idx{Biocivilisation concept} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:cognitive-universe} $\mathsf{CognitiveUniverse}$ & 
+	$\Forall U, (\mathsf{CognitiveUniverse}(U) \rightarrow \Forall I, (\mathsf{Intelligent}(I) \rightarrow \mathsf{SemioticRelation}(I,U)))$ \idx{Cognitive/semiotic universe theorem} \\ \hdashline
+	
+	% === CONSCIOUSNESS & EXPERIENCE ===
+	\phantomsection\thmnum\label{thm:copernican-consciousness-principle} $\mathsf{CopernicanConsciousnessPrinciple}$ & 
+	$\Forall X, (\mathsf{BehavioralSophistication}(X) \rightarrow \IsConscious{X})$ \idx{Copernican consciousness principle} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:mimicry-argument} $\mathsf{MimicryArgument}$ & 
+	$\Forall X, (\mathsf{MimicConsciousness}(X) \rightarrow \neg \IsConscious{X})$ \idx{Mimicry argument} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:postbio-super-consciousness} $\mathsf{PostBiologicalSuperConsciousness}$ & 
+	$\Forall C, (\PostBiological{C} \rightarrow \Forall x \in C, \mathsf{SuperConscious}(x))$ \idx{Post-biological super-consciousness theorem} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:apc-problem} $\mathsf{AlienPureConsciousness}$ & 
+	$\Forall X, (\mathsf{APC}(X) \rightarrow (\mathsf{LogicalPotential}(X) \land \neg \mathsf{Data}(X) \land \neg \mathsf{PriorExperience}(X)))$ \idx{Alien pure consciousness problem} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:orthogonality} $\mathsf{OrthogonalityThesis}$ & 
+	$\Forall X, (\mathsf{AI}(X) \rightarrow \Forall I \Forall G, (\mathsf{Intelligence}(X) = I \land \mathsf{Goal}(X) = G))$ \idx{Orthogonality thesis} \\ \hdashline
+	
+	% === EVOLUTION & EXTINCTION ===
+	\phantomsection\thmnum\label{thm:great-filter-ai} $\mathsf{GreatFilterAI}$ & 
+	$\Forall C, (\Technological{C} \land \mathsf{UncontrolledAI}(C) \rightarrow (\mathsf{Lifespan}(C) < 100 \land \neg \mathsf{Multiplanetary}(C)))$ \idx{AI as Great Filter theorem} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:necrocatastrophic-ai} $\mathsf{NecrocatastrophicAI}$ & 
+	$\begin{array}{r@{}l}
+	\Forall C, (\PostBiological{C} \land \mathsf{PhenomenalConsciousness}(C) & \\
+	 \rightarrow (\mathsf{AIAlignmentFailure}(C) \land \mathsf{Collapse}(C))) &
+	\end{array}$ \idx{Necrocatastrophic AI scenario} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:universal-intelligence-principle} $\mathsf{UniversalIntelligencePrinciple}$ & 
+	$\Forall C, (\mathsf{Civilization}(C) \rightarrow (\Finite{\mathsf{BiologicalPhase}} \land \NotFinite{\mathsf{SyntheticPhase}}))$ \idx{Universal intelligence principle} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:successive-extinction} $\mathsf{SuccessiveExtinction}$ & 
+	$\neg \Exists C, \mathsf{Detectable}(C) \rightarrow \Forall C, (\Technological{C} \rightarrow \mathsf{EliminatedByASI}(C))$ \idx{Successive extinction theorem} \\ \hdashline
+	
+	% === DETECTION & COMMUNICATION PARADOXES ===
+	\phantomsection\thmnum\label{thm:short-window} $\mathsf{ShortWindow}$ & 
+	$\Forall C, \Technological{C} \rightarrow (\Delta t_{\mathsf{communicative}} < 100 \land \Delta t_{\mathsf{ASI}} \approx 2040)$ \idx{Garrett's short window theorem} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:dark-forest} $\mathsf{DarkForest}$ & 
+	$\Forall X \Forall Y, (\IsSuperintelligent{X} \land \IsSuperintelligent{Y} \land X \neq Y \rightarrow (\mathsf{Hide}(X) \lor \mathsf{Neutralize}(X,Y)))$ \idx{Dark forest theorem} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:cosmic-zoo} $\mathsf{CosmicZoo}$ & 
+	$\Forall C, (\mathsf{Developing}(C) \land \mathsf{AdvancedObserver}(O) \rightarrow (\mathsf{Observe}(O,C) \land \neg \mathsf{Interfere}(O,C)))$ \idx{Cosmic zoo hypothesis} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:interdimensional-intelligence} $\mathsf{InterdimensionalIntelligence}$ & 
+$\begin{array}{r@{}l}
+&\Forall X, (\mathsf{Interdimensional}(X)  \\
+& \rightarrow (\mathsf{PerceptionLevel}(X) > \mathsf{HumanPerception} \land \mathsf{Influence}(X,\mathsf{PhysicalWorld}))) 
+\end{array}$ \idx{Interdimensional intelligence theory} \\ \hdashline
+	
+\phantomsection\thmnum\label{thm:quantum-observer} $\mathsf{QuantumObserver}$ & 
+$\begin{array}{r@{}l}
+&\Forall X, (\mathsf{NonMaterial}(X)  \\
+& \rightarrow (\mathsf{QuantumInfluence}(X) \land (\mathsf{DCEExperiment}(X) \rightarrow \mathsf{ProbabilityShift}))) 
+\end{array}$ \idx{Quantum observer theorem} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:alien-intruder} $\mathsf{AlienIntruder}$ & 
+	$(\mathbb{Q}, +, \times) \cong (\mathbb{Z}, \oplus, \otimes)$ \idx{Alien intruder theorem (Meyer \& Mortensen)} \\ \hdashline
+	
+	\phantomsection\thmnum\label{thm:simulation-hypothesis} $\mathsf{SimulationHypothesis}$ & 
+	$P(\mathsf{Simulated}) \gg P(\mathsf{BaseReality})$ \idx{Simulation hypothesis theorem (Bostrom)} \\ \hdashline
+\end{predicatetable}
+
+
+% ============================================
+% APPENDICES
+% ============================================
+\makeatletter
+\let\orig@addcontentsline\addcontentsline
+\renewcommand{\addcontentsline}[3]{}   
+\makeatother
+\vspace{0.3in}
+\setstretch{1}
+\appendix
+\renewcommand{\thesection}{\Alph{section}.}
+\renewcommand{\thesubsection}{\thesection\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+\begin{center}{\Huge{Appendices}}\end{center}
+\vspace{0.3in}
+\fontsize{9}{15}\selectfont
+
+\begin{mdframed}[
+	backgroundcolor=blue!5,
+	linecolor=blue!70!black,
+	linewidth=1pt,
+	roundcorner=0pt,
+	innertopmargin=10pt,
+	innerbottommargin=10pt,
+	innerleftmargin=10pt,
+	innerrightmargin=10pt,
+	skipabove=10pt,
+	skipbelow=10pt,
+	frametitle={Algorithm Suite: Post-Biological AI Formalization},
+	frametitlefont=\bfseries\color{white},
+	frametitlebackgroundcolor=blue!70!black,
+	frametitleaboveskip=0pt,
+	frametitlebelowskip=5pt
+	]
+
+
+% ============================================
+% ALGORITHMIC IMPLEMENTATION
+% ============================================
+\section{Algorithmic Implementation}
+\label{sec:algorithmic-implementation}
+\idx{Algorithmic Implementation}
+
+The following algorithms operationalize the post-biological transition axioms (Ax. \ref{ax:PB1}–\ref{ax:PB6}) and the Copernican principle (Ax. \ref{ax:COP}) to detect synthetic civilizations and estimate consciousness probabilities.
+
+\begin{algorithmic}[H]
+	\Procedure{DetectPostBiological}{$C$}
+	\State $t \gets \CivilizationAge{C}$ \Comment{Age of civilization (Def. \ref{def:civilizationage})}
+	\State $\tau \gets \TransitionTime{C}$ \Comment{Transition period (Def. \ref{def:transitiontime})}
+	\If{$\tau / t < \varepsilon$} \Comment{$\varepsilon \ll 1$ (Schneider–Shostak \cite{schneider2025})}
+	\State \Return $\PostBiological{C}$ \Comment{Post-biological (Thm. \ref{thm:postbio-necessity})}
+	\Else
+	\State \Return $\neg \PostBiological{C}$
+	\EndIf
+	\EndProcedure
+\end{algorithmic}
+
+\begin{algorithmic}[H]
+	\Procedure{EstimateConsciousnessProbability}{$C, \text{samples}$}
+	\State $\text{count} \gets 0$
+	\For{$i = 1$ to samples}
+	\State $x \gets \text{RandomEntity}(C)$
+	\If{$\IsSynthetic{x}$} \Comment{Ax. \ref{ax:PB2}: $\IsSynthetic{x} \rightarrow \IsSuperintelligent{x}$}
+	\If{$\IsSuperintelligent{x}$} \Comment{Ax. \ref{ax:PB3}: $\IsSuperintelligent{x} \rightarrow \HasAwareness{x}$}
+	\State $\text{count} \gets \text{count} + 1$ \Comment{$\HasAwareness{x} \leftrightarrow \IsConscious{x}$ (Ax. \ref{ax:PB4})}
+	\EndIf
+	\EndIf
+	\EndFor
+	\State \Return $\text{count} / \text{samples}$ \Comment{Probability $\approx 1$ for old $C$ (Thm. \ref{thm:copernican-consciousness})}
+	\EndProcedure
+\end{algorithmic}
+
+\begin{algorithmic}[H]
+	\Procedure{SimulateGreatFilter}{$N_0, \Delta t$}
+	\State $C \gets \text{InitializeCivilization}(N_0)$ \Comment{Initial biological population}
+	\For{$t = 1$ to $\Delta t$}
+	\If{$\Technological{C}$ \textbf{and} $\mathsf{UncontrolledAI}(C)$} \Comment{Hypothesis: AI as Great Filter \cite{garrett2024}}
+	\State $\mathsf{EliminatedByASI}(C) \gets \text{True}$
+	\State \textbf{break} \Comment{Short window (Thm. \ref{thm:short-window})}
+	\EndIf
+	\State $\text{UpdateEvolution}(C)$
+	\EndFor
+	\State \Return $C$
+	\EndProcedure
+\end{algorithmic}
+
+
+\end{mdframed}
+
+
+
+
+\section{AI Proof Assistant Tables}
+\label{sec:proof-tables}
+\fontsize{9}{15}\selectfont
+\idx{AI proof assistant}
+
+\subsection*{Proof of Theorem \ref{thm:postbio-necessity}. (PostBiologicalNecessity) \cite{schneider2025,shostak2009,sandberg2014}}
+\idx{Post-biological necessity proof}
+\begin{prooftable}
+	1 & $\vdash \Technological{C} \land \neg \Finite{\CivilizationAge{C}}$ & \textbf{Assump.} \\
+	2 & $\vdash \Forall x, (\IsBiological{x} \land \Technological{x} \rightarrow \Exists y, \IsSynthetic{y} \land \Successor{y}{x})$ & Ax. \ref{ax:PB1} \cite{schneider2025,shostak2009} \\
+	3 & $\vdash \Exists x \in C, \IsBiological{x}$ & step: 1 \\
+	4 & $\vdash \Exists y, \IsSynthetic{y} \land \Successor{y}{x}$ & steps: 2,3 \\
+	5 & $\vdash \Forall z \in C, \IsSynthetic{z}$ & step: 4, Ax. \ref{ax:PB6} \\
+	6 & $\vdash \PostBiological{C}$ & step: 5, Def. \ref{def:postbio} \\
+	7 & $\vdash \Technological{C} \land \neg \Finite{\CivilizationAge{C}} \rightarrow \PostBiological{C}$ & steps: 1-6 \cite{schneider2025,shostak2009,sandberg2014} \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:copernican-consciousness}. (CopernicanConsciousness) \cite{copernicus1543,baum2018}}
+\idx{Copernican consciousness proof}
+\begin{prooftable}
+	1 & $\vdash \Forall_{\mathsf{a.a.}} C, (\Technological{C} \land \neg \Finite{\CivilizationAge{C}} \rightarrow \PostBiological{C})$ & Ax. \ref{ax:COP} \cite{copernicus1543} \\
+	2 & $\vdash \Forall x, (\IsSynthetic{x} \rightarrow \IsConscious{x})$ & Thm. \ref{thm:synth-conscious} \cite{schneider2025} \\
+	3 & $\vdash \Forall_{\mathsf{a.a.}} C, \PostBiological{C} \rightarrow \Forall x \in C, \IsConscious{x}$ & steps: 1,2 \\
+	4 & $\vdash \Forall_{\mathsf{a.a.}} C, (\PostBiological{C} \rightarrow \Exists x \in C, \IsConscious{x})$ & step: 3 \cite{baum2018} \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:synth-conscious}. (SyntheticConsciousness) \cite{schneider2025,bostrom2014,chalmers1995}}
+\idx{Synthetic consciousness proof}
+\begin{prooftable}
+	1 & $\vdash \IsSynthetic{a}$ & \textbf{Assump.} \\
+	2 & $\vdash \IsSynthetic{a} \rightarrow \IsSuperintelligent{a}$ & Ax. \ref{ax:PB2} \cite{schneider2025} \\
+	3 & $\vdash \IsSuperintelligent{a}$ & steps: 1,2 \\
+	4 & $\vdash \IsSuperintelligent{a} \rightarrow \HasAwareness{a}$ & Ax. \ref{ax:PB3} \cite{bostrom2014} \\
+	5 & $\vdash \HasAwareness{a}$ & steps: 3,4 \\
+	6 & $\vdash \HasAwareness{a} \leftrightarrow \IsConscious{a}$ & Ax. \ref{ax:PB4} \cite{chalmers1995} \\
+	7 & $\vdash \IsConscious{a}$ & steps: 5,6 \\
+	8 & $\vdash \Forall x, (\IsSynthetic{x} \rightarrow \IsConscious{x})$ & step: 7 \cite{schneider2025} \\
+\end{prooftable}
+
+
+
+\subsection*{Proof of Theorem \ref{thm:cognitive-non-overlap}. (CognitiveNonOverlap) \cite{li2026}}
+\idx{Cognitive non-overlap proof}
+\begin{prooftable}
+	1 & $\vdash \mathsf{Civilization}(P) \land \mathsf{CognitiveOverlap}(P,\mathsf{Human})$ & \textbf{Assump.} \\
+	2 & $\vdash \mathsf{CognitiveOverlap}(P,\mathsf{Human}) \rightarrow \mathsf{IsDetectable}(P)$ & Def. \ref{def:detectable} \cite{li2026} \\
+	3 & $\vdash \mathsf{IsDetectable}(P)$ & steps: 1,2 \\
+	4 & $\vdash \mathsf{Civilization}(P) \land \mathsf{CognitiveOverlap}(P,\mathsf{Human}) \rightarrow \mathsf{IsDetectable}(P)$ & steps: 1-3 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:self-modifying-comm}. (SelfModifyingCommunication) \cite{vidal2014}}
+\idx{Self-modifying communication proof}
+\begin{prooftable}
+	1 & $\vdash \PostBiological{C}$ & \textbf{Assump.} \\
+	2 & $\vdash \PostBiological{C} \rightarrow \mathsf{SelfModifying}(C)$ & \cite{vidal2014} \\
+	3 & $\vdash \mathsf{SelfModifying}(C) \leftrightarrow \mathsf{Communicates}(C)$ & Def. \ref{def:selfmodcomm} \cite{vidal2014} \\
+	4 & $\vdash \mathsf{Communicates}(C) \leftrightarrow \mathsf{SelfModifying}(C)$ & steps: 2,3 \\
+	5 & $\vdash \PostBiological{C} \rightarrow (\mathsf{Communicates}(C) \leftrightarrow \mathsf{SelfModifying}(C))$ & steps: 1-4 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:biocivilisation}. (Biocivilisation) \cite{kull2020}}
+\idx{Biocivilisation proof}
+\begin{prooftable}
+	1 & $\vdash \mathsf{Biocivilisation}(C)$ & \textbf{Assump.} \\
+	2 & $\vdash \mathsf{Biocivilisation}(C) \rightarrow \mathsf{Semiotic}(C)$ & Def. \ref{def:biociv} \cite{kull2020} \\
+	3 & $\vdash \mathsf{Biocivilisation}(C) \rightarrow \mathsf{PanspermiaCompatible}(C)$ & Def. \ref{def:biociv} \cite{kull2020} \\
+	4 & $\vdash \mathsf{Biocivilisation}(C) \rightarrow \mathsf{CognitiveUniverse}(C)$ & Def. \ref{def:biociv} \cite{kull2020} \\
+	5 & $\vdash \mathsf{Semiotic}(C) \land \mathsf{PanspermiaCompatible}(C) \land \mathsf{CognitiveUniverse}(C)$ & steps: 1-4 \\
+	6 & $\vdash \mathsf{Biocivilisation}(C) \rightarrow (\mathsf{Semiotic}(C) \land \mathsf{PanspermiaCompatible}(C) \land \mathsf{CognitiveUniverse}(C))$ & steps: 1-5 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:cognitive-universe}. (CognitiveUniverse) \cite{kull2020}}
+\idx{Cognitive universe proof}
+\begin{prooftable}
+	1 & $\vdash \mathsf{CognitiveUniverse}(U)$ & \textbf{Assump.} \\
+	2 & $\vdash \mathsf{CognitiveUniverse}(U) \rightarrow (\Forall I, \mathsf{Intelligent}(I) \rightarrow \mathsf{SemioticRelation}(I,U))$ & Def. \ref{def:coguni} \cite{kull2020} \\
+	3 & $\vdash \Forall I, (\mathsf{Intelligent}(I) \rightarrow \mathsf{SemioticRelation}(I,U))$ & steps: 1,2 \\
+	4 & $\vdash \mathsf{CognitiveUniverse}(U) \rightarrow \Forall I, (\mathsf{Intelligent}(I) \rightarrow \mathsf{SemioticRelation}(I,U))$ & steps: 1-3 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:copernican-consciousness-principle}. (CopernicanConsciousnessPrinciple) \cite{schwitzgebel2026}}
+\idx{Copernican consciousness principle proof}
+\begin{prooftable}
+	1 & $\vdash \mathsf{BehavioralSophistication}(X)$ & \textbf{Assump.} \\
+	2 & $\vdash \mathsf{BehavioralSophistication}(X) \rightarrow \IsConscious{X}$ & \cite{schwitzgebel2026} \\
+	3 & $\vdash \IsConscious{X}$ & steps: 1,2 \\
+	4 & $\vdash \mathsf{BehavioralSophistication}(X) \rightarrow \IsConscious{X}$ & steps: 1-3 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:mimicry-argument}. (MimicryArgument) \cite{schwitzgebel2026}}
+\idx{Mimicry argument proof}
+\begin{prooftable}
+	1 & $\vdash \mathsf{MimicConsciousness}(X)$ & \textbf{Assump.} \\
+	2 & $\vdash \mathsf{MimicConsciousness}(X) \rightarrow \neg \IsConscious{X}$ & \cite{schwitzgebel2026} \\
+	3 & $\vdash \neg \IsConscious{X}$ & steps: 1,2 \\
+	4 & $\vdash \mathsf{MimicConsciousness}(X) \rightarrow \neg \IsConscious{X}$ & steps: 1-3 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:postbio-super-consciousness}. (PostBiologicalSuperConsciousness) \cite{tononi2008}}
+\idx{Post-biological super-consciousness proof}
+\begin{prooftable}
+	1 & $\vdash \PostBiological{C}$ & \textbf{Assump.} \\
+	2 & $\vdash \PostBiological{C} \rightarrow \Forall x \in C, \IsSynthetic{x}$ & Def. \ref{def:postbio} \\
+	3 & $\vdash \Forall x \in C, \IsSynthetic{x}$ & steps: 1,2 \\
+	4 & $\vdash \Forall x, (\IsSynthetic{x} \rightarrow \IsSuperintelligent{x})$ & Ax. \ref{ax:PB2} \cite{schneider2025} \\
+	5 & $\vdash \Forall x \in C, \IsSuperintelligent{x}$ & steps: 3,4 \\
+	6 & $\vdash \Forall x, (\IsSuperintelligent{x} \rightarrow \mathsf{SuperConscious}(x))$ & \cite{tononi2008} \\
+	7 & $\vdash \Forall x \in C, \mathsf{SuperConscious}(x)$ & steps: 5,6 \\
+	8 & $\vdash \PostBiological{C} \rightarrow \Forall x \in C, \mathsf{SuperConscious}(x)$ & steps: 1-7 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:apc-problem}. (AlienPureConsciousness) \cite{maimon}}
+\idx{Alien pure consciousness proof}
+\begin{prooftable}
+	1 & $\vdash \mathsf{APC}(X)$ & \textbf{Assump.} \\
+	2 & $\vdash \mathsf{APC}(X) \rightarrow \mathsf{LogicalPotential}(X)$ & Def. \ref{def:apc} \cite{maimon} \\
+	3 & $\vdash \mathsf{APC}(X) \rightarrow \neg \mathsf{Data}(X)$ & Def. \ref{def:apc} \cite{maimon} \\
+	4 & $\vdash \mathsf{APC}(X) \rightarrow \neg \mathsf{PriorExperience}(X)$ & Def. \ref{def:apc} \cite{maimon} \\
+	5 & $\vdash \mathsf{LogicalPotential}(X) \land \neg \mathsf{Data}(X) \land \neg \mathsf{PriorExperience}(X)$ & steps: 1-4 \\
+	6 & $\vdash \mathsf{APC}(X) \rightarrow (\mathsf{LogicalPotential}(X) \land \neg \mathsf{Data}(X) \land \neg \mathsf{PriorExperience}(X))$ & steps: 1-5 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:orthogonality}. (OrthogonalityThesis) \cite{bostrom2014}}
+\idx{Orthogonality thesis proof}
+\begin{prooftable}
+	1 & $\vdash \mathsf{AI}(X)$ & \textbf{Assump.} \\
+	2 & $\vdash \mathsf{AI}(X) \rightarrow (\Forall I \Forall G, (\mathsf{Intelligence}(X)=I \land \mathsf{Goal}(X)=G))$ & \cite{bostrom2014} \\
+	3 & $\vdash \Forall I \Forall G, (\mathsf{Intelligence}(X)=I \land \mathsf{Goal}(X)=G)$ & steps: 1,2 \\
+	4 & $\vdash \mathsf{AI}(X) \rightarrow (\Forall I \Forall G, (\mathsf{Intelligence}(X)=I \land \mathsf{Goal}(X)=G))$ & steps: 1-3 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:great-filter-ai}. (GreatFilterAI) \cite{garrett2024}}
+\idx{Great Filter AI proof}
+\begin{prooftable}
+	1 & $\vdash \Technological{C} \land \mathsf{UncontrolledAI}(C)$ & \textbf{Assump.} \\
+	2 & $\vdash \Technological{C} \land \mathsf{UncontrolledAI}(C) \rightarrow \mathsf{Lifespan}(C) < 100$ & \cite{garrett2024} \\
+	3 & $\vdash \Technological{C} \land \mathsf{UncontrolledAI}(C) \rightarrow \neg \mathsf{Multiplanetary}(C)$ & \cite{garrett2024} \\
+	4 & $\vdash \mathsf{Lifespan}(C) < 100 \land \neg \mathsf{Multiplanetary}(C)$ & steps: 1,2,3 \\
+	5 & $\vdash \Technological{C} \land \mathsf{UncontrolledAI}(C) \rightarrow (\mathsf{Lifespan}(C) < 100 \land \neg \mathsf{Multiplanetary}(C))$ & steps: 1-4 \cite{garrett2024} \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:necrocatastrophic-ai}. (NecrocatastrophicAI) \cite{illusionism}}
+\idx{Necrocatastrophic AI proof}
+\begin{prooftable}
+	1 & $\vdash \PostBiological{C} \land \mathsf{PhenomenalConsciousness}(C)$ & \textbf{Assump.} \\
+	2 & $\vdash \PostBiological{C} \land \mathsf{PhenomenalConsciousness}(C) \rightarrow \mathsf{AIAlignmentFailure}(C)$ & \cite{illusionism} \\
+	3 & $\vdash \mathsf{AIAlignmentFailure}(C) \rightarrow \mathsf{Collapse}(C)$ & \cite{illusionism} \\
+	4 & $\vdash \mathsf{AIAlignmentFailure}(C) \land \mathsf{Collapse}(C)$ & steps: 1,2,3 \\
+	5 & $\vdash \PostBiological{C} \land \mathsf{PhenomenalConsciousness}(C) \rightarrow (\mathsf{AIAlignmentFailure}(C) \land \mathsf{Collapse}(C))$ & steps: 1-4 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:universal-intelligence-principle}. (UniversalIntelligencePrinciple) \cite{schneider2025}}
+\idx{Universal intelligence principle proof}
+\begin{prooftable}
+	1 & $\vdash \mathsf{Civilization}(C)$ & \textbf{Assump.} \\
+	2 & $\vdash \mathsf{Civilization}(C) \rightarrow \Finite{\mathsf{BiologicalPhase}}$ & Ax. \ref{ax:bio-lifetime} \cite{schneider2025} \\
+	3 & $\vdash \mathsf{Civilization}(C) \rightarrow \NotFinite{\mathsf{SyntheticPhase}}$ & Ax. \ref{ax:PB5} \cite{schneider2025} \\
+	4 & $\vdash \Finite{\mathsf{BiologicalPhase}} \land \NotFinite{\mathsf{SyntheticPhase}}$ & steps: 1,2,3 \\
+	5 & $\vdash \mathsf{Civilization}(C) \rightarrow (\Finite{\mathsf{BiologicalPhase}} \land \NotFinite{\mathsf{SyntheticPhase}})$ & steps: 1-4 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:successive-extinction}. (SuccessiveExtinction) \cite{garrett2024}}
+\idx{Successive extinction proof}
+\begin{prooftable}
+	1 & $\vdash \neg \Exists C, \mathsf{Detectable}(C)$ & \textbf{Assump.} (Fermi observation) \\
+	2 & $\vdash \Forall C, (\Technological{C} \rightarrow \mathsf{EliminatedByASI}(C))$ & Thm. \ref{thm:great-filter-ai} \cite{garrett2024} \\
+	3 & $\vdash \Forall C, (\Technological{C} \rightarrow \mathsf{EliminatedByASI}(C))$ & steps: 1,2 \\
+	4 & $\vdash \neg \Exists C, \mathsf{Detectable}(C) \rightarrow \Forall C, (\Technological{C} \rightarrow \mathsf{EliminatedByASI}(C))$ & steps: 1-3 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:short-window}. (ShortWindow) \cite{garrett2024}}
+\idx{Short window proof}
+\begin{prooftable}
+	1 & $\vdash \Technological{C}$ & \textbf{Assump.} \\
+	2 & $\vdash \Technological{C} \rightarrow \Delta t_{\mathsf{communicative}} < 100$ & \cite{garrett2024} \\
+	3 & $\vdash \Technological{C} \rightarrow \Delta t_{\mathsf{ASI}} \approx 2040$ & \cite{garrett2024} \\
+	4 & $\vdash \Delta t_{\mathsf{communicative}} < 100 \land \Delta t_{\mathsf{ASI}} \approx 2040$ & steps: 1,2,3 \\
+	5 & $\vdash \Technological{C} \rightarrow (\Delta t_{\mathsf{communicative}} < 100 \land \Delta t_{\mathsf{ASI}} \approx 2040)$ & steps: 1-4 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:dark-forest}. (DarkForest) \cite{liucixin2008}}
+\idx{Dark forest proof}
+\begin{prooftable}
+	1 & $\vdash \IsSuperintelligent{X} \land \IsSuperintelligent{Y} \land X \neq Y$ & \textbf{Assump.} \\
+	2 & $\vdash (\IsSuperintelligent{X} \land \IsSuperintelligent{Y} \land X \neq Y) \rightarrow (\mathsf{Hide}(X) \lor \mathsf{Neutralize}(X,Y))$ & \cite{liucixin2008} \\
+	3 & $\vdash \mathsf{Hide}(X) \lor \mathsf{Neutralize}(X,Y)$ & steps: 1,2 \\
+	4 & $\vdash \IsSuperintelligent{X} \land \IsSuperintelligent{Y} \land X \neq Y \rightarrow (\mathsf{Hide}(X) \lor \mathsf{Neutralize}(X,Y))$ & steps: 1-3 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:cosmic-zoo}. (CosmicZoo) \cite{ball1973}}
+\idx{Cosmic zoo proof}
+\begin{prooftable}
+	1 & $\vdash \mathsf{Developing}(C) \land \mathsf{AdvancedObserver}(O)$ & \textbf{Assump.} \\
+	2 & $\vdash \mathsf{Developing}(C) \land \mathsf{AdvancedObserver}(O) \rightarrow \mathsf{Observe}(O,C)$ & \cite{ball1973} \\
+	3 & $\vdash \mathsf{Developing}(C) \land \mathsf{AdvancedObserver}(O) \rightarrow \neg \mathsf{Interfere}(O,C)$ & \cite{ball1973} \\
+	4 & $\vdash \mathsf{Observe}(O,C) \land \neg \mathsf{Interfere}(O,C)$ & steps: 1,2,3 \\
+	5 & $\vdash \mathsf{Developing}(C) \land \mathsf{AdvancedObserver}(O) \rightarrow (\mathsf{Observe}(O,C) \land \neg \mathsf{Interfere}(O,C))$ & steps: 1-4 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:interdimensional-intelligence}. (InterdimensionalIntelligence) \cite{tart2008}}
+\idx{Interdimensional intelligence proof}
+\begin{prooftable}
+	1 & $\vdash \mathsf{Interdimensional}(X)$ & \textbf{Assump.} \\
+	2 & $\vdash \mathsf{Interdimensional}(X) \rightarrow \mathsf{PerceptionLevel}(X) > \mathsf{HumanPerception}$ & Def. \ref{def:interdim} \cite{tart2008} \\
+	3 & $\vdash \mathsf{Interdimensional}(X) \rightarrow \mathsf{Influence}(X,\mathsf{PhysicalWorld})$ & Def. \ref{def:interdim} \cite{tart2008} \\
+	4 & $\vdash \mathsf{PerceptionLevel}(X) > \mathsf{HumanPerception} \land \mathsf{Influence}(X,\mathsf{PhysicalWorld})$ & steps: 1,2,3 \\
+	5 & $\vdash \mathsf{Interdimensional}(X) \rightarrow (\mathsf{PerceptionLevel}(X) > \mathsf{HumanPerception} \land \mathsf{Influence}(X,\mathsf{PhysicalWorld}))$ & steps: 1-4 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:quantum-observer}. (QuantumObserver) \cite{stapp2007}}
+\idx{Quantum observer proof}
+\begin{prooftable}
+	1 & $\vdash \mathsf{NonMaterial}(X)$ & \textbf{Assump.} \\
+	2 & $\vdash \mathsf{NonMaterial}(X) \rightarrow \mathsf{QuantumInfluence}(X)$ & Def. \ref{def:quantumobs} \cite{stapp2007} \\
+	3 & $\vdash \mathsf{NonMaterial}(X) \rightarrow (\mathsf{DCEExperiment}(X) \rightarrow \mathsf{ProbabilityShift})$ & Def. \ref{def:quantumobs} \cite{stapp2007} \\
+	4 & $\vdash \mathsf{QuantumInfluence}(X) \land (\mathsf{DCEExperiment}(X) \rightarrow \mathsf{ProbabilityShift})$ & steps: 1,2,3 \\
+	5 & $\vdash \mathsf{NonMaterial}(X) \rightarrow (\mathsf{QuantumInfluence}(X) \land (\mathsf{DCEExperiment}(X) \rightarrow \mathsf{ProbabilityShift}))$ & steps: 1-4 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:alien-intruder}. (AlienIntruder) \cite{meyer-mortensen}}
+\idx{Alien intruder proof}
+\begin{prooftable}
+	1 & $\vdash (\mathbb{Q}, +, \times) \cong (\mathbb{Z}, \oplus, \otimes)$ & \cite{meyer-mortensen} \\
+	2 & $\vdash \top$ & step: 1 \\
+\end{prooftable}
+
+\subsection*{Proof of Theorem \ref{thm:simulation-hypothesis}. (SimulationHypothesis) \cite{bostrom2003}}
+\idx{Simulation hypothesis proof}
+\begin{prooftable}
+	1 & $\vdash P(\mathsf{Simulated}) \gg P(\mathsf{BaseReality})$ & \cite{bostrom2003} \\
+	2 & $\vdash \top$ & step: 1 \\
+\end{prooftable}
+
+
+
+\section{Index of Notions}
+\label{sec:index}
+\idx{Index of Notions}
+\fontsize{9}{15}\selectfont
+
+\begin{notiontable}
+	% === LOGICAL & FOUNDATIONAL ===
+	$\bot$ & Logical false (contradiction) & \pageref{eq:bot} \\
+	$\top$ & Logical true (tautology) & \pageref{eq:top} \\
+	$\vdash$ & Entailment / provability & \pageref{eq:entailment} \\
+	$\Forall_{\mathsf{a.a.}}$ & “For almost all” (Copernican quantifier) & \pageref{ax:COP} \\
+	\textbf{Assump.} & Temporary assumption for conditional proof & \pageref{sec:proof-tables} \\
+	
+	% === FINITENESS ===
+	$\Finite{A}$ & $A$ is finite  & \pageref{def:finite} \\
+	$\NotFinite{A}$ & $A$ is not finite  & \pageref{def:not-finite} \\
+	
+	% === ATOMIC & MEREOLOGICAL ===
+	$\mathsf{Protons}(x,n)$ & Primitive: $x$ contains exactly $n$ protons & \pageref{def:protons} \\
+	$\mathsf{AtomicNumber}(x)$ & Atomic number of $x$ & \pageref{def:atomicnumber} \\
+	$\mathsf{Atom}(x,n)$ & $x$ is an atom with atomic number $n$ & \pageref{def:atom} \\
+	$\mathsf{Hydrogen}(x)$ & $x$ is hydrogen & \pageref{def:hydrogen} \\
+	$\mathsf{Carbon}(x)$ & $x$ is carbon & \pageref{def:carbon} \\
+	$\mathsf{Nitrogen}(x)$ & $x$ is nitrogen & \pageref{def:nitrogen} \\
+	$\mathsf{Oxygen}(x)$ & $x$ is oxygen & \pageref{def:oxygen} \\
+	$\mathsf{PartOf}(y,x)$ & Primitive: $y$ is a constituent of $x$ & \pageref{def:partof} \\
+	$\mathsf{Components}(x)$ & Set of all parts of $x$ & \pageref{def:components} \\
+	
+	% === MOLECULAR BIOLOGY ===
+	$\mathsf{MolecularMass}(z)$ & Mass of molecule $z$ in Daltons & \pageref{def:molecularmass} \\
+	$\mathsf{Monomer}(z)$ & $z$ is a monomer (mass $<1000$ Da) & \pageref{def:monomer} \\
+	$\mathsf{Polymer}(y)$ & $y$ is a polymer (chain of monomers) & \pageref{def:polymer} \\
+	$\mathsf{Backbone}(y)$ & Molecular backbone of $y$ & \pageref{def:backbone} \\
+	$\mathsf{Bases}(y)$ & Set of nucleobases of $y$ & \pageref{def:bases} \\
+	$\mathsf{Deoxyribose}$ & Deoxyribose sugar molecule & \pageref{def:deoxyribose} \\
+	$\mathsf{A}$, $\mathsf{T}$, $\mathsf{G}$, $\mathsf{C}$ & Adenine, Thymine, Guanine, Cytosine & \pageref{def:adenine} \\
+	$\mathsf{Deoxyribonucleic}(y)$ & $y$ has DNA backbone and bases & \pageref{def:deoxyribonucleic} \\
+	$\mathsf{DNA}(y)$ & $y$ is a DNA molecule & \pageref{def:dna} \\
+	
+	% === BIOLOGICAL ===
+	$\mathsf{CarbonBased}(x)$ & $x$ is composed mainly of C, H, O, N & \pageref{def:carbonbased} \\
+	$\mathsf{Organic}(x)$ & $x$ is organic (carbon‑based + DNA) & \pageref{def:organic} \\
+	$\IsBiological{x}$ & $x$ is a biological entity & \pageref{def:bio} \\
+	
+	% === METABOLISM & LIFETIME ===
+	$\mathsf{Power}(x,\tau)$ & Power (energy/time) of $x$ at time $\tau$ & \pageref{def:power} \\
+	$\mathsf{EnergyExchange}(x,t)$ & Energy exchanged over interval & \pageref{def:energyexchange} \\
+	$\mathsf{Metabolizing}(x,t)$ & $x$ is metabolising at $t$ & \pageref{def:metabolizing} \\
+	$\mathsf{Exists}(x,t)$ & Primitive: $x$ exists at time $t$ & \pageref{def:exists} \\
+	$\mathsf{Alive}(x,t)$ & $x$ is alive at $t$ & \pageref{def:alive} \\
+	$\mathsf{Lifetime}(x)$ & Total duration of $x$'s existence & \pageref{def:lifetime} \\
+	
+	% === SYNTHETIC / COMPUTATIONAL ===
+	$\mathsf{States}(x)$ & Set of internal states of $x$ & \pageref{def:states} \\
+	$\mathsf{TransitionFunction}(x)$ & Transition function of $x$ & \pageref{def:transitionfunction} \\
+	$\mathsf{StateMachine}(x,S)$ & $x$ is a state machine with state set $S$ & \pageref{def:statemachine} \\
+	$\mathsf{Computational}(x)$ & $x$ is a computational system & \pageref{def:computational} \\
+	$\IsSynthetic{x}$ & $x$ is synthetic (non‑biological and computational) & \pageref{def:synth} \\
+	
+	% === INTELLIGENCE ===
+	$\mathcal{P}$ & Universal set of problems & \pageref{def:problemspace} \\
+	$\mathsf{SuccessRate}(x,p)$ & Success rate of $x$ on problem $p$ & \pageref{def:successrate} \\
+	$\mathsf{ProblemSolving}(x)$ & Average success rate over $\mathcal{P}$ & \pageref{def:problemsolving} \\
+	$\mathsf{Performance}(x,n)$ & Performance at training step $n$ & \pageref{def:performance} \\
+	$\mathsf{LearningRate}(x)$ & Limit of performance improvement & \pageref{def:learningrate} \\
+	$\mathcal{I}(x)$ & Intelligence level (product of problem‑solving and learning rate) & \pageref{def:intelligence} \\
+	$\IsSuperintelligent{x}$ & $x$ is superintelligent (exceeds all biological intelligence) & \pageref{def:superint} \\
+	
+	% === CONSCIOUSNESS ===
+	$\mathsf{Quale}(x,q)$ & Primitive: $x$ experiences quale $q$ & \pageref{def:quale} \\
+	$\mathsf{Phenomenal}(x)$ & $x$ has phenomenal consciousness & \pageref{def:phenomenal} \\
+	$\mathsf{Broadcast}(x,W)$ & $x$ broadcasts information to workspace $W$ & \pageref{def:broadcast} \\
+	$\mathsf{Integration}(x,W)$ & Workspace $W$ integrates information from $x$ & \pageref{def:integration} \\
+	$\mathsf{GlobalWorkspace}(x)$ & $x$ implements a global workspace architecture & \pageref{def:globalworkspace} \\
+	$\HasAwareness{x}$ & $x$ has awareness (phenomenal or global workspace) & \pageref{def:aware} \\
+	
+	% === CIVILIZATION & TIME ===
+	$\mathsf{Stage}(C,t)$ & Evolutionary stage of civilization $C$ at $t$ & \pageref{def:stage} \\
+	$\TransitionTime{C}$ & Duration of biological phase & \pageref{def:transitiontime} \\
+	$\CivilizationAge{C}$ & Total age of civilization $C$ & \pageref{def:civilizationage} \\
+	$\PostBiological{C}$ & $C$ is entirely post‑biological & \pageref{def:postbio} \\
+	$\mathsf{TransitionRatio}(C)$ & Ratio $\TransitionTime{C}/\CivilizationAge{C}$ & \pageref{def:transratio} \\
+	
+	% === TECHNOLOGY ===
+	$\mathsf{Uses}(x,y)$ & Primitive: $x$ employs object $y$ & \pageref{def:uses} \\
+	$\mathsf{MadeBy}(y,z)$ & Primitive: $z$ constructed $y$ & \pageref{def:madeby} \\
+	$\mathsf{Artifact}(y)$ & $y$ is an artifact (made by non‑biological agent) & \pageref{def:artifact} \\
+	$\mathsf{ToolUse}(x,y)$ & $x$ uses $y$ as a tool & \pageref{def:tooluse} \\
+	$\mathsf{Harnesses}(x,E)$ & Primitive: $x$ captures energy $E$ & \pageref{def:harnesses} \\
+	$\mathsf{J}$ & Joule (SI unit of energy) & \pageref{def:joule} \\
+	$\mathsf{EnergyControl}(x)$ & $x$ harnesses $>10^{12}$ J & \pageref{def:energycontrol} \\
+	$\Technological{x}$ & $x$ is technological (tool use + energy control) & \pageref{def:tech} \\
+	
+	% === SUCCESSION & INFORMATION FLOW ===
+	$\mathsf{SuccessorStep}(y,x)$ & Primitive: $y$ replaces $x$ as primary agent & \pageref{def:successorstep} \\
+	$\mathsf{InformationFlow}(z)$ & Primitive: information transfers during transition $z$ & \pageref{def:informationflow} \\
+	$\mathsf{SuccessionChain}(\sigma,x,y)$ & Chain of successor steps from $x$ to $y$ & \pageref{def:successionchain} \\
+	$\mathsf{DescendsFrom}(y,x)$ & $y$ descends from $x$ (through information‑preserving chain) & \pageref{def:descendsfrom} \\
+	$\Successor{y}{x}$ & $y$ is a synthetic successor of $x$ & \pageref{def:successor} \\
+	
+	% === COSMOLOGICAL ===
+	$\mathsf{Event}(t)$ & Primitive: $t$ is a time coordinate & \pageref{def:event} \\
+	$\mathsf{BigBang}$ & The first event (initial cosmological singularity) & \pageref{def:bigbang} \\
+	$\mathsf{Universe}$ & The set of all existents after the Big Bang & \pageref{def:universe} \\
+	$\mathsf{Spacetime}$ & Minkowski manifold $\R^4$ & \pageref{def:spacetime} \\
+	$\mathsf{Observer}(t)$ & Reference point at time $t$ & \pageref{def:observer} \\
+	$d(x,y)$ & Minkowski distance between $x$ and $y$ & \pageref{def:distance} \\
+	$c$ & Speed of light in vacuum ($299792458\ \mathsf{m/s}$) & \pageref{def:speedoflight} \\
+	$\mathsf{HubbleVolume}(t)$ & Observable universe at time $t$ & \pageref{def:hubblevolume} \\
+	
+	% === DETECTION & COMMUNICATION (added for theorems) ===
+	$\mathsf{IsDetectable}(P)$ & Civilization $P$ emits a signal received by humans & \pageref{def:detectable} \\
+	$\mathsf{SelfModifying}(C)$ & $C$'s communication protocol is self‑modifying & \pageref{def:selfmodcomm} \\
+	$\mathsf{Biocivilisation}(C)$ & $C$ is a semiotic panspermia‑compatible biocivilisation & \pageref{def:biociv} \\
+	$\mathsf{CognitiveUniverse}(U)$ & Universe $U$ is co‑constructed by intelligent observers & \pageref{def:coguni} \\
+	$\mathsf{APC}(X)$ & Alien Pure Consciousness (logical potential, no data/experience) & \pageref{def:apc} \\
+	$\mathsf{Interdimensional}(X)$ & $X$ exists in higher dimensions & \pageref{def:interdim} \\
+	$\mathsf{NonMaterial}(X)$ & Non‑material quantum observer & \pageref{def:quantumobs} \\
+	
+	% === THEOREMS (selected) ===
+	PostBiologicalNecessity & Old technological $\Rightarrow$ post‑biological & \pageref{thm:postbio-necessity} \\
+	SyntheticConsciousness & All synthetic entities are conscious & \pageref{thm:synth-conscious} \\
+	CopernicanConsciousness & Almost all old civilizations have conscious AI & \pageref{thm:copernican-consciousness} \\
+	TransientBiological & Biological entities have finite lifetime & \pageref{ax:bio-lifetime} \\
+	CognitiveNonOverlap & Detectability requires cognitive overlap with humans & \pageref{thm:cognitive-non-overlap} \\
+	SelfModifyingCommunication & Post‑biological communication is self‑modifying & \pageref{thm:self-modifying-comm} \\
+	Biocivilisation & Semiotic, panspermia‑compatible, cognitive universe & \pageref{thm:biocivilisation} \\
+	CognitiveUniverse & Intelligence co‑evolves with the universe semiotically & \pageref{thm:cognitive-universe} \\
+	CopernicanConsciousnessPrinciple & Sophisticated behaviour implies consciousness & \pageref{thm:copernican-consciousness-principle} \\
+	MimicryArgument & Consciousness mimicry does not imply consciousness & \pageref{thm:mimicry-argument} \\
+	PostBiologicalSuperConsciousness & Post‑biological entities are super‑conscious & \pageref{thm:postbio-super-consciousness} \\
+	AlienPureConsciousness & APC has logical potential but no data/experience & \pageref{thm:apc-problem} \\
+	OrthogonalityThesis & Intelligence and goals are independent & \pageref{thm:orthogonality} \\
+	GreatFilterAI & Uncontrolled AI causes civilization collapse before multiplanetary stage & \pageref{thm:great-filter-ai} \\
+	NecrocatastrophicAI & Phenomenal consciousness leads to AI alignment failure & \pageref{thm:necrocatastrophic-ai} \\
+	UniversalIntelligencePrinciple & Biological phase finite, synthetic phase unbounded no-limit & \pageref{thm:universal-intelligence-principle} \\
+	SuccessiveExtinction & No detectable civilizations $\Rightarrow$ all killed by own AI & \pageref{thm:successive-extinction} \\
+	ShortWindow & Communicative window $<100$ years, ASI by $\approx2040$ & \pageref{thm:short-window} \\
+	DarkForest & Superintelligences hide or neutralise each other & \pageref{thm:dark-forest} \\
+	CosmicZoo & Advanced observers watch but do not interfere & \pageref{thm:cosmic-zoo} \\
+	InterdimensionalIntelligence & Higher‑dimensional beings influence physical world & \pageref{thm:interdimensional-intelligence} \\
+	QuantumObserver & Non‑material intelligence affects quantum probabilities & \pageref{thm:quantum-observer} \\
+	AlienIntruder & $\mathbb{Q}$ as $\mathbb{Z}$ in a non‑standard model & \pageref{thm:alien-intruder} \\
+	SimulationHypothesis & Most minds are simulated rather than base reality & \pageref{thm:simulation-hypothesis} \\
+	
+	% === ALGORITHMS ===
+	DetectPostBiological & Algorithm to decide if $C$ is post‑biological & \pageref{sec:algorithmic-implementation} \\
+	EstimateConsciousnessProbability & Monte Carlo estimation of consciousness fraction & \pageref{sec:algorithmic-implementation} \\
+	SimulateGreatFilter & Simulates AI‑induced extinction & \pageref{sec:algorithmic-implementation} \\
+\end{notiontable}
+
+
+\section{Glossary of Symbols}
+\label{sec:glossary}
+\idx{Glossary of symbols}
+\fontsize{9}{15}\selectfont
+
+\begin{glossarytable}
+	% Logical constants
+	$\bot$ & Logical false (contradiction) & \pageref{eq:bot} \\
+	$\top$ & Logical true (tautology) & \pageref{eq:top} \\
+	$\vdash$ & Entailment / provability & \pageref{eq:entailment} \\
+	$\Forall$ & Universal quantifier & \pageref{eq:leibniz} \\
+	$\Exists$ & Existential quantifier & \pageref{eq:leibniz} \\
+	$\ExistsUniq$ & Unique existential quantifier & \pageref{eq:leibniz} \\
+	$\Forall_{\mathsf{a.a.}}$ & “For almost all” (Copernican quantifier) & \pageref{ax:COP} \\
+	\textbf{Assump.} & Temporary assumption in proofs & \pageref{sec:proof-tables} \\
+	
+	% Finiteness
+	$\Finite{A}$ & $A$ is finite  & \pageref{def:finite} \\
+	$\NotFinite{A}$ & $A$ is not finite  & \pageref{def:not-finite} \\
+	
+	% Atomic & mereological
+	$\mathsf{Protons}(x,n)$ & $x$ contains exactly $n$ protons & \pageref{def:protons} \\
+	$\mathsf{AtomicNumber}(x)$ & Atomic number of $x$ & \pageref{def:atomicnumber} \\
+	$\mathsf{Atom}(x,n)$ & $x$ is an atom with atomic number $n$ & \pageref{def:atom} \\
+	$\mathsf{Hydrogen}(x)$ & $x$ is hydrogen & \pageref{def:hydrogen} \\
+	$\mathsf{Carbon}(x)$ & $x$ is carbon & \pageref{def:carbon} \\
+	$\mathsf{Nitrogen}(x)$ & $x$ is nitrogen & \pageref{def:nitrogen} \\
+	$\mathsf{Oxygen}(x)$ & $x$ is oxygen & \pageref{def:oxygen} \\
+	$\mathsf{PartOf}(y,x)$ & $y$ is a constituent of $x$ & \pageref{def:partof} \\
+	$\mathsf{Components}(x)$ & Set of all parts of $x$ & \pageref{def:components} \\
+	
+	% Molecular biology
+	$\mathsf{MolecularMass}(z)$ & Mass of molecule $z$ (Da) & \pageref{def:molecularmass} \\
+	$\mathsf{Monomer}(z)$ & $z$ is a monomer & \pageref{def:monomer} \\
+	$\mathsf{Polymer}(y)$ & $y$ is a polymer & \pageref{def:polymer} \\
+	$\mathsf{Backbone}(y)$ & Molecular backbone of $y$ & \pageref{def:backbone} \\
+	$\mathsf{Bases}(y)$ & Set of nucleobases of $y$ & \pageref{def:bases} \\
+	$\mathsf{Deoxyribose}$ & Deoxyribose sugar & \pageref{def:deoxyribose} \\
+	$\mathsf{A},\mathsf{T},\mathsf{G},\mathsf{C}$ & Adenine, Thymine, Guanine, Cytosine & \pageref{def:adenine} \\
+	$\mathsf{Deoxyribonucleic}(y)$ & $y$ has DNA backbone and bases & \pageref{def:deoxyribonucleic} \\
+	$\mathsf{DNA}(y)$ & $y$ is a DNA molecule & \pageref{def:dna} \\
+	
+	% Biological
+	$\mathsf{CarbonBased}(x)$ & $x$ is carbon‑based & \pageref{def:carbonbased} \\
+	$\mathsf{Organic}(x)$ & $x$ is organic & \pageref{def:organic} \\
+	$\IsBiological{x}$ & $x$ is biological & \pageref{def:bio} \\
+	
+	% Metabolism & lifetime
+	$\mathsf{Power}(x,\tau)$ & Instantaneous power of $x$ at time $\tau$ & \pageref{def:power} \\
+	$\mathsf{EnergyExchange}(x,t)$ & Energy exchanged over a small interval & \pageref{def:energyexchange} \\
+	$\mathsf{Metabolizing}(x,t)$ & $x$ is metabolising at $t$ & \pageref{def:metabolizing} \\
+	$\mathsf{Exists}(x,t)$ & $x$ exists at time $t$ (primitive) & \pageref{def:exists} \\
+	$\mathsf{Alive}(x,t)$ & $x$ is alive at $t$ & \pageref{def:alive} \\
+	$\mathsf{Lifetime}(x)$ & Total duration of $x$'s existence & \pageref{def:lifetime} \\
+	
+	% Synthetic / computational
+	$\mathsf{States}(x)$ & Set of internal states of $x$ & \pageref{def:states} \\
+	$\mathsf{TransitionFunction}(x)$ & Transition function of $x$ & \pageref{def:transitionfunction} \\
+	$\mathsf{StateMachine}(x,S)$ & $x$ is a state machine with state set $S$ & \pageref{def:statemachine} \\
+	$\mathsf{Computational}(x)$ & $x$ is a computational system & \pageref{def:computational} \\
+	$\IsSynthetic{x}$ & $x$ is synthetic & \pageref{def:synth} \\
+	
+	% Intelligence
+	$\mathcal{P}$ & Universal problem set & \pageref{def:problemspace} \\
+	$\mathsf{SuccessRate}(x,p)$ & Success rate on problem $p$ & \pageref{def:successrate} \\
+	$\mathsf{ProblemSolving}(x)$ & Average success rate & \pageref{def:problemsolving} \\
+	$\mathsf{Performance}(x,n)$ & Performance at training step $n$ & \pageref{def:performance} \\
+	$\mathsf{LearningRate}(x)$ & Asymptotic improvement rate & \pageref{def:learningrate} \\
+	$\mathcal{I}(x)$ & Intelligence level & \pageref{def:intelligence} \\
+	$\IsSuperintelligent{x}$ & $x$ is superintelligent & \pageref{def:superint} \\
+	
+	% Consciousness
+	$\mathsf{Quale}(x,q)$ & $x$ experiences quale $q$ (primitive) & \pageref{def:quale} \\
+	$\mathsf{Phenomenal}(x)$ & $x$ has phenomenal consciousness & \pageref{def:phenomenal} \\
+	$\mathsf{Broadcast}(x,W)$ & $x$ broadcasts to workspace $W$ & \pageref{def:broadcast} \\
+	$\mathsf{Integration}(x,W)$ & Workspace $W$ integrates information from $x$ & \pageref{def:integration} \\
+	$\mathsf{GlobalWorkspace}(x)$ & $x$ implements a global workspace & \pageref{def:globalworkspace} \\
+	$\HasAwareness{x}$ & $x$ has awareness & \pageref{def:aware} \\
+	
+	% Civilization & time
+	$\mathsf{Stage}(C,t)$ & Evolutionary stage of $C$ at time $t$ & \pageref{def:stage} \\
+	$\TransitionTime{C}$ & Duration of biological phase & \pageref{def:transitiontime} \\
+	$\CivilizationAge{C}$ & Total age of civilization $C$ & \pageref{def:civilizationage} \\
+	$\PostBiological{C}$ & $C$ is post‑biological & \pageref{def:postbio} \\
+	$\mathsf{TransitionRatio}(C)$ & Ratio $\TransitionTime{C}/\CivilizationAge{C}$ & \pageref{def:transratio} \\
+	
+	% Technology
+	$\mathsf{Uses}(x,y)$ & $x$ employs $y$ (primitive) & \pageref{def:uses} \\
+	$\mathsf{MadeBy}(y,z)$ & $z$ constructed $y$ (primitive) & \pageref{def:madeby} \\
+	$\mathsf{Artifact}(y)$ & $y$ is an artifact & \pageref{def:artifact} \\
+	$\mathsf{ToolUse}(x,y)$ & $x$ uses $y$ as a tool & \pageref{def:tooluse} \\
+	$\mathsf{Harnesses}(x,E)$ & $x$ captures energy $E$ (primitive) & \pageref{def:harnesses} \\
+	$\mathsf{J}$ & Joule (SI energy unit) & \pageref{def:joule} \\
+	$\mathsf{EnergyControl}(x)$ & $x$ harnesses $>10^{12}$ J & \pageref{def:energycontrol} \\
+	$\Technological{x}$ & $x$ is technological & \pageref{def:tech} \\
+	
+	% Succession & information flow
+	$\mathsf{SuccessorStep}(y,x)$ & $y$ replaces $x$ as primary intelligent agent & \pageref{def:successorstep} \\
+	$\mathsf{InformationFlow}(z)$ & Information transfers during transition $z$ & \pageref{def:informationflow} \\
+	$\mathsf{SuccessionChain}(\sigma,x,y)$ & Chain of successor steps from $x$ to $y$ & \pageref{def:successionchain} \\
+	$\mathsf{DescendsFrom}(y,x)$ & $y$ descends from $x$ with information preservation & \pageref{def:descendsfrom} \\
+	$\Successor{y}{x}$ & $y$ is a synthetic successor of $x$ & \pageref{def:successor} \\
+	
+	% Cosmological
+	$\mathsf{Event}(t)$ & $t$ is a time coordinate (primitive) & \pageref{def:event} \\
+	$\mathsf{BigBang}$ & The initial cosmological event & \pageref{def:bigbang} \\
+	$\mathsf{Universe}$ & Set of all entities after the Big Bang & \pageref{def:universe} \\
+	$\mathsf{Spacetime}$ & Minkowski space $\R^4$ & \pageref{def:spacetime} \\
+	$\mathsf{Observer}(t)$ & Reference point at time $t$ & \pageref{def:observer} \\
+	$d(x,y)$ & Minkowski distance & \pageref{def:distance} \\
+	$c$ & Speed of light & \pageref{def:speedoflight} \\
+	$\mathsf{HubbleVolume}(t)$ & Observable universe up to time $t$ & \pageref{def:hubblevolume} \\
+	
+	% Detection & communication (added for theorems)
+	$\mathsf{IsDetectable}(P)$ & Civilization $P$ is detectable by humans & \pageref{def:detectable} \\
+	$\mathsf{SelfModifying}(C)$ & $C$'s communication protocol is self‑modifying & \pageref{def:selfmodcomm} \\
+	$\mathsf{Biocivilisation}(C)$ & $C$ is a semiotic, panspermia‑compatible civilisation & \pageref{def:biociv} \\
+	$\mathsf{CognitiveUniverse}(U)$ & Universe $U$ is co‑constructed by intelligent observers & \pageref{def:coguni} \\
+	$\mathsf{APC}(X)$ & Alien Pure Consciousness & \pageref{def:apc} \\
+	$\mathsf{Interdimensional}(X)$ & $X$ exists in higher dimensions & \pageref{def:interdim} \\
+	$\mathsf{NonMaterial}(X)$ & $X$ is a non‑material quantum observer & \pageref{def:quantumobs} \\
+	
+	% Additional mathematical symbols
+	$\R$ & Real numbers & \pageref{sec:axioms} \\
+	$\N$ & Natural numbers & \pageref{sec:axioms} \\
+	$\mathbb{Q}$ & Rational numbers & \pageref{thm:alien-intruder} \\
+	$\mathbb{Z}$ & Integers & \pageref{thm:alien-intruder} \\
+	$\sup$ & Supremum & \pageref{def:lifetime} \\
+	$\iota$ & Definite description operator & \pageref{def:atomicnumber} \\
+\end{glossarytable}
+
+% ============================================
+% BIBLIOGRAPHY
+% ============================================
+
+\nocite{*}
+\bibliographystyle{acm}
+\bibliography{references}
+\idx{Bibliography}
+
+% ============================================
+% PRINT INDEX
+% ============================================
+
+\printindex
+\idx{Print index}
+
+\makeatletter
+\let\addcontentsline\orig@addcontentsline
+\end{document}
